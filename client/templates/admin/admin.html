@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    Admin Page
+    <h1>Welcome, {{ name }}</h1>
+    <p>User ID: {{ user_id }}</p>
+    <p>Your role: {{ role }}</p>
+
+    <div>
+        <h1>Side Bar</h1>
+
+        <button onclick="window.location.href = '/admins/{{ user_id }}'">Home</button>
+
+        <div>
+            <h3>Add Content</h3>
+            <button onclick="window.location.href = '/admins/{{ user_id }}/new/content'">Create New Content</button>
+            <button onclick="window.location.href = '/admins/{{ user_id }}/edit/content'">Edit New Content</button>
+        </div>
+
+        <div>
+            <h3>Admin</h3>
+            <button onclick="window.location.href = '/admins/{{ user_id }}/new/subadmin'">Create Subadmin</button>
+            <button onclick="window.location.href = '/admins/{{ user_id }}/view/subadmin'">Sub Admin</button>
+        </div>
+
+        <div>
+            <h3>Course Allocation</h3>
+            <button onclick="window.location.href = '/admins/{{ user_id }}/allocate/subadmin'">Sub Admin</button>
+            <button onclick="window.location.href = '/admins/{{ user_id }}/allocate/users'">User</button>
+        </div>
+
+
+        <button onclick="window.location.href = '/'">Log Out</button>
+
+
+    </div>
+
+
+    <div>
+        <h1>Nav Bar</h1>
+        <button onclick="window.location.href = '/admins/{{ user_id }}'">Dashboard</button>
+        <button onclick="window.location.href = '/admins/{{ user_id }}/profile'">Profile</button>
+        <button onclick="window.location.href = '/admins/{{ user_id }}/setting'">Setting</button>
+    </div>
+
+
+</body>
+
+</html>
