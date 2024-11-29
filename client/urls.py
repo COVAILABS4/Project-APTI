@@ -33,6 +33,37 @@ urlpatterns = [
         views.new_subtopic,
         name="new_subtopic",
     ),
+    
+    path(
+        "admins/<str:user_id>/edit/content/<str:topic_id>/subtopics",
+        views.edit_subtopic,
+        name="new_subtopic",
+    ),
+    path(
+        "admins/<str:user_id>/new/content/<str:topic_id>/subtopics/<str:subtopic_id>",
+        views.new_title,
+        name="new_title",
+    ),
+    path(
+        "admins/<str:user_id>/edit/content/<str:topic_id>/subtopics/<str:subtopic_id>",
+        views.edit_title,
+        name="edit_title",
+    ),
+    path(
+        "admins/<str:user_id>/new/content/<str:topic_id>/subtopics/<str:subtopic_id>/<str:type>/<str:title_id>",
+        views.new_questions,
+        name="new_questions",
+    ),
+    path(
+        "admins/<str:user_id>/edit/content/<str:topic_id>/subtopics/<str:subtopic_id>/<str:type>/<str:title_id>",
+        views.edit_questions,
+        name="edit_questions",
+    ),
+    path(
+        "admins/<str:user_id>/new/content/<str:topic_id>/subtopics/<str:subtopic_id>/<str:type>/<str:title_id>/import",
+        views.new_questions_import,
+        name="new_questions_import",
+    ),
     path("admins/<str:user_id>/edit/content", views.edit_content, name="edit-content"),
     path("admins/<str:user_id>/new/subadmin", views.new_subadmin, name="new-subadmin"),
     path(

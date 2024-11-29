@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Topic Details</title>
+    <style>
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 12px 0;
+        }
+
+        a {
+            text-decoration: none;
+            color: blue;
+            cursor: pointer;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Topic Details</h1>
+    <p><strong>Topic ID:</strong> <span id="topicId">{{ topic_id }}</span></p>
+
+    <h2>Subtopics</h2>
+    <ul id="subtopicsList"></ul>
+
+    <button onclick="window.history.back()">Go Back</button>
+
+    <script>
+        const apiUrl = "http://localhost:4000/subtopics";
+        const topicId = "{{ topic_id }}";
+
+
+
+        // Function to render a subtopic with buttons
+        function createSubtopicTemplate(subtopic) {
+            const listItem = document.createElement("li");
+            const title = document.createElement("p");
+            title.textContent = subtopic.name;
+
+            const actions = document.createElement("div");
+            actions.className = "actions";
+
+            const contentLink = document.createElement("a");
+            contentLink.href = `subtopic/${subtopic.subtopic_id}/type/content`;
+            contentLink.textContent = "Content";
+
+            const practiceLink = document.createElement("a");
+            practiceLink.href = `subtopic/${subtopic.subtopic_id}/type/Practices`;
+            practiceLink.textContent = "Practice";
+
+            const testLink = document.createElement("a");
+            testLink.href = `subtopic/${subtopic.subtopic_id}/type/Test`;
+            testLink.textContent = "Test";
+
+            actions.append(contentLink, practiceLink, testLink);
+            listItem.append(title, actions);
+
+            return listItem;
+        }
+
+        // Function to fetch subtopics for the given topic ID
+        async function fetchSubtopics() {
+            try {
+                const response = await fetch(`${apiUrl}?topic_id=${topicId}`);
+                if (!response.ok) {
+                    throw new Error(`Error fetching subtopics: ${response.statusText}`);
+                }
+
+                const subtopics = await response.json();
+                const subtopicsList = document.getElementById("subtopicsList");
+
+                if (subtopics.length === 0) {
+                    subtopicsList.innerHTML = "<li>No subtopics available</li>";
+                    return;
+                }
+
+                subtopics.forEach(subtopic => {
+                    const listItem = createSubtopicTemplate(subtopic);
+                    subtopicsList.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error(error.message);
+                alert("Failed to load subtopics.");
+            }
+        }
+
+        // Call fetchSubtopics on page load
+        window.onload = fetchSubtopics;
+    </script>
+</body>
+
+</html>

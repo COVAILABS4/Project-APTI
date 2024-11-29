@@ -41,49 +41,88 @@ def admin(request, user_id):
 def new_content(request, user_id):
 
     context = {"user_id": user_id}
-    return render(request, "admin/new_content.html", context)
+    return render(request, "admin/add-content/new-content/new_content.html", context)
 
 
 @validate_session
 def new_subtopic(request, user_id, topic_id):
 
     context = {"user_id": user_id, "topic_id": topic_id}
-    return render(request, "admin/new_subtopic.html", context)
+    return render(request, "admin/add-content/new-content/new_subtopic.html", context)
+
+@validate_session
+def edit_subtopic(request, user_id, topic_id):
+
+    context = {"user_id": user_id, "topic_id": topic_id}
+    return render(request, "admin/add-content/edit-content/edit_subtopic.html", context)
+@validate_session
+def new_title(request, user_id, topic_id,subtopic_id):
+
+    context = {"user_id": user_id, "topic_id": topic_id , "subtopic_id":subtopic_id ,}
+    return render(request, "admin/add-content/new-content/new_title.html", context)
+@validate_session
+def edit_title(request, user_id, topic_id,subtopic_id):
+
+    context = {"user_id": user_id, "topic_id": topic_id , "subtopic_id":subtopic_id ,}
+    return render(request, "admin/add-content/edit-content/edit_title.html", context)
+
+
+
+@validate_session
+def new_questions(request, user_id, topic_id,subtopic_id,type,title_id):
+
+    context = {"user_id": user_id, "topic_id": topic_id , "subtopic_id":subtopic_id, "type":type , "title_id":title_id}
+    return render(request, "admin/add-content/new-content/new_questions.html", context)
+
+@validate_session
+def edit_questions(request, user_id, topic_id,subtopic_id,type,title_id):
+
+    context = {"user_id": user_id, "topic_id": topic_id , "subtopic_id":subtopic_id, "type":type , "title_id":title_id}
+    return render(request, "admin/add-content/edit-content/edit_questions.html", context)
+
+@validate_session
+def new_questions_import(request, user_id, topic_id,subtopic_id,type,title_id):
+
+    context = {"user_id": user_id, "topic_id": topic_id , "subtopic_id":subtopic_id, "type":type , "title_id":title_id}
+    return render(request, "admin/add-content/new-content/new_questions_import.html", context)
+
 
 
 @validate_session
 def edit_content(request, user_id):
-    return render(request, "admin/edit_content.html")
+    return render(request, "admin/add-content/edit-content/edit_content.html")
 
 
 @validate_session
 def new_subadmin(request, user_id):
-    return render(request, "admin/new_subadmin.html")
+    return render(request, "admin/admin-actions/new_subadmin.html")
 
 
 @validate_session
 def view_subadmin(request, user_id):
-    return render(request, "admin/view_subadmin.html")
+    return render(request, "admin/admin-actions/view_subadmin.html")
 
 
 @validate_session
 def allocate_subadmin(request, user_id):
-    return render(request, "admin/allocate_subadmin.html")
+    return render(request, "admin/course-allocation/allocate_subadmin.html")
 
 
 @validate_session
 def allocate_user(request, user_id):
-    return render(request, "admin/allocate_user.html")
+    return render(request, "admin/course-allocation/allocate_user.html")
 
 
 @validate_session
 def admin_profile(request, user_id):
-    return render(request, "admin/admin_profile.html")
+    context = {"user_id": user_id}
+    return render(request, "admin/nav-bar/admin_profile.html", context)
 
 
 @validate_session
 def admin_setting(request, user_id):
-    return render(request, "admin/admin_setting.html")
+    context = {"user_id": user_id}
+    return render(request, "admin/nav-bar/admin_setting.html", context)
 
 
 # SUBADMIN

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Practices and Tests</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .clickable-row {
+            cursor: pointer;
+        }
+
+        .clickable-row:hover {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Manage Topics</h1>
+
+      
+        <!-- Practices Table -->
+        <h3>Practices</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>S.No</th>
+                    <th>Title</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="practicesTableBody">
+                <!-- Dynamic content will be added here -->
+            </tbody>
+        </table>
+
+        <!-- Tests Table -->
+        <h3>Tests</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>S.No</th>
+                    <th>Title</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="testsTableBody">
+                <!-- Dynamic content will be added here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal for Adding Titles -->
+    <div class="modal fade" id="addTitleModal" tabindex="-1" aria-labelledby="addTitleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addTitleModalLabel">Add Title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addTitleForm">
+                        <div class="mb-3">
+                            <label for="titleInput" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="titleInput" placeholder="Enter title">
+                        </div>
+                        <div class="mb-3">
+                            <label for="typeSelect" class="form-label">Type</label>
+                            <select class="form-select" id="typeSelect" placeholder="Select Type" >
+                                <option value="Select Type" >Select Type</option>
+                                <option value="Practices">Practice</option>
+                                <option value="Test">Test</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="submitTitleBtn">Add Title</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const apiBaseUrl = "http://localhost:4000";
+        const topic_id = '{{topic_id}}';
+        const subtopic_id = '{{subtopic_id}}';
+        const userId = '{{user_id}}';
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadTitles('Practices');
+            loadTitles('Test');
+
+            document.getElementById("addTitleBtn").addEventListener("click", () => {
+                openAddTitleModal();
+            });
+        });
+
+        async function loadTitles(utilsType) {
+            try {
+                const response = await fetch(`${apiBaseUrl}/title?topic_id=${topic_id}&subtopic_id=${subtopic_id}&utils_type=${utilsType}`);
+                const titles = await response.json();
+                populateTable(utilsType === 'Practices' ? 'practices' : 'tests', titles);
+            } catch (error) {
+                console.error(`Error fetching ${utilsType} titles:`, error);
+            }
+        }
+
+        function populateTable(type, titles) {
+            const tableBody = document.getElementById(`${type}TableBody`);
+            tableBody.innerHTML = "";
+
+            titles.forEach((title, index) => {
+                const row = document.createElement("tr");
+                row.className = "clickable-row";
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${title.title}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="editTitle(event, '${type}', '${title.title_id}')">Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteTitle(event, '${type}', '${title.title_id}')">Delete</button>
+                    </td>
+                `;
+
+                row.addEventListener("click", () => showTitleDetails(type,title));
+
+                tableBody.appendChild(row);
+            });
+        }
+
+        function openAddTitleModal() {
+            const modal = new bootstrap.Modal(document.getElementById('addTitleModal'));
+            modal.show();
+
+            const submitButton = document.getElementById('submitTitleBtn');
+            submitButton.onclick = null; // Remove any previous click events
+            submitButton.addEventListener('click', submitTitle);
+        }
+
+        async function submitTitle() {
+            const titleInput = document.getElementById('titleInput');
+            const typeSelect = document.getElementById('typeSelect');
+        
+            const title = titleInput.value;
+            const type = typeSelect.value;
+        
+            if (!title) {
+                alert('Please enter a title.');
+                return;
+            }
+            
+            if (type==="Select Type") {
+                alert('Please Select a Type.');
+                return;
+            }
+
+            
+        
+            const body = { title, type };
+        
+            try {
+                const response = await fetch(`${apiBaseUrl}/add/topic/${topic_id}/subtopics/${subtopic_id}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(body),
+                });
+        
+                const data = await response.json();
+                alert(`Successfully added title: ${title}`);
+        
+                // Call function to reload the titles based on the selected type
+                loadTitles(type);
+        
+                // Hide the modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addTitleModal'));
+                modal.hide();
+        
+                // Clear the input fields
+                titleInput.value = '';
+                typeSelect.value = 'Select Type'; 
+                typeSelect.option = 'Select Type'
+                // Resetting the type select dropdown if needed
+        
+            } catch (error) {
+                console.error('Error adding title:', error);
+            }
+        }
+        
+        function showTitleDetails(type,title) {
+
+            window.location.href = `/admins/${userId}/edit/content/${topic_id}/subtopics/${subtopic_id}/${type === 'practices' ? 'Practices' : 'Test'}/${title.title_id}`
+
+        }
+
+        function editTitle(event, type, titleId) {
+            event.stopPropagation();
+            alert(`Edit title: Type = ${type}, Title ID = ${titleId}`);
+        }
+
+        function deleteTitle(event, type, titleId) {
+            event.stopPropagation();
+            alert(`Delete title: Type = ${type}, Title ID = ${titleId}`);
+        }
+    </script>
+</body>
+
+</html>

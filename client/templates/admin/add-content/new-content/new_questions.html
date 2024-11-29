@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questions</title>
+    <!-- Include Bootstrap for styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Questions for Topic: <span id="topic-label"></span></h2>
+            <div>
+                <button class="btn btn-primary me-2" onclick="redirectToImport()">Import</button>
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addQuestionModal">Add Question</button>
+            </div>   </div>
+
+        <!-- Section to display existing questions -->
+        <div id="question-list">
+            <h4>Existing Questions</h4>
+            <ul id="questions" class="list-group">
+                <!-- Questions will be dynamically loaded here -->
+            </ul>
+        </div>
+    </div>
+
+    <!-- Modal for Adding Questions -->
+    <div class="modal fade" id="addQuestionModal" tabindex="-1" aria-labelledby="addQuestionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addQuestionModalLabel">Add New Question</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="questionForm">
+                        <div class="mb-3">
+                            <label for="question" class="form-label">Question</label>
+                            <textarea id="question" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Options</label>
+                            <div id="options-container">
+                                <input type="text" class="form-control mb-2 option" placeholder="Option 1" required>
+                                <input type="text" class="form-control mb-2 option" placeholder="Option 2" required>
+                                <input type="text" class="form-control mb-2 option" placeholder="Option 3" required>
+                                <input type="text" class="form-control mb-2 option" placeholder="Option 4" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="correct_option" class="form-label">Correct Option (1-4)</label>
+                            <input type="number" id="correct_option" class="form-control" min="1" max="4" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="explanation" class="form-label">Explanation</label>
+                            <textarea id="explanation" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const user_id = "{{user_id}}"
+        const topic_id = "{{topic_id}}" || "Default Topic ID";
+        const subtopic_id = "{{subtopic_id}}" || "Default Subtopic ID";
+        const type = "{{type}}" || "Practices";
+        const title_id = "{{title_id}}" || "1";
+        const apiBaseUrl = "http://localhost:4000";
+
+        document.getElementById("topic-label").innerText = `${topic_id} - Subtopic: ${subtopic_id}`;
+
+        async function fetchQuestions() {
+            try {
+                const response = await fetch(`${apiBaseUrl}/questions/${title_id}?topic_id=${topic_id}&subtopic_id=${subtopic_id}&utils=${type}`);
+                if (!response.ok) throw new Error("Failed to fetch questions");
+
+                const data = await response.json();
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                const questions = data.questions || [];
+                const questionsList = document.getElementById("questions");
+                questionsList.innerHTML = '';
+
+                questions.forEach((question, index) => {
+                    const li = document.createElement('li');
+                    li.classList.add("list-group-item");
+                    const correctOption = question.options[question.correct_option - 1];
+
+                    li.innerHTML = `
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>Q${index + 1}:</strong> ${question.question}
+                                <ul class="list-unstyled mt-2">
+                                    ${question.options.map((option, i) => `
+                                        <li class="${i + 1 === question.correct_option ? 'text-success fw-bold' : ''}">
+                                            Option ${i + 1}: ${option}
+                                        </li>`).join('')}
+                                </ul>
+                                <strong>Correct Option:</strong> ${correctOption}<br>
+                                <strong>Explanation:</strong> ${question.explanation}
+                            </div>
+                        </div>`;
+                    questionsList.appendChild(li);
+                });
+            } catch (error) {
+                console.error("Error fetching questions:", error);
+                alert("Failed to load questions. Please try again.");
+            }
+        }
+
+        document.getElementById("questionForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const question = document.getElementById("question").value.trim();
+            const options = [...document.querySelectorAll(".option")].map(opt => opt.value.trim());
+            const correct_option = parseInt(document.getElementById("correct_option").value);
+            const explanation = document.getElementById("explanation").value.trim();
+
+            if (!question || options.some(opt => !opt) || isNaN(correct_option) || correct_option < 1 || correct_option > 4) {
+                alert("Please fill all fields correctly.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`${apiBaseUrl}/add/questions`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ topic_id, subtopic_id, title_id, question, options, correct_option, explanation, type })
+                });
+
+                if (!response.ok) throw new Error("Failed to add question");
+
+                const data = await response.json();
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                alert("Question added successfully!");
+                document.getElementById("questionForm").reset();
+                fetchQuestions();
+                bootstrap.Modal.getInstance(document.getElementById('addQuestionModal')).hide();
+            } catch (error) {
+                console.error("Error adding question:", error);
+                alert("Failed to add question. Please try again.");
+            }
+        });
+
+        function editQuestion(id) {
+            alert(`Edit question ID: ${id}, Topic ID: ${topic_id}, Subtopic ID: ${subtopic_id}`);
+            // Handle edit functionality
+        }
+
+        function deleteQuestion(id) {
+            alert(`Delete question ID: ${id}, Topic ID: ${topic_id}, Subtopic ID: ${subtopic_id}`);
+            // Handle delete functionality
+        }
+
+        function redirectToImport() {
+            window.location.href = `/admins/${user_id}/new/content/${topic_id}/subtopics/${subtopic_id}/${type}/${title_id}/import`
+        }
+
+        window.onload = fetchQuestions;
+    </script>
+
+    <!-- Bootstrap JS for modals, etc. -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
