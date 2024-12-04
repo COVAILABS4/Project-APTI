@@ -33,7 +33,6 @@ urlpatterns = [
         views.new_subtopic,
         name="new_subtopic",
     ),
-    
     path(
         "admins/<str:user_id>/edit/content/<str:topic_id>/subtopics",
         views.edit_subtopic,
@@ -67,7 +66,7 @@ urlpatterns = [
     path("admins/<str:user_id>/edit/content", views.edit_content, name="edit-content"),
     path("admins/<str:user_id>/new/subadmin", views.new_subadmin, name="new-subadmin"),
     path(
-        "admins/<str:user_id>/view/subadmin", views.view_subadmin, name="view-subadmin"
+        "admins/<str:user_id>/edit/subadmin", views.edit_subadmin, name="edit-subadmin"
     ),
     path(
         "admins/<str:user_id>/allocate/subadmin",

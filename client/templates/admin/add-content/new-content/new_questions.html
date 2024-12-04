@@ -153,15 +153,6 @@
             }
         });
 
-        function editQuestion(id) {
-            alert(`Edit question ID: ${id}, Topic ID: ${topic_id}, Subtopic ID: ${subtopic_id}`);
-            // Handle edit functionality
-        }
-
-        function deleteQuestion(id) {
-            alert(`Delete question ID: ${id}, Topic ID: ${topic_id}, Subtopic ID: ${subtopic_id}`);
-            // Handle delete functionality
-        }
 
         function redirectToImport() {
             window.location.href = `/admins/${user_id}/new/content/${topic_id}/subtopics/${subtopic_id}/${type}/${title_id}/import`

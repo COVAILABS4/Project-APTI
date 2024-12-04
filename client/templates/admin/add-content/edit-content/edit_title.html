@@ -19,9 +19,11 @@
 
 <body>
     <div class="container mt-5">
-        <h1 class="mb-4">Manage Topics</h1>
+        <h1 class="mb-4" id="header">Manage Topics</h1>
 
-      
+        <h2 id="topicHeader"></h2>
+        <h4 id="subtopicHeader" class="mb-4"></h4>
+
         <!-- Practices Table -->
         <h3>Practices</h3>
         <table class="table table-striped">
@@ -53,33 +55,22 @@
         </table>
     </div>
 
-    <!-- Modal for Adding Titles -->
-    <div class="modal fade" id="addTitleModal" tabindex="-1" aria-labelledby="addTitleModalLabel" aria-hidden="true">
+    <!-- Bootstrap Modal for Editing -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addTitleModalLabel">Add Title</h5>
+                    <h5 class="modal-title" id="editModalLabel">Edit Title</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addTitleForm">
+                    <form id="editForm">
                         <div class="mb-3">
-                            <label for="titleInput" class="form-label">Title</label>
-                            <input type="text" class="form-control" id="titleInput" placeholder="Enter title">
+                            <label for="editTitleInput" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="editTitleInput" required>
                         </div>
-                        <div class="mb-3">
-                            <label for="typeSelect" class="form-label">Type</label>
-                            <select class="form-select" id="typeSelect" placeholder="Select Type" >
-                                <option value="Select Type" >Select Type</option>
-                                <option value="Practices">Practice</option>
-                                <option value="Test">Test</option>
-                            </select>
-                        </div>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
                     </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="submitTitleBtn">Add Title</button>
                 </div>
             </div>
         </div>
@@ -91,15 +82,28 @@
         const topic_id = '{{topic_id}}';
         const subtopic_id = '{{subtopic_id}}';
         const userId = '{{user_id}}';
+        let currentEditType, currentEditId;
 
         document.addEventListener("DOMContentLoaded", () => {
+            loadTopicHeaders();
             loadTitles('Practices');
             loadTitles('Test');
-
-            document.getElementById("addTitleBtn").addEventListener("click", () => {
-                openAddTitleModal();
-            });
         });
+
+        async function loadTopicHeaders() {
+            try {
+                const topicResponse = await fetch(`${apiBaseUrl}/topic/${topic_id}`);
+                const topic = await topicResponse.json();
+
+                const subtopicResponse = await fetch(`${apiBaseUrl}/topics/${topic_id}/subtopics/${subtopic_id}`);
+                const subtopic = await subtopicResponse.json();
+
+                document.getElementById("topicHeader").textContent = topic.topic_name;
+                document.getElementById("subtopicHeader").textContent = subtopic.content;
+            } catch (error) {
+                console.error("Error loading topic headers:", error);
+            }
+        }
 
         async function loadTitles(utilsType) {
             try {
@@ -122,90 +126,69 @@
                     <td>${index + 1}</td>
                     <td>${title.title}</td>
                     <td>
-                        <button class="btn btn-warning btn-sm" onclick="editTitle(event, '${type}', '${title.title_id}')">Edit</button>
+                        <button class="btn btn-warning btn-sm" onclick="openEditModal(event, '${type}', '${title.title_id}', '${title.title}')">Edit</button>
                         <button class="btn btn-danger btn-sm" onclick="deleteTitle(event, '${type}', '${title.title_id}')">Delete</button>
                     </td>
                 `;
-
-                row.addEventListener("click", () => showTitleDetails(type,title));
-
                 tableBody.appendChild(row);
             });
         }
 
-        function openAddTitleModal() {
-            const modal = new bootstrap.Modal(document.getElementById('addTitleModal'));
-            modal.show();
-
-            const submitButton = document.getElementById('submitTitleBtn');
-            submitButton.onclick = null; // Remove any previous click events
-            submitButton.addEventListener('click', submitTitle);
+        function openEditModal(event, type, titleId, title) {
+            event.stopPropagation();
+            currentEditType = type;
+            currentEditId = titleId;
+            document.getElementById("editTitleInput").value = title;
+            const editModal = new bootstrap.Modal(document.getElementById("editModal"));
+            editModal.show();
         }
 
-        async function submitTitle() {
-            const titleInput = document.getElementById('titleInput');
-            const typeSelect = document.getElementById('typeSelect');
-        
-            const title = titleInput.value;
-            const type = typeSelect.value;
-        
-            if (!title) {
-                alert('Please enter a title.');
-                return;
+        async function deleteTitle(event, type, titleId) {
+            event.stopPropagation();
+            if (confirm("Are you sure you want to delete this title?")) {
+                try {
+                    const response = await fetch(
+                        `${apiBaseUrl}/title/${titleId}?topic_id=${topic_id}&subtopic_id=${subtopic_id}&type=${type === 'practices' ? 'Practices' : 'Test'}`,
+                        {
+                            method: "DELETE",
+                            headers: { "Content-Type": "application/json" }
+                        }
+                    );
+                    if (response.ok) {
+                        alert("Title deleted successfully");
+                        loadTitles(type === 'practices' ? 'Practices' : 'Test');
+                    } else {
+                        alert("Failed to delete title");
+                    }
+                } catch (error) {
+                    console.error("Error deleting title:", error);
+                }
             }
-            
-            if (type==="Select Type") {
-                alert('Please Select a Type.');
-                return;
-            }
+        }
 
-            
-        
-            const body = { title, type };
-        
+        document.getElementById("editForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const newTitle = document.getElementById("editTitleInput").value;
+
             try {
-                const response = await fetch(`${apiBaseUrl}/add/topic/${topic_id}/subtopics/${subtopic_id}`, {
-                    method: "POST",
+                const response = await fetch(`${apiBaseUrl}/title/${currentEditId}`, {
+                    method: "PUT",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(body),
+                    body: JSON.stringify({ topic_id: topic_id, subtopic_id: subtopic_id, type: currentEditType === 'practices' ? 'Practices' : 'Test', newTitle: newTitle })
                 });
-        
-                const data = await response.json();
-                alert(`Successfully added title: ${title}`);
-        
-                // Call function to reload the titles based on the selected type
-                loadTitles(type);
-        
-                // Hide the modal
-                const modal = bootstrap.Modal.getInstance(document.getElementById('addTitleModal'));
-                modal.hide();
-        
-                // Clear the input fields
-                titleInput.value = '';
-                typeSelect.value = 'Select Type'; 
-                typeSelect.option = 'Select Type'
-                // Resetting the type select dropdown if needed
-        
+
+                if (response.ok) {
+                    alert("Title updated successfully");
+                    const editModal = bootstrap.Modal.getInstance(document.getElementById("editModal"));
+                    editModal.hide();
+                    loadTitles(currentEditType === 'practices' ? 'Practices' : 'Test');
+                } else {
+                    alert("Failed to update title");
+                }
             } catch (error) {
-                console.error('Error adding title:', error);
+                console.error("Error updating title:", error);
             }
-        }
-        
-        function showTitleDetails(type,title) {
-
-            window.location.href = `/admins/${userId}/edit/content/${topic_id}/subtopics/${subtopic_id}/${type === 'practices' ? 'Practices' : 'Test'}/${title.title_id}`
-
-        }
-
-        function editTitle(event, type, titleId) {
-            event.stopPropagation();
-            alert(`Edit title: Type = ${type}, Title ID = ${titleId}`);
-        }
-
-        function deleteTitle(event, type, titleId) {
-            event.stopPropagation();
-            alert(`Delete title: Type = ${type}, Title ID = ${titleId}`);
-        }
+        });
     </script>
 </body>
 

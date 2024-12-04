@@ -40,11 +40,6 @@
 <body>
     <div class="container mt-5">
         <h1 class="text-center mb-4">Manage Sub-admins</h1>
-        <div class="d-flex justify-content-end mb-3">
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSubAdminModal">
-                <i class="bi bi-person-plus"></i> Add Sub-admin
-            </button>
-        </div>
 
         <!-- Sub-admins Table -->
         <table class="table table-striped table-bordered align-middle text-center">
@@ -55,6 +50,7 @@
                     <th>Phone Number</th>
                     <th>Email</th>
                     <th>Password</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody id="subAdminsTableBody">
@@ -63,17 +59,18 @@
         </table>
     </div>
 
-    <!-- Add Sub-admin Modal -->
-    <div class="modal fade" id="addSubAdminModal" tabindex="-1" aria-labelledby="addSubAdminModalLabel"
+    <!-- Add/Edit Sub-admin Modal -->
+    <div class="modal fade" id="manageSubAdminModal" tabindex="-1" aria-labelledby="manageSubAdminModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addSubAdminModalLabel">Add Sub-admin</h5>
+                    <h5 class="modal-title" id="manageSubAdminModalLabel">Edit Sub-admin</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addSubAdminForm">
+                    <form id="manageSubAdminForm">
+                        <input type="hidden" id="subAdminId" name="id">
                         <div class="mb-3">
                             <label for="name" class="form-label">Name</label>
                             <input type="text" class="form-control" id="name" name="name" placeholder="Enter full name"
@@ -91,12 +88,11 @@
                         </div>
                         <div class="mb-3 position-relative">
                             <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" name="password"
+                            <input type="" class="form-control" id="password" name="password"
                                 placeholder="Enter password" required>
-                            <i class="bi bi-eye-slash position-absolute top-50 end-0 translate-middle-y me-2"
-                                id="togglePassword" style="cursor: pointer;"></i>
+
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Add Sub-admin</button>
+                        <button type="submit" class="btn btn-primary w-100">Save Changes</button>
                     </form>
                 </div>
             </div>
@@ -111,32 +107,99 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             const subAdminsTableBody = document.getElementById("subAdminsTableBody");
-            const addSubAdminForm = document.getElementById("addSubAdminForm");
+            const manageSubAdminForm = document.getElementById("manageSubAdminForm");
             const togglePasswordIcon = document.getElementById("togglePassword");
+            let editingSubAdminId = null;
 
             // Fetch Sub-admins
             async function fetchSubAdmins() {
                 const response = await fetch(apiBaseUrl + "/get-subadmins");
                 const subAdmins = await response.json();
+
+
                 subAdminsTableBody.innerHTML = subAdmins
                     .map(
                         (subAdmin, index) => `
-                        <tr>
-                            <td>${index + 1}</td>
-                            <td>${subAdmin.name}</td>
-                            <td>${subAdmin.phone_number}</td>
-                            <td>${subAdmin.email}</td>
-                            <td>
-                                <div class="position-relative">
-                                    <input type="password" class="form-control" value="${subAdmin.password}" readonly>
-                                    <i class="bi bi-eye-slash position-absolute top-50 end-0 translate-middle-y me-2"
-                                        onclick="togglePasswordVisibility(this)" style="cursor: pointer;"></i>
-                                </div>
-                            </td>
-                        </tr>`
+        <tr data-id="${subAdmin.user_id}">
+            <td>${index + 1}</td>
+            <td class="name">${subAdmin.name}</td>
+            <td class="phone-number">${subAdmin.phone_number}</td>
+            <td class="email">${subAdmin.email}</td>
+            <td class="password">
+                <div class="position-relative">
+                    <input type="password" class="form-control" value="${subAdmin.password}" readonly>
+                    <i class="bi bi-eye-slash position-absolute top-50 end-0 translate-middle-y me-2"
+                        onclick="togglePasswordVisibility(this)" style="cursor: pointer;"></i>
+                </div>
+            </td>
+            <td>
+                <button class="btn btn-warning btn-sm me-2" onclick="editSubAdmin('${subAdmin.user_id}')">
+                    <i class="bi bi-pencil"></i> Edit
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="deleteSubAdmin('${subAdmin.user_id}')">
+                    <i class="bi bi-trash"></i> Delete
+                </button>
+            </td>
+        </tr>`
                     )
                     .join("");
+
             }
+
+            window.editSubAdmin = function (id) {
+
+
+                const row = document.querySelector(`[data-id="${id}"]`);
+                const name = row.querySelector(".name").innerText;
+                const phoneNumber = row.querySelector(".phone-number").innerText;
+                const email = row.querySelector(".email").innerText;
+                const password = row.querySelector(".password input").value;
+
+                // Populate the modal form with the extracted data
+                document.getElementById("subAdminId").value = id;
+                document.getElementById("name").value = name;
+                document.getElementById("phoneNumber").value = phoneNumber;
+                document.getElementById("email").value = email;
+                document.getElementById("password").value = password;
+
+                bootstrap.Modal.getOrCreateInstance(document.getElementById("manageSubAdminModal")).show();
+            };
+
+            // Delete Sub-admin
+            window.deleteSubAdmin = function (id) {
+                if (confirm("Are you sure you want to delete this Sub-admin?")) {
+                    fetch(`${apiBaseUrl}/delete-subadmin/${id}`, { method: "DELETE" })
+                        .then(response => {
+                            if (response.ok) fetchSubAdmins();
+                            else alert("Error deleting sub-admin.");
+                        });
+                }
+            };
+
+            // Submit Add/Edit Form
+            manageSubAdminForm.addEventListener("submit", async (event) => {
+                event.preventDefault();
+                const formData = new FormData(manageSubAdminForm);
+                const data = Object.fromEntries(formData);
+
+
+                const endpoint = `/edit-subadmin/${data.id}`;
+                const method = "PUT";
+
+                const response = await fetch(apiBaseUrl + endpoint, {
+                    method: method,
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data),
+                });
+
+                if (response.ok) {
+                    fetchSubAdmins();
+                    bootstrap.Modal.getInstance(document.getElementById("manageSubAdminModal")).hide();
+                    alert("Changed Successfully")
+                } else {
+                    alert("Error saving changes.");
+                }
+            });
 
             // Toggle Password Visibility
             window.togglePasswordVisibility = function (icon) {
@@ -150,39 +213,6 @@
                 }
             };
 
-            // Toggle Password for Add Sub-admin
-            togglePasswordIcon.addEventListener("click", () => {
-                const passwordInput = document.getElementById("password");
-                if (passwordInput.type === "password") {
-                    passwordInput.type = "text";
-                    togglePasswordIcon.classList.replace("bi-eye-slash", "bi-eye");
-                } else {
-                    passwordInput.type = "password";
-                    togglePasswordIcon.classList.replace("bi-eye", "bi-eye-slash");
-                }
-            });
-
-            // Add Sub-admin
-            addSubAdminForm.addEventListener("submit", async (event) => {
-                event.preventDefault();
-                const formData = new FormData(addSubAdminForm);
-                const data = Object.fromEntries(formData);
-                data.role = "subadmin";
-
-                const response = await fetch(apiBaseUrl + "/admin-register", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(data),
-                });
-
-                if (response.ok) {
-                    addSubAdminForm.reset();
-                    fetchSubAdmins();
-                    bootstrap.Modal.getInstance(document.getElementById("addSubAdminModal")).hide();
-                } else {
-                    alert("Error adding sub-admin");
-                }
-            });
 
             // Initial Fetch
             fetchSubAdmins();

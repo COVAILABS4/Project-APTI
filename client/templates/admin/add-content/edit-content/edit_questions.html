@@ -21,45 +21,6 @@
             </ul>
         </div>
     </div>
-
-    <!-- Modal for Adding Questions -->
-    <div class="modal fade" id="addQuestionModal" tabindex="-1" aria-labelledby="addQuestionModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addQuestionModalLabel">Add New Question</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="questionForm">
-                        <div class="mb-3">
-                            <label for="question" class="form-label">Question</label>
-                            <textarea id="question" class="form-control" rows="3" required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Options</label>
-                            <div id="options-container">
-                                <input type="text" class="form-control mb-2 option" placeholder="Option 1" required>
-                                <input type="text" class="form-control mb-2 option" placeholder="Option 2" required>
-                                <input type="text" class="form-control mb-2 option" placeholder="Option 3" required>
-                                <input type="text" class="form-control mb-2 option" placeholder="Option 4" required>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="correct_option" class="form-label">Correct Option (1-4)</label>
-                            <input type="number" id="correct_option" class="form-control" min="1" max="4" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="explanation" class="form-label">Explanation</label>
-                            <textarea id="explanation" class="form-control" rows="3" required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Submit</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
         const user_id = "{{user_id}}"
         const topic_id = "{{topic_id}}" || "Default Topic ID";
@@ -115,44 +76,6 @@
                 alert("Failed to load questions. Please try again.");
             }
         }
-
-        document.getElementById("questionForm").addEventListener("submit", async (e) => {
-            e.preventDefault();
-
-            const question = document.getElementById("question").value.trim();
-            const options = [...document.querySelectorAll(".option")].map(opt => opt.value.trim());
-            const correct_option = parseInt(document.getElementById("correct_option").value);
-            const explanation = document.getElementById("explanation").value.trim();
-
-            if (!question || options.some(opt => !opt) || isNaN(correct_option) || correct_option < 1 || correct_option > 4) {
-                alert("Please fill all fields correctly.");
-                return;
-            }
-
-            try {
-                const response = await fetch(`${apiBaseUrl}/add/questions`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ topic_id, subtopic_id, title_id, question, options, correct_option, explanation, type })
-                });
-
-                if (!response.ok) throw new Error("Failed to add question");
-
-                const data = await response.json();
-                if (data.error) {
-                    alert(data.error);
-                    return;
-                }
-
-                alert("Question added successfully!");
-                document.getElementById("questionForm").reset();
-                fetchQuestions();
-                bootstrap.Modal.getInstance(document.getElementById('addQuestionModal')).hide();
-            } catch (error) {
-                console.error("Error adding question:", error);
-                alert("Failed to add question. Please try again.");
-            }
-        });
 
         function editQuestion(id) {
             alert(`Edit question ID: ${id}, Topic ID: ${topic_id}, Subtopic ID: ${subtopic_id}`);
