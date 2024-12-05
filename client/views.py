@@ -22,6 +22,18 @@ def admin_register(request):
 
 
 @validate_session
+def admin_profile(request, user_id):
+    context = {"user_id": user_id}
+    return render(request, "admin/nav-bar/admin_profile.html", context)
+
+
+@validate_session
+def admin_setting(request, user_id):
+    context = {"user_id": user_id}
+    return render(request, "admin/nav-bar/admin_setting.html", context)
+
+
+@validate_session
 def admin(request, user_id):
 
     print("LOGINSSS")
@@ -146,18 +158,6 @@ def allocate_subadmin(request, user_id):
 @validate_session
 def allocate_user(request, user_id):
     return render(request, "admin/course-allocation/allocate_user.html")
-
-
-@validate_session
-def admin_profile(request, user_id):
-    context = {"user_id": user_id}
-    return render(request, "admin/nav-bar/admin_profile.html", context)
-
-
-@validate_session
-def admin_setting(request, user_id):
-    context = {"user_id": user_id}
-    return render(request, "admin/nav-bar/admin_setting.html", context)
 
 
 # SUBADMIN

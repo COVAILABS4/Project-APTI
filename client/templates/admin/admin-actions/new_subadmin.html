@@ -91,10 +91,10 @@
                         </div>
                         <div class="mb-3 position-relative">
                             <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" name="password"
+                            <input type="" class="form-control" id="password" name="password"
                                 placeholder="Enter password" required>
-                            <i class="bi bi-eye-slash position-absolute top-50 end-0 translate-middle-y me-2"
-                                id="togglePassword" style="cursor: pointer;"></i>
+                            <!-- <i class="bi bi-eye-slash position-absolute top-50 end-0 translate-middle-y me-2"
+                                id="togglePassword" style="cursor: pointer;"></i> -->
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Add Sub-admin</button>
                     </form>
@@ -150,17 +150,7 @@
                 }
             };
 
-            // Toggle Password for Add Sub-admin
-            togglePasswordIcon.addEventListener("click", () => {
-                const passwordInput = document.getElementById("password");
-                if (passwordInput.type === "password") {
-                    passwordInput.type = "text";
-                    togglePasswordIcon.classList.replace("bi-eye-slash", "bi-eye");
-                } else {
-                    passwordInput.type = "password";
-                    togglePasswordIcon.classList.replace("bi-eye", "bi-eye-slash");
-                }
-            });
+
 
             // Add Sub-admin
             addSubAdminForm.addEventListener("submit", async (event) => {

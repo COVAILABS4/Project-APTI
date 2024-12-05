@@ -43,14 +43,14 @@
   <ul id="topicsList"></ul>
 
   <script>
-    const apiUrl = "http://localhost:4000/topic";
+    const apiUrl = "http://localhost:4000";
 
     const userId = '{{ user_id }}'
 
     // Function to fetch topics and display them as a list
     async function fetchTopics() {
       try {
-        const response = await fetch(apiUrl);
+        const response = await fetch(`${apiUrl}/user-topics?user_id=${userId}`);
         if (!response.ok) {
           throw new Error(`Error fetching topics: ${response.statusText}`);
         }

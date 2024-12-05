@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Questions</title>
-    <!-- Include Bootstrap for styling -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
     <div class="container mt-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Questions for Topic: <span id="topic-label"></span></h2>
-      </div>
+        </div>
 
-        <!-- Section to display existing questions -->
         <div id="question-list">
             <h4>Existing Questions</h4>
             <ul id="questions" class="list-group">
@@ -21,8 +21,50 @@
             </ul>
         </div>
     </div>
+
+    <!-- Edit Question Modal -->
+    <div class="modal fade" id="editQuestionModal" tabindex="-1" aria-labelledby="editQuestionModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editQuestionModalLabel">Edit Question</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-question-form">
+                        <div class="mb-3">
+                            <label for="edit-question-text" class="form-label">Question</label>
+                            <textarea id="edit-question-text" class="form-control" rows="2" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Options</label>
+                            <input type="text" id="edit-option-1" class="form-control mb-2" placeholder="Option 1"
+                                required>
+                            <input type="text" id="edit-option-2" class="form-control mb-2" placeholder="Option 2"
+                                required>
+                            <input type="text" id="edit-option-3" class="form-control mb-2" placeholder="Option 3"
+                                required>
+                            <input type="text" id="edit-option-4" class="form-control" placeholder="Option 4" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-correct-option" class="form-label">Correct Option (1-4)</label>
+                            <input type="number" id="edit-correct-option" class="form-control" min="1" max="4" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-explanation" class="form-label">Explanation</label>
+                            <textarea id="edit-explanation" class="form-control" rows="2"></textarea>
+                        </div>
+                        <input type="hidden" id="edit-question-id">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        const user_id = "{{user_id}}"
+        const user_id = "{{user_id}}";
         const topic_id = "{{topic_id}}" || "Default Topic ID";
         const subtopic_id = "{{subtopic_id}}" || "Default Subtopic ID";
         const type = "{{type}}" || "Practices";
@@ -37,11 +79,6 @@
                 if (!response.ok) throw new Error("Failed to fetch questions");
 
                 const data = await response.json();
-                if (data.error) {
-                    alert(data.error);
-                    return;
-                }
-
                 const questions = data.questions || [];
                 const questionsList = document.getElementById("questions");
                 questionsList.innerHTML = '';
@@ -49,7 +86,6 @@
                 questions.forEach((question, index) => {
                     const li = document.createElement('li');
                     li.classList.add("list-group-item");
-                    const correctOption = question.options[question.correct_option - 1];
 
                     li.innerHTML = `
                         <div class="d-flex justify-content-between align-items-center">
@@ -61,11 +97,11 @@
                                             Option ${i + 1}: ${option}
                                         </li>`).join('')}
                                 </ul>
-                                <strong>Correct Option:</strong> ${correctOption}<br>
+                                <strong>Correct Option:</strong> Option ${question.correct_option}<br>
                                 <strong>Explanation:</strong> ${question.explanation}
                             </div>
                             <div>
-                                <button class="btn btn-sm btn-warning me-2" onclick="editQuestion('${question.question_id}')">Edit</button>
+                                <button class="btn btn-sm btn-warning me-2" onclick="openEditModal('${question.question_id}', '${question.question}', '${question.options.join(',')}', ${question.correct_option}, '${question.explanation}')">Edit</button>
                                 <button class="btn btn-sm btn-danger" onclick="deleteQuestion('${question.question_id}')">Delete</button>
                             </div>
                         </div>`;
@@ -77,24 +113,76 @@
             }
         }
 
-        function editQuestion(id) {
-            alert(`Edit question ID: ${id}, Topic ID: ${topic_id}, Subtopic ID: ${subtopic_id}`);
-            // Handle edit functionality
+        function openEditModal(id, question, options, correctOption, explanation) {
+            document.getElementById("edit-question-id").value = id;
+            document.getElementById("edit-question-text").value = question;
+
+            // Split options into individual inputs
+            const optionArray = options.split(',');
+            document.getElementById("edit-option-1").value = optionArray[0] || '';
+            document.getElementById("edit-option-2").value = optionArray[1] || '';
+            document.getElementById("edit-option-3").value = optionArray[2] || '';
+            document.getElementById("edit-option-4").value = optionArray[3] || '';
+
+            document.getElementById("edit-correct-option").value = correctOption;
+            document.getElementById("edit-explanation").value = explanation;
+
+            const modal = new bootstrap.Modal(document.getElementById('editQuestionModal'));
+            modal.show();
+        }
+        async function editQuestion(event) {
+            event.preventDefault();
+
+            const id = document.getElementById("edit-question-id").value;
+            const question = document.getElementById("edit-question-text").value;
+
+            // Collect options from individual inputs
+            const options = [
+                document.getElementById("edit-option-1").value,
+                document.getElementById("edit-option-2").value,
+                document.getElementById("edit-option-3").value,
+                document.getElementById("edit-option-4").value,
+            ];
+
+            const correctOption = parseInt(document.getElementById("edit-correct-option").value, 10);
+            const explanation = document.getElementById("edit-explanation").value;
+
+            try {
+                const response = await fetch(`${apiBaseUrl}/update/questions`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ question_id: id, topic_id, subtopic_id, title_id, question, options, correct_option: correctOption, explanation, type }),
+                });
+
+                if (!response.ok) throw new Error("Failed to update question");
+                alert("Question updated successfully");
+                fetchQuestions();
+            } catch (error) {
+                console.error("Error updating question:", error);
+                alert("Failed to update question. Please try again.");
+            }
+        }
+        async function deleteQuestion(id) {
+            try {
+                const response = await fetch(`${apiBaseUrl}/delete/questions`, {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ question_id: id, topic_id, subtopic_id, title_id, type }),
+                });
+
+                if (!response.ok) throw new Error("Failed to delete question");
+                alert("Question deleted successfully");
+                fetchQuestions();
+            } catch (error) {
+                console.error("Error deleting question:", error);
+                alert("Failed to delete question. Please try again.");
+            }
         }
 
-        function deleteQuestion(id) {
-            alert(`Delete question ID: ${id}, Topic ID: ${topic_id}, Subtopic ID: ${subtopic_id}`);
-            // Handle delete functionality
-        }
-
-        function redirectToImport() {
-            window.location.href = `/admins/${user_id}/new/content/${topic_id}/subtopics/${subtopic_id}/${type}/${title_id}/import`
-        }
-
+        document.getElementById("edit-question-form").addEventListener("submit", editQuestion);
         window.onload = fetchQuestions;
     </script>
-
-    <!-- Bootstrap JS for modals, etc. -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

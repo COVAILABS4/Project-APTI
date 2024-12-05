@@ -7,72 +7,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
     <!-- width: calc(100% - 250px); -->
     <style>
-        .main-content {
-            background-color: #f5f9fc;
-            height: 92vh;
-            padding: 20px;
-        }
-
-        .card-stats {
-            transition: transform 0.3s ease-in-out;
-            border-radius: 10px;
-        }
-
-        .card-stats:hover {
-            transform: translateY(-5px);
-        }
-
-        .card .icon {
-            font-size: 3rem;
-        }
-
-        .icon {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .card-body {
-            background-color: #ffffff;
-            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-
-        .category {
-            font-size: 1.2rem;
-            color: #6c757d;
-        }
-
-        /* Color for cards */
-        .card-total-users {
-            background-color: #B3D0FF;
-        }
-
-        .card-total-subadmins {
-            background-color: #F6C7B6;
-        }
-
-        .card-total-courses {
-            background-color: #D0F2B2;
-        }
-
-        .card-total-tests {
-            background-color: #F1D8D8;
-        }
-
-        .card-active-users {
-            background-color: #C9F2F3;
-        }
-
         body {
             margin: 0;
             overflow-x: hidden;
@@ -268,24 +206,20 @@
                     data-bs-placement="right" title="Profile" style="cursor: pointer;"></i>
                 <div id="profile-tooltip" class="position-absolute bg-white border rounded shadow p-3"
                     style="display: none; top: 40px; right: 0; width: 250px; z-index: 1000;">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div class="d-flex align-items-center">
-                            <img id="profile-image" src="{% static 'profile.png' %}" alt="Profile Image"
-                                class="rounded-circle me-2" style="width: 50px; height: 50px; object-fit: cover;">
-                            <div>
-                                <p id="profile-name" style="color: black;" class="mb-0 fw-bold">John Doe</p>
-                                <p id="profile-email" class="mb-0 text-muted small">john.doe@example.com</p>
-                            </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <img id="profile-image" src="https://via.placeholder.com/50" alt="Profile Image"
+                            class="rounded-circle me-2" style="width: 50px; height: 50px; object-fit: cover;">
+                        <div>
+                            <p id="profile-name" style="color: black;" class="mb-0 fw-bold">John Doe</p>
+                            <p id="profile-email" class="mb-0 text-muted small">john.doe@example.com</p>
                         </div>
-                        <button id="profile-close" class="btn-close" aria-label="Close"></button>
                     </div>
                     <a href="#" id="profile-manage-account" class="btn btn-primary btn-sm w-100 mb-2">Manage Your
                         Account</a>
-                    <button id="profile-logout" class="btn btn-danger btn-sm w-100">Logout</button>
+                    <button onclick="window.location.href = '/'" id="profile-logout"
+                        class="btn btn-danger btn-sm w-100">Logout</button>
                 </div>
             </div>
-
-
         </div>
     </nav>
 
@@ -333,10 +267,10 @@
                     <i class="bi bi-person-plus"></i>
                     <span class="sidebar-item-text">Create Subadmin</span>
                 </div>
-                <div onclick="window.location.href = '/admins/{{ user_id }}/edit/subadmin'" class="ms-4 sidebar-item"
+                <div onclick="window.location.href = '/admins/{{ user_id }}/view/subadmin'" class="ms-4 sidebar-item"
                     data-bs-toggle="tooltip" data-bs-placement="right" title="View Subadmins">
                     <i class="bi bi-people"></i>
-                    <span class="sidebar-item-text">Edit Subadmins</span>
+                    <span class="sidebar-item-text">View Subadmins</span>
                 </div>
             </div>
             <div class="sidebar-item" data-bs-toggle="collapse" data-bs-target="#courseMenu" data-bs-placement="right"
@@ -364,140 +298,13 @@
             </div> -->
         </div>
         <div class="flex-grow-1 dynamic-body">
-            <div class="container-fluid main-content">
-                <div class="row">
-                    <!-- Total Users Card -->
-                    <div class="col-lg-3 col-md-6 col-sm-6">
-                        <div class="card card-stats shadow card-total-users">
-                            <div class="card-header">
-                                <div class="icon text-primary">
-                                    <span class="material-icons">people</span>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <p class="category"><strong>Total Users</strong></p>
-                                <h3 class="card-title" id="total-users">0</h3>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Total Sub-Admins Card -->
-                    <div class="col-lg-3 col-md-6 col-sm-6">
-                        <div class="card card-stats shadow card-total-subadmins">
-                            <div class="card-header">
-                                <div class="icon text-secondary">
-                                    <span class="material-icons">supervisor_account</span>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <p class="category"><strong>Total Sub-Admins</strong></p>
-                                <h3 class="card-title" id="total-subadmins">0</h3>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Total Courses Card -->
-                    <div class="col-lg-3 col-md-6 col-sm-6">
-                        <div class="card card-stats shadow card-total-courses">
-                            <div class="card-header">
-                                <div class="icon text-success">
-                                    <span class="material-icons">menu_book</span>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <p class="category"><strong>Total Courses</strong></p>
-                                <h3 class="card-title" id="total-courses">0</h3>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Total Tests Attempted Card -->
-                    <div class="col-lg-3 col-md-6 col-sm-6">
-                        <div class="card card-stats shadow card-total-tests">
-                            <div class="card-header">
-                                <div class="icon text-warning">
-                                    <span class="material-icons">check_circle</span>
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <p class="category"><strong>Tests Attempted</strong></p>
-                                <h3 class="card-title" id="total-tests">0</h3>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Active Users Card
-                                <div class="col-lg-3 col-md-6 col-sm-6 mt-4">
-                                    <div class="card card-stats shadow card-active-users">
-                                        <div class="card-header">
-                                            <div class="icon text-info">
-                                                <span class="material-icons">person</span>
-                                            </div>
-                                        </div>
-                                        <div class="card-body">
-                                            <p class="category"><strong>Active Users</strong></p>
-                                            <h3 class="card-title" id="active-users">0</h3>
-                                        </div>
-                                    </div>
-                                </div> -->
-                </div>
-            </div>
+            <h1>Profile Page</h1>
         </div>
     </div>
 
-
-    <script>
-        const apiBaseUrl = "http://localhost:4000";
-
-        async function fetchStats() {
-            try {
-                // Call the API to fetch stats
-                const response = await fetch(`${apiBaseUrl}/dashboard-stats`);
-                const stats = await response.json();
-
-                // Animate numbers with different timing based on the value
-                animateValue("total-users", 0, stats.totalUsers, getDuration(stats.totalUsers));
-                animateValue("total-subadmins", 0, stats.totalSubAdmins, getDuration(stats.totalSubAdmins));
-                animateValue("total-courses", 0, stats.totalCourses, getDuration(stats.totalCourses));
-                animateValue("total-tests", 0, stats.totalTestsAttempted, getDuration(stats.totalTestsAttempted));
-                animateValue("active-users", 0, stats.activeUsers, getDuration(stats.activeUsers));
-            } catch (error) {
-                console.error("Failed to fetch dashboard stats:", error);
-            }
-        }
-
-        function getDuration(count) {
-            // Dynamic duration based on the count
-            return 1000 + (count * 50); // Slower for higher counts
-        }
-
-        function animateValue(id, start, end, duration) {
-            const element = document.getElementById(id);
-            let startTime = null;
-
-            function updateNumber(currentTime) {
-                if (!startTime) startTime = currentTime;
-                const elapsedTime = currentTime - startTime;
-
-                const progress = Math.min(elapsedTime / duration, 1);
-                const currentValue = Math.floor(progress * (end - start) + start);
-                element.textContent = currentValue;
-
-                if (progress < 1) {
-                    requestAnimationFrame(updateNumber);
-                }
-            }
-
-            requestAnimationFrame(updateNumber);
-        }
-
-        // Fetch stats when page loads
-        window.onload = fetchStats;
-    </script>
-
-
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
 
     <script>
         const user_id = '{{ user_id }}'; // Django Template Variable
@@ -507,8 +314,6 @@
         const profileEmail = document.getElementById('profile-email');
         const manageAccountLink = document.getElementById('profile-manage-account');
         const logoutButton = document.getElementById('profile-logout');
-        const profileClose = document.getElementById('profile-close');
-
         const ip = "http://localhost:4000";
 
         // Fetch user data from API
@@ -518,7 +323,7 @@
                 if (data.email) {
                     profileEmail.textContent = data.email;
                     profileName.textContent = data.name;
-
+                    manageAccountLink.href = `/admins/${user_id}/setting`; // Update settings link
                     // Optionally set profile image if available
                     if (data.profileImage) {
                         document.getElementById('profile-image').src = data.profileImage;
@@ -534,28 +339,8 @@
             profileTooltip.style.display = (profileTooltip.style.display === 'block') ? 'none' : 'block';
         });
 
-        // Close tooltip when clicking the close button
-        profileClose.addEventListener('click', () => {
-            profileTooltip.style.display = 'none';
-        });
 
-        logoutButton.addEventListener('click', () => {
-
-            if (confirm('Are you sure to logout ?'))
-
-                profileTooltip.style.display = 'none';
-
-            window.location.href = '/'
-        });
-
-        manageAccountLink.addEventListener('click', () => {
-
-            profileTooltip.style.display = 'none';
-            window.location.href = `/admins/${user_id}/setting`
-
-        });
     </script>
-
 
     <script>
 

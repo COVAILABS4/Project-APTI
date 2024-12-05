@@ -130,6 +130,9 @@
                         <button class="btn btn-danger btn-sm" onclick="deleteTitle(event, '${type}', '${title.title_id}')">Delete</button>
                     </td>
                 `;
+
+                row.addEventListener("click", () => showTitleDetails(type, title));
+
                 tableBody.appendChild(row);
             });
         }
@@ -189,6 +192,12 @@
                 console.error("Error updating title:", error);
             }
         });
+
+        function showTitleDetails(type, title) {
+
+            window.location.href = `/admins/${userId}/edit/content/${topic_id}/subtopics/${subtopic_id}/${type === 'practices' ? 'Practices' : 'Test'}/${title.title_id}`
+
+        }
     </script>
 </body>
 

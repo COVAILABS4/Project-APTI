@@ -1,1 +1,156 @@
-Allocate USer Page
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Allocate Courses</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h2>Allocate Courses to Users</h2>
+        <table class="table table-bordered mt-4">
+            <thead>
+                <tr>
+                    <th>S.No</th>
+                    <th>Name</th>
+                    <th>Courses</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="subadmin-table">
+                <!-- Dynamic rows -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- View Courses Modal -->
+    <div class="modal fade" id="viewCoursesModal" tabindex="-1" aria-labelledby="viewCoursesModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewCoursesModalLabel">Allocated Courses</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul id="allocated-courses-list" class="list-group">
+                        <!-- List of allocated courses -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Allocate Courses Modal -->
+    <div class="modal fade" id="allocateCoursesModal" tabindex="-1" aria-labelledby="allocateCoursesModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="allocateCoursesModalLabel">Allocate Courses</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="allocate-courses-form">
+                        <div id="course-list" class="form-check">
+                            <!-- Checkboxes for available courses -->
+                        </div>
+                        <input type="hidden" id="subadmin-id">
+                        <button type="submit" class="btn btn-primary mt-3">Allocate</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const apiBaseUrl = "http://localhost:4000";
+
+        async function fetchSubadmins() {
+            const response = await fetch(`${apiBaseUrl}/users?role=user`);
+            const subadmins = await response.json();
+            const tableBody = document.getElementById("subadmin-table");
+            tableBody.innerHTML = "";
+
+            subadmins.forEach((subadmin, index) => {
+                const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${subadmin.name}</td>
+                        <td>
+                            <button class="btn btn-sm btn-info" onclick="viewCourses('${subadmin.user_id}')">View</button>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" onclick="allocateCourses('${subadmin.user_id}', '${subadmin.name}')">Allocate</button>
+                        </td>
+                    </tr>`;
+                tableBody.insertAdjacentHTML("beforeend", row);
+            });
+        }
+
+        async function viewCourses(userId) {
+            const response = await fetch(`${apiBaseUrl}/user-topics?user_id=${userId}`);
+            const courses = await response.json();
+            const courseList = document.getElementById("allocated-courses-list");
+            courseList.innerHTML = "";
+
+            courses.forEach(course => {
+                courseList.insertAdjacentHTML("beforeend", `<li class="list-group-item">${course.name}</li>`);
+            });
+
+            const modal = new bootstrap.Modal(document.getElementById("viewCoursesModal"));
+            modal.show();
+        }
+
+        async function allocateCourses(userId, name) {
+            document.getElementById("subadmin-id").value = userId;
+
+            const allCoursesResponse = await fetch(`${apiBaseUrl}/topic`);
+            const allCourses = await allCoursesResponse.json();
+
+            const userCoursesResponse = await fetch(`${apiBaseUrl}/user-topics?user_id=${userId}`);
+            const userCourses = await userCoursesResponse.json();
+            const userCourseIds = userCourses.map(course => course.topic_id);
+
+            const courseList = document.getElementById("course-list");
+            courseList.innerHTML = "";
+
+            allCourses.forEach(course => {
+                const isChecked = userCourseIds.includes(course.topic_id) ? "checked" : "";
+                const checkbox = `
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="${course.topic_id}" id="course-${course.topic_id}" ${isChecked}>
+                        <label class="form-check-label" for="course-${course.topic_id}">${course.name}</label>
+                    </div>`;
+                courseList.insertAdjacentHTML("beforeend", checkbox);
+            });
+
+            const modal = new bootstrap.Modal(document.getElementById("allocateCoursesModal"));
+            modal.show();
+        }
+
+        document.getElementById("allocate-courses-form").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const userId = document.getElementById("subadmin-id").value;
+            const selectedCourses = Array.from(document.querySelectorAll("#course-list input:checked"))
+                .map(input => input.value);
+
+            await fetch(`${apiBaseUrl}/allocate`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ user_id: userId, topics: selectedCourses }),
+            });
+
+            alert("Courses allocated successfully");
+            fetchSubadmins();
+        });
+
+        window.onload = fetchSubadmins;
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

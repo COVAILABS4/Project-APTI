@@ -1,325 +1,193 @@
-{% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <!-- width: calc(100% - 250px); -->
+    <title>Profile Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         body {
-            margin: 0;
-            overflow-x: hidden;
+            font-family: 'Poppins', sans-serif;
+            background: #f8f9fa;
         }
 
-        /* Navbar */
-        #nav-bar {
-            background-color: #0d6efd;
-            color: white;
-            z-index: 1000;
-            position: fixed;
-            top: 0;
-            left: 250px;
-
-            width: calc(100% - 250px);
-            transition: all 0.3s ease-in-out;
+        .profile-card {
+            border-radius: 15px;
+            background: #ffffff;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
         }
 
-        #side-bar.shrink~#nav-bar {
-            left: 80px;
-            /* Matches the width of the shrunk sidebar */
-            width: calc(100% - 80px);
+        .profile-card h1 {
+            font-weight: 600;
+            color: #343a40;
         }
 
-        /* Sidebar */
-        #side-bar {
-            background-color: #f8f9fa;
-            height: 100vh;
-            border-right: 1px solid #ddd;
-            transition: all 0.3s ease-in-out;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 250px;
-            z-index: 999;
+        .form-label {
+            font-weight: 500;
+            color: #6c757d;
         }
 
-        #side-bar.shrink {
-            width: 80px;
+        input[readonly] {
+            background-color: #f8f9fa !important;
         }
 
-        #side-bar.shrink .sidebar-item-text {
-            display: none;
+        #toggleMode {
+            background: #0d6efd;
+            border: none;
         }
 
-        #side-bar .sidebar-item {
-            display: flex;
-            align-items: center;
-            padding: 10px 15px;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: background-color 0.3s ease;
+        #toggleMode:hover {
+            background: #0056b3;
         }
 
-        #side-bar .sidebar-item:hover {
-            background-color: #e9ecef;
+        #saveButton {
+            background: #198754;
+            border: none;
         }
 
-        #side-bar .sidebar-item i {
-            margin-right: 10px;
+        #saveButton:hover {
+            background: #146c43;
         }
 
-        #side-bar.shrink .sidebar-item i {
-            margin-right: 0;
+        #cancelButton {
+            background: #adb5bd;
+            border: none;
         }
 
-        /* Main Body */
-        .dynamic-body {
-            margin-left: 250px;
-            margin-top: 56px;
-
-            height: calc(100vh - 56px);
-
-            transition: all 0.3s ease-in-out;
-        }
-
-        #side-bar.shrink~.dynamic-body {
-            margin-left: 80px;
-        }
-
-        /* Tooltip Animations */
-        .dropdown-menu {
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        #nav-toggler {
-            display: inline-block;
-            cursor: pointer;
-            padding: 10px;
-        }
-
-        .tooltip-inner {
-            background-color: #0d6efd;
-            color: white;
-        }
-
-        .tooltip-arrow {
-            border-top-color: #0d6efd !important;
-        }
-
-        /* Updated Logo Styles */
-        #side-bar .logo-container {
-            text-align: center;
-            margin-bottom: 20px;
-            transition: all 0.3s ease-in-out;
-        }
-
-        #side-bar .logo-container img {
-            max-height: 80px;
-            transition: all 0.3s ease-in-out;
-        }
-
-        #side-bar.shrink .logo-container img {
-            max-height: 50px;
-            border-radius: 50%;
-            /* Makes the logo rounded */
-        }
-
-        #side-bar .logo-container h5 {
-            margin-top: 10px;
-            font-size: 16px;
-            transition: all 0.3s ease-in-out;
-        }
-
-        #side-bar.shrink .logo-container h5 {
-            display: none;
-            /* Hide logo name on shrink */
-        }
-
-        .dropdown-icon {
-            margin-left: auto;
-        }
-
-        @keyframes rotate {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        #side-bar .logo-container img.rotate {
-            animation: rotate 0.5s linear;
-        }
-
-        .dropdown-icon {
-            transition: transform 0.3s ease-in-out;
-            /* Matches dropdown animation duration */
-        }
-
-        .dropdown-icon.rotate {
-            transform: rotate(180deg);
+        #cancelButton:hover {
+            background: #868e96;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 
 <body>
-    <!-- Navbar -->
-    <nav id="nav-bar" class="navbar">
-        <div class="container-fluid">
-            <div id="nav-toggler" class="navbar-toggler">
-                <i class="bi bi-list text-white fs-4"></i>
-            </div>
-            <a onclick="window.location.href = '/admins/{{ user_id }}'" class="navbar-brand ms-3" href="#">Dashboard</a>
-            <div class="d-flex align-items-center">
-                <i onclick="window.location.href = '/admins/{{ user_id }}/profile'"
-                    class="bi bi-person-circle fs-4 me-3" data-bs-toggle="tooltip" data-bs-placement="right"
-                    title="Profile"></i>
-                <i onclick="window.location.href = '/admins/{{ user_id }}/setting'" class="bi bi-gear fs-4"
-                    data-bs-toggle="tooltip" data-bs-placement="bottom" title="Setting"></i>
-            </div>
+    <div class="container mt-5">
+        <div class="text-center mb-4">
+            <h1 class="text-primary">My Profile</h1>
+            <!-- <p class="text-secondary">Manage your profile information and keep it up-to-date.</p> -->
         </div>
-    </nav>
 
-    <!-- Sidebar and Body -->
-    <div class="d-flex">
-        <div id="side-bar">
-            <!-- Tooltip for logo -->
-            <div class="logo-container">
-                <img src="{% static 'icon.png' %}" alt="Logo" class="img-fluid">
-                <h5>KRISH TEC</h5>
+        <div class="profile-card mx-auto">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Profile</h1>
+                <button id="toggleMode" class="btn btn-primary">Edit</button>
             </div>
 
-            <!-- Sidebar items -->
-            <div onclick="window.location.href = '/admins/{{ user_id }}'" class="sidebar-item" data-bs-toggle="tooltip"
-                data-bs-placement="right" title="Home">
-                <i class="bi bi-house-door"></i>
-                <span class="sidebar-item-text">Home</span>
-            </div>
-            <div class="sidebar-item" data-bs-toggle="collapse" data-bs-target="#addContentMenu"
-                data-bs-placement="right" title="Add Content">
-                <i class="bi bi-file-earmark-plus"></i>
-                <span class="sidebar-item-text">Add Content</span>
-                <i class="bi bi-chevron-down dropdown-icon"></i>
-            </div>
-            <div id="addContentMenu" class="collapse">
-                <div onclick="window.location.href = '/admins/{{ user_id }}/new/content'" class="ms-4 sidebar-item"
-                    data-bs-toggle="tooltip" data-bs-placement="right" title="Create New Content">
-                    <i class="bi bi-pencil-square"></i>
-                    <span class="sidebar-item-text">Create New Content</span>
+            <form id="profileForm">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" id="name" name="name" class="form-control" readonly>
                 </div>
-                <div onclick="window.location.href = '/admins/{{ user_id }}/edit/content'" class="ms-4 sidebar-item"
-                    data-bs-toggle="tooltip" data-bs-placement="right" title="Edit Content">
-                    <i class="bi bi-folder2-open"></i>
-                    <span class="sidebar-item-text">Edit Content</span>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" id="email" name="email" class="form-control" readonly>
                 </div>
-            </div>
-            <div class="sidebar-item" data-bs-toggle="collapse" data-bs-target="#adminMenu" title="Admin">
-                <i class="bi bi-person-badge"></i>
-                <span class="sidebar-item-text">Admin</span>
-                <i class="bi bi-chevron-down dropdown-icon"></i>
-            </div>
-            <div id="adminMenu" class="collapse">
-                <div onclick="window.location.href = '/admins/{{ user_id }}/new/subadmin'" class="ms-4 sidebar-item"
-                    data-bs-toggle="tooltip" data-bs-placement="right" title="Create Subadmin">
-                    <i class="bi bi-person-plus"></i>
-                    <span class="sidebar-item-text">Create Subadmin</span>
+                <div class="mb-3">
+                    <label for="dob" class="form-label">Date of Birth</label>
+                    <input type="date" id="dob" name="dob" class="form-control" readonly>
                 </div>
-                <div onclick="window.location.href = '/admins/{{ user_id }}/view/subadmin'" class="ms-4 sidebar-item"
-                    data-bs-toggle="tooltip" data-bs-placement="right" title="View Subadmins">
-                    <i class="bi bi-people"></i>
-                    <span class="sidebar-item-text">View Subadmins</span>
+                <div class="mb-3">
+                    <label for="city" class="form-label">City</label>
+                    <input type="text" id="city" name="city" class="form-control" readonly>
                 </div>
-            </div>
-            <div class="sidebar-item" data-bs-toggle="collapse" data-bs-target="#courseMenu" data-bs-placement="right"
-                title="Course Allocation">
-                <i class="bi bi-book"></i>
-                <span class="sidebar-item-text">Course Allocation</span>
-                <i class="bi bi-chevron-down dropdown-icon"></i>
-            </div>
-            <div id="courseMenu" class="collapse">
-                <div onclick="window.location.href = '/admins/{{ user_id }}/allocate/subadmin'"
-                    class="ms-4 sidebar-item" data-bs-toggle="tooltip" data-bs-placement="right" title="Sub Admin">
-                    <i class="bi bi-person-workspace"></i>
-                    <span class="sidebar-item-text">Sub Admin</span>
+                <div class="mb-3">
+                    <label for="state" class="form-label">State</label>
+                    <input type="text" id="state" name="state" class="form-control" readonly>
                 </div>
-                <div onclick="window.location.href = '/admins/{{ user_id }}/allocate/users'" class="ms-4 sidebar-item"
-                    data-bs-toggle="tooltip" data-bs-placement="right" title="Users">
-                    <i class="bi bi-people"></i>
-                    <span class="sidebar-item-text">Users</span>
+                <div class="mb-3">
+                    <label for="country" class="form-label">Country</label>
+                    <input type="text" id="country" name="country" class="form-control" readonly>
                 </div>
-            </div>
-            <div onclick="window.location.href = '/'" class="sidebar-item text-danger" data-bs-toggle="tooltip"
-                data-bs-placement="right" title="Logout">
-                <i class="bi bi-box-arrow-right"></i>
-                <span class="sidebar-item-text">Logout</span>
-            </div>
-        </div>
-        <div class="flex-grow-1 dynamic-body">
-            <h1>Setting Page</h1>
+                <div id="actionButtons" class="d-none mt-4">
+                    <button type="button" id="saveButton" class="btn btn-success me-2">Save</button>
+                    <button type="button" id="cancelButton" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        var isShrink = false;
-        const navbar = document.getElementById('nav-bar');
-        const navToggler = document.getElementById("nav-toggler");
-        const sideBar = document.getElementById("side-bar");
-        const dropdownIcons = document.querySelectorAll('.dropdown-icon');
+        const user_id = '{{user_id}}'; // Replace with dynamic user ID
 
-        const logoImg = document.querySelector("#side-bar .logo-container img");
+        const apiBaseUrl = "http://localhost:4000";
 
+        const apiUrl = `${apiBaseUrl}/api/users/${user_id}`;
+        const updateApiUrl = `${apiBaseUrl}/api/users/${user_id}/update`;
 
-        navToggler.addEventListener("click", () => {
-            isShrink = !isShrink;
-            navbar.style.left = isShrink ? '80px' : '250px';
-            navbar.style.width = isShrink ? 'calc(100% - 80px)' : 'calc(100% - 250px)';
-            sideBar.classList.toggle("shrink");
+        const toggleModeButton = document.getElementById('toggleMode');
+        const formElements = document.querySelectorAll('#profileForm input');
+        const actionButtons = document.getElementById('actionButtons');
 
-            // Add rotation class temporarily
-            logoImg.classList.add("rotate");
-            setTimeout(() => logoImg.classList.remove("rotate"), 500); // Remove class after animation
+        let originalData = {};
+
+        // Fetch user data and populate the form
+        async function fetchUserData() {
+            try {
+                const response = await axios.get(apiUrl);
+                const userData = response.data;
+                originalData = { ...userData }; // Store original data for cancel action
+                populateForm(userData);
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        }
+
+        // Populate form fields with user data
+        function populateForm(data) {
+            document.getElementById('name').value = data.name;
+            document.getElementById('email').value = data.email;
+            document.getElementById('dob').value = data.dob || '';
+            document.getElementById('city').value = data.city || '';
+            document.getElementById('state').value = data.state || '';
+            document.getElementById('country').value = data.country || '';
+        }
+
+        // Toggle view/edit mode
+        toggleModeButton.addEventListener('click', () => {
+            const isEditMode = toggleModeButton.textContent === 'Edit';
+            formElements.forEach(input => input.readOnly = !isEditMode);
+            actionButtons.classList.toggle('d-none', !isEditMode);
+            toggleModeButton.textContent = isEditMode ? 'View' : 'Edit';
+            if (!isEditMode) {
+                populateForm(originalData); // Revert changes if exiting edit mode
+            }
         });
 
+        // Save updated user data
+        document.getElementById('saveButton').addEventListener('click', async () => {
+            const updatedData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                dob: document.getElementById('dob').value,
+                city: document.getElementById('city').value,
+                state: document.getElementById('state').value,
+                country: document.getElementById('country').value,
+            };
 
-        dropdownIcons.forEach(icon => {
-            const targetId = icon.parentElement.getAttribute('data-bs-target');
-            const target = document.querySelector(targetId);
-
-            // Add click listener to rotate immediately
-            icon.parentElement.addEventListener('click', () => {
-                icon.classList.toggle('rotate'); // Rotate immediately when clicked
-            });
-
-            // Optional: Clean up rotation if animation ends unexpectedly
-            target.addEventListener('hidden.bs.collapse', () => {
-                icon.classList.remove('rotate');
-            });
+            try {
+                await axios.post(updateApiUrl, updatedData);
+                alert('Profile updated successfully!');
+                originalData = { ...updatedData };
+                toggleModeButton.click(); // Switch back to view mode
+            } catch (error) {
+                console.error('Error updating user data:', error);
+                alert('Failed to update profile.');
+            }
         });
-        // Enable tooltips
-        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        const tooltipList = tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+        // Cancel edits and revert to original data
+        document.getElementById('cancelButton').addEventListener('click', () => {
+            populateForm(originalData);
+            toggleModeButton.click(); // Switch back to view mode
+        });
+
+        // Initial data load
+        fetchUserData();
     </script>
 </body>
-
-
 
 </html>
