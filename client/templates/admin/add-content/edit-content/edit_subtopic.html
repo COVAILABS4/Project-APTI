@@ -16,15 +16,42 @@
         .clickable-row:hover {
             background-color: #f8f9fa;
         }
+
+        .breadcrumb-item+.breadcrumb-item::before {
+            content: "/";
+            color: #6c757d;
+        }
+
+        .breadcrumb {
+            background-color: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: .375rem;
+            border: 1px solid gray;
+        }
+
+        .highlight {
+            color: rgb(69, 170, 247);
+            cursor: pointer;
+            text-decoration: underline;
+            font-weight: bold;
+        }
     </style>
 </head>
 
 <body>
     <div class="container mt-5">
+        <!-- Breadcrumb Navigation -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item highlight " id="bc-home">Home</li>
+                <li class="breadcrumb-item highlight " id="bc-create">Edit Content</li>
+                <li class="breadcrumb-item" id="bc-topic">Loading...</li>
+            </ol>
+        </nav>
         <h1 class="mb-4" id="topicTitle">Subtopics Management</h1>
-        <table class="table table-striped">
+        <table class="table table-striped table-bordered align-middle text-center">
             <thead>
-                <tr>
+                <tr class="table-dark">
                     <th>S.No</th>
                     <th>Subtopic</th>
                     <th>Actions</th>
@@ -95,6 +122,49 @@
             </div>
         </div>
     </div>
+
+    <script>
+
+
+        const uid = '{{ user_id }}';
+        const top_id = '{{topic_id}}'
+        var bc_home = document.getElementById('bc-home');
+        var bc_create = document.getElementById('bc-create');
+        var bc_topic = document.getElementById('bc-topic');
+
+
+        bc_home.addEventListener('click', () => {
+            window.location.href = '/admins/' + uid
+        })
+
+        bc_create.addEventListener('click', () => {
+
+            //  alert("SW")
+            window.history.go(-1);
+            //  window.location.href = '/admins/' + uid + "/new/content"
+        })
+
+        apiBaseUrl = "http://localhost:4000";
+
+        // Function to Load Topic Name
+        async function loadTopicName() {
+            try {
+                const response = await fetch(`${apiBaseUrl}/topic/${top_id}`);
+                const topic = await response.json();
+                if (topic && topic.name) {
+                    bc_topic.textContent = topic.name;
+                } else {
+                    console.error("Topic not found");
+                }
+            } catch (error) {
+                console.error("Error fetching topic:", error);
+            }
+        }
+
+        loadTopicName();
+
+    </script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"

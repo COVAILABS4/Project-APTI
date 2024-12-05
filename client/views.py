@@ -137,7 +137,8 @@ def new_questions_import(request, user_id, topic_id, subtopic_id, type, title_id
 
 @validate_session
 def edit_content(request, user_id):
-    return render(request, "admin/add-content/edit-content/edit_content.html")
+    context = {"user_id": user_id}
+    return render(request, "admin/add-content/edit-content/edit_content.html", context)
 
 
 @validate_session
