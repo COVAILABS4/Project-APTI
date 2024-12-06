@@ -447,7 +447,7 @@
 
 
     <script>
-        const apiBaseUrl = "http://localhost:4000";
+        const apiBaseUrl = "http://192.168.1.34:4000";
 
         async function fetchStats() {
             try {
@@ -460,7 +460,7 @@
                 animateValue("total-subadmins", 0, stats.totalSubAdmins, getDuration(stats.totalSubAdmins));
                 animateValue("total-courses", 0, stats.totalCourses, getDuration(stats.totalCourses));
                 animateValue("total-tests", 0, stats.totalTestsAttempted, getDuration(stats.totalTestsAttempted));
-                animateValue("active-users", 0, stats.activeUsers, getDuration(stats.activeUsers));
+                //  animateValue("active-users", 0, stats.activeUsers, getDuration(stats.activeUsers));
             } catch (error) {
                 console.error("Failed to fetch dashboard stats:", error);
             }
@@ -509,7 +509,7 @@
         const logoutButton = document.getElementById('profile-logout');
         const profileClose = document.getElementById('profile-close');
 
-        const ip = "http://localhost:4000";
+        const ip = "http://192.168.1.34:4000";
 
         // Fetch user data from API
         fetch(`${ip}/api/users/${user_id}`)
