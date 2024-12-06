@@ -7,10 +7,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
     <!-- width: calc(100% - 250px); -->
     <style>
+        .main-content {
+            background-color: #f5f9fc;
+            height: 92vh;
+            padding: 20px;
+        }
+
+        .card-stats {
+            transition: transform 0.3s ease-in-out;
+            border-radius: 10px;
+        }
+
+        .card-stats:hover {
+            transform: translateY(-5px);
+        }
+
+        .card .icon {
+            font-size: 3rem;
+        }
+
+        .icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card-body {
+            background-color: #ffffff;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .category {
+            font-size: 1.2rem;
+            color: #6c757d;
+        }
+
+        /* Color for cards */
+        .card-total-users {
+            background-color: #B3D0FF;
+        }
+
+        .card-total-subadmins {
+            background-color: #F6C7B6;
+        }
+
+        .card-total-courses {
+            background-color: #D0F2B2;
+        }
+
+        .card-total-tests {
+            background-color: #F1D8D8;
+        }
+
+        .card-active-users {
+            background-color: #C9F2F3;
+        }
+
         body {
             margin: 0;
             overflow-x: hidden;
@@ -190,28 +252,6 @@
                 opacity: 1;
             }
         }
-
-        body {
-            background-color: #f4f7fc;
-        }
-
-        .breadcrumb-item+.breadcrumb-item::before {
-            content: "/";
-            color: #6c757d;
-        }
-
-        .breadcrumb {
-            background-color: #f8f9fa;
-            padding: 10px 15px;
-            border: 1px solid gray;
-        }
-
-        .highlight {
-            color: rgb(69, 170, 247);
-            cursor: pointer;
-            text-decoration: underline;
-            font-weight: bold;
-        }
     </style>
 </head>
 
@@ -222,7 +262,7 @@
             <div id="nav-toggler" class="navbar-toggler">
                 <i class="bi bi-list text-white fs-4"></i>
             </div>
-            <a onclick="window.location.href = '/admins/1/{{ user_id }}'" class="navbar-brand ms-3"
+            <a onclick="window.location.href = '/subadmin/2/{{ user_id }}'" class="navbar-brand ms-3"
                 href="#">Dashboard</a>
             <div class="d-flex align-items-center position-relative">
                 <i id="profile-icon" class="bi bi-person-circle fs-4 me-3" data-bs-toggle="tooltip"
@@ -246,6 +286,7 @@
                 </div>
             </div>
 
+
         </div>
     </nav>
 
@@ -259,7 +300,7 @@
             </div>
 
             <!-- Sidebar items -->
-            <div onclick="window.location.href = '/admins/1/{{ user_id }}'" class="sidebar-item"
+            <div onclick="window.location.href = '/subadmin/2/{{ user_id }}'" class="sidebar-item"
                 data-bs-toggle="tooltip" data-bs-placement="right" title="Home">
                 <i class="bi bi-house-door"></i>
                 <span class="sidebar-item-text">Home</span>
@@ -271,30 +312,30 @@
                 <i class="bi bi-chevron-down dropdown-icon"></i>
             </div>
             <div id="addContentMenu" class="collapse">
-                <div onclick="window.location.href = '/admins/1/{{ user_id }}/new/content'" class="ms-4 sidebar-item"
+                <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/new/content'" class="ms-4 sidebar-item"
                     data-bs-toggle="tooltip" data-bs-placement="right" title="Create New Content">
                     <i class="bi bi-pencil-square"></i>
                     <span class="sidebar-item-text">Create New Content</span>
                 </div>
-                <div onclick="window.location.href = '/admins/1/{{ user_id }}/edit/content'" class="ms-4 sidebar-item"
+                <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/edit/content'" class="ms-4 sidebar-item"
                     data-bs-toggle="tooltip" data-bs-placement="right" title="Edit Content">
                     <i class="bi bi-folder2-open"></i>
                     <span class="sidebar-item-text">Edit Content</span>
                 </div>
             </div>
-            <div class="sidebar-item" data-bs-toggle="collapse" data-bs-target="#adminMenu" title="Admin">
+            <!-- <div class="sidebar-item" data-bs-toggle="collapse" data-bs-target="#adminMenu" title="Admin">
                 <i class="bi bi-person-badge"></i>
                 <span class="sidebar-item-text">Admin</span>
                 <i class="bi bi-chevron-down dropdown-icon"></i>
-            </div>
+            </div> -->
             <div id="adminMenu" class="collapse">
-                <div onclick="window.location.href = '/admins/1/{{ user_id }}/new/subadmin'" class="ms-4 sidebar-item"
+                <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/new/subadmin'" class="ms-4 sidebar-item"
                     data-bs-toggle="tooltip" data-bs-placement="right" title="Create Subadmin">
                     <i class="bi bi-person-plus"></i>
                     <span class="sidebar-item-text">Create Subadmin</span>
                 </div>
-                <div onclick="window.location.href = '/admins/1/{{ user_id }}/edit/subadmin'" class="ms-4 sidebar-item"
-                    data-bs-toggle="tooltip" data-bs-placement="right" title="View Subadmins">
+                <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/edit/subadmin'"
+                    class="ms-4 sidebar-item" data-bs-toggle="tooltip" data-bs-placement="right" title="View Subadmins">
                     <i class="bi bi-people"></i>
                     <span class="sidebar-item-text">Edit Subadmins</span>
                 </div>
@@ -306,13 +347,13 @@
                 <i class="bi bi-chevron-down dropdown-icon"></i>
             </div>
             <div id="courseMenu" class="collapse">
-                <div onclick="window.location.href = '/admins/1/{{ user_id }}/allocate/subadmin'"
+                <!-- <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/allocate/subadmin'"
                     class="ms-4 sidebar-item" data-bs-toggle="tooltip" data-bs-placement="right" title="Sub Admin">
                     <i class="bi bi-person-workspace"></i>
                     <span class="sidebar-item-text">Sub Admin</span>
-                </div>
-                <div onclick="window.location.href = '/admins/1/{{ user_id }}/allocate/users'" class="ms-4 sidebar-item"
-                    data-bs-toggle="tooltip" data-bs-placement="right" title="Users">
+                </div> -->
+                <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/allocate/users'"
+                    class="ms-4 sidebar-item" data-bs-toggle="tooltip" data-bs-placement="right" title="Users">
                     <i class="bi bi-people"></i>
                     <span class="sidebar-item-text">Users</span>
                 </div>
@@ -324,209 +365,140 @@
             </div> -->
         </div>
         <div class="flex-grow-1 dynamic-body">
-            <div>
-                <!-- Breadcrumb Navigation -->
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item  highlight" id="bc-home">Home</li>
-                        <li class="breadcrumb-item highlight " id="bc-create">Create Content</li>
-                        <li class="breadcrumb-item highlight" id="bc-topic">Loading...</li>
-                        <li class="breadcrumb-item highlight" id="bc-subtopic">Loading...</li>
-                        <li class="breadcrumb-item highlight" id="bc-title">Loading...</li>
-                        <li class="breadcrumb-item" id="bc-title">Import</li>
-                    </ol>
-                </nav>
-                <div class="container mt-5">
-                    <!-- Breadcrumb Navigation -->
-
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2>Manage Questions</h2>
-                        <div>
-                            <button class="btn btn-info me-2" data-bs-toggle="modal"
-                                data-bs-target="#downloadModal">Download
-                                Sample</button>
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#importModal">Import
-                                Questions</button>
+            <div class="container-fluid main-content">
+                <div class="row">
+                    <!-- Total Users Card -->
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats shadow card-total-users">
+                            <div class="card-header">
+                                <div class="icon text-primary">
+                                    <span class="material-icons">people</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <p class="category"><strong>Total Users</strong></p>
+                                <h3 class="card-title" id="total-users">0</h3>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Modal for Download Sample -->
-                <div class="modal fade" id="downloadModal" tabindex="-1" aria-labelledby="downloadModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="downloadModalLabel">Download Sample</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
+                    <!-- Total Sub-Admins Card -->
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats shadow card-total-subadmins">
+                            <div class="card-header">
+                                <div class="icon text-secondary">
+                                    <span class="material-icons">supervisor_account</span>
+                                </div>
                             </div>
-                            <div class="modal-body">
-                                <form id="downloadForm">
-                                    <div class="mb-3">
-                                        <label for="noOfQuestions" class="form-label">Number of Questions</label>
-                                        <input type="number" id="noOfQuestions" class="form-control" min="1" required>
+                            <div class="card-body">
+                                <p class="category"><strong>Total Sub-Admins</strong></p>
+                                <h3 class="card-title" id="total-subadmins">0</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Courses Card -->
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats shadow card-total-courses">
+                            <div class="card-header">
+                                <div class="icon text-success">
+                                    <span class="material-icons">menu_book</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <p class="category"><strong>Total Courses</strong></p>
+                                <h3 class="card-title" id="total-courses">0</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Tests Attempted Card -->
+                    <div class="col-lg-3 col-md-6 col-sm-6">
+                        <div class="card card-stats shadow card-total-tests">
+                            <div class="card-header">
+                                <div class="icon text-warning">
+                                    <span class="material-icons">check_circle</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <p class="category"><strong>Tests Attempted</strong></p>
+                                <h3 class="card-title" id="total-tests">0</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active Users Card
+                                <div class="col-lg-3 col-md-6 col-sm-6 mt-4">
+                                    <div class="card card-stats shadow card-active-users">
+                                        <div class="card-header">
+                                            <div class="icon text-info">
+                                                <span class="material-icons">person</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="category"><strong>Active Users</strong></p>
+                                            <h3 class="card-title" id="active-users">0</h3>
+                                        </div>
                                     </div>
-                                    <button type="submit" class="btn btn-primary w-100">Download</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Modal for Import Questions -->
-                <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="importModalLabel">Import Questions</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form id="importForm">
-                                    <div class="mb-3">
-                                        <label for="importFile" class="form-label">Select File</label>
-                                        <input type="file" id="importFile" class="form-control" accept=".xlsx" required>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary w-100">Upload</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
+                                </div> -->
                 </div>
             </div>
         </div>
     </div>
 
 
+    <script>
+        const apiBaseUrl = "http://localhost:4000";
+
+        async function fetchStats() {
+            try {
+                // Call the API to fetch stats
+                const response = await fetch(`${apiBaseUrl}/dashboard-stats`);
+                const stats = await response.json();
+
+                // Animate numbers with different timing based on the value
+                animateValue("total-users", 0, stats.totalUsers, getDuration(stats.totalUsers));
+                animateValue("total-subadmins", 0, stats.totalSubAdmins, getDuration(stats.totalSubAdmins));
+                animateValue("total-courses", 0, stats.totalCourses, getDuration(stats.totalCourses));
+                animateValue("total-tests", 0, stats.totalTestsAttempted, getDuration(stats.totalTestsAttempted));
+                //  animateValue("active-users", 0, stats.activeUsers, getDuration(stats.activeUsers));
+            } catch (error) {
+                console.error("Failed to fetch dashboard stats:", error);
+            }
+        }
+
+        function getDuration(count) {
+            // Dynamic duration based on the count
+            return 1000 + (count * 50); // Slower for higher counts
+        }
+
+        function animateValue(id, start, end, duration) {
+            const element = document.getElementById(id);
+            let startTime = null;
+
+            function updateNumber(currentTime) {
+                if (!startTime) startTime = currentTime;
+                const elapsedTime = currentTime - startTime;
+
+                const progress = Math.min(elapsedTime / duration, 1);
+                const currentValue = Math.floor(progress * (end - start) + start);
+                element.textContent = currentValue;
+
+                if (progress < 1) {
+                    requestAnimationFrame(updateNumber);
+                }
+            }
+
+            requestAnimationFrame(updateNumber);
+        }
+
+        // Fetch stats when page loads
+        window.onload = fetchStats;
+    </script>
+
 
     <!-- Scripts -->
-
-    <script>
-
-
-        const uid = '{{ user_id }}';
-        const top_id = '{{topic_id}}'
-        const subtop_id = '{{subtopic_id}}'
-        const _type = '{{type}}'
-        const _title_id = '{{title_id}}'
-
-        console.log(uid, top_id, subtop_id)
-        var bc_home = document.getElementById('bc-home');
-        var bc_create = document.getElementById('bc-create');
-        var bc_topic = document.getElementById('bc-topic');
-        var bc_subtopic = document.getElementById('bc-subtopic');
-        var bc_title = document.getElementById('bc-title');
-
-
-        bc_home.addEventListener('click', () => {
-            window.location.href = '/admins/1/' + uid
-        })
-
-        bc_create.addEventListener('click', () => {
-
-            //  alert("SW")
-
-            window.location.href = '/admins/1/' + uid + "/new/content"
-        })
-        bc_topic.addEventListener('click', () => {
-
-            //  alert("SW")
-
-            window.location.href = `/admins/1/${uid}/new/content/${top_id}/subtopics`
-        })
-        bc_subtopic.addEventListener('click', () => {
-
-            //  alert("SW")
-
-            window.location.href = `/admins/1/${uid}/new/content/${top_id}/subtopics/${subtop_id}`
-        })
-        bc_title.addEventListener('click', () => {
-
-            //  alert("SW")
-            window.history.go(-1);
-            //   window.location.href = `/admins/1/${uid}/new/content/${top_id}/subtopics/${subtop_id}/${_type}/${_title_id}`
-        })
-
-        apiBaseUrl = "http://localhost:4000";
-
-        // Function to Load Topic Name
-        async function loadTopicName() {
-            try {
-                const response = await fetch(`${apiBaseUrl}/topic/${top_id}`);
-                const topic = await response.json();
-                if (topic && topic.name) {
-                    bc_topic.textContent = topic.name;
-                } else {
-                    console.error("Topic not found");
-                }
-            } catch (error) {
-                console.error("Error fetching topic:", error);
-            }
-        }
-        async function loadSubtopicNames() {
-            try {
-
-                // Fetch Subtopic Name
-                const subtopicResponse = await fetch(`${apiBaseUrl}/topics/${top_id}/subtopics/${subtop_id}`);
-                const subtopicData = await subtopicResponse.json();
-                bc_subtopic.textContent = subtopicData.name;
-            } catch (error) {
-                console.error('Error loading topic or subtopic names:', error);
-            }
-        }
-        async function loadTitleNames() {
-            try {
-
-                // Fetch Subtopic Name
-                const titleResponse = await fetch(`${apiBaseUrl}/get-title?topic_id=${top_id}&subtopic_id=${subtop_id}&utils_type=${_type}&title_id=${_title_id}`);
-                const titleData = await titleResponse.json();
-
-
-                bc_title.textContent = titleData.title;
-            } catch (error) {
-                console.error('Error loading topic or subtopic names:', error);
-            }
-        }
-
-        loadTopicName();
-        loadSubtopicNames();
-        loadTitleNames();
-        // loadSubtopicNames();
-
-        function handleFileUpload(event) {
-            event.preventDefault();
-            const fileInput = document.getElementById("importFile");
-            if (!fileInput.files[0]) {
-                alert("Please select a file to upload.");
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append("file", fileInput.files[0]);
-            importQuestions(formData);
-        }
-
-    </script>
-
-    <script>
-        document.getElementById("downloadForm").addEventListener("submit", (e) => {
-            e.preventDefault();
-            const noOfQuestions = parseInt(document.getElementById("noOfQuestions").value);
-            if (isNaN(noOfQuestions) || noOfQuestions < 1) {
-                alert("Please enter a valid number of questions.");
-                return;
-            }
-            downloadSample(noOfQuestions);
-            bootstrap.Modal.getInstance(document.getElementById('downloadModal')).hide();
-        });
-
-        document.getElementById("importForm").addEventListener("submit", handleFileUpload);
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-
 
     <script>
         const user_id = '{{ user_id }}'; // Django Template Variable
@@ -580,81 +552,11 @@
         manageAccountLink.addEventListener('click', () => {
 
             profileTooltip.style.display = 'none';
-            window.location.href = `/admins/1/${user_id}/setting`
+            window.location.href = `/subadmin/2/${user_id}/setting`
 
         });
     </script>
 
-    <script>
-
-        const topic_id = "{{topic_id}}" || "Default Topic ID";
-        const subtopic_id = "{{subtopic_id}}" || "Default Subtopic ID";
-        const type = "{{type}}" || "Practices";
-        const title_id = "{{title_id}}" || "1";
-        const apiBaseUrl = "http://localhost:4000";
-
-        async function downloadSample(noOfQuestions) {
-            const requestBody = {
-                topic_id: topic_id,
-                subtopic_id: subtopic_id,
-                title_id: title_id,
-                type: type,
-                no_of_questions: noOfQuestions
-            };
-
-            try {
-                const response = await fetch(apiBaseUrl + "/download-sample", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(requestBody)
-                });
-
-                if (!response.ok) {
-                    throw new Error("Failed to download the file");
-                }
-
-                const contentDisposition = response.headers.get("Content-Disposition");
-                const fileName = contentDisposition
-                    ? contentDisposition.split("filename=")[1].replace(/"/g, "")
-                    : "Sample_Format.xlsx";
-
-                const blob = await response.blob();
-                const downloadLink = document.createElement("a");
-                downloadLink.href = URL.createObjectURL(blob);
-                downloadLink.download = fileName;
-                downloadLink.click();
-                URL.revokeObjectURL(downloadLink.href);
-            } catch (error) {
-                console.error("Error:", error.message);
-                alert("Failed to download the file. Please try again.");
-            }
-        }
-
-        async function importQuestions(formData) {
-            try {
-                const response = await fetch(apiBaseUrl + "/add/questions/import", {
-                    method: "POST",
-                    body: formData
-                });
-
-                if (!response.ok) {
-                    throw new Error("Failed to upload the file");
-                }
-
-                const data = await response.json();
-                alert(data.message || "Questions imported successfully.");
-
-                window.location.href = `/admins/1/${user_id}/new/content/${topic_id}/subtopics/${subtopic_id}/${type}/${title_id}`
-            } catch (error) {
-                console.error("Error:", error.message);
-                alert("Failed to import questions. Please try again.");
-            }
-        }
-
-
-    </script>
 
     <script>
 

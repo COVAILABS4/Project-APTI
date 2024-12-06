@@ -191,10 +191,6 @@
             }
         }
 
-        body {
-            background-color: #f4f7fc;
-        }
-
         .breadcrumb-item+.breadcrumb-item::before {
             content: "/";
             color: #6c757d;
@@ -202,7 +198,7 @@
 
         .breadcrumb {
             background-color: #f8f9fa;
-            padding: 10px 15px;
+            padding: 10px;
             border: 1px solid gray;
         }
 
@@ -222,7 +218,7 @@
             <div id="nav-toggler" class="navbar-toggler">
                 <i class="bi bi-list text-white fs-4"></i>
             </div>
-            <a onclick="window.location.href = '/admins/1/{{ user_id }}'" class="navbar-brand ms-3"
+            <a onclick="window.location.href = '/subadmin/2/{{ user_id }}'" class="navbar-brand ms-3"
                 href="#">Dashboard</a>
             <div class="d-flex align-items-center position-relative">
                 <i id="profile-icon" class="bi bi-person-circle fs-4 me-3" data-bs-toggle="tooltip"
@@ -259,7 +255,7 @@
             </div>
 
             <!-- Sidebar items -->
-            <div onclick="window.location.href = '/admins/1/{{ user_id }}'" class="sidebar-item"
+            <div onclick="window.location.href = '/subadmin/2/{{ user_id }}'" class="sidebar-item"
                 data-bs-toggle="tooltip" data-bs-placement="right" title="Home">
                 <i class="bi bi-house-door"></i>
                 <span class="sidebar-item-text">Home</span>
@@ -271,32 +267,33 @@
                 <i class="bi bi-chevron-down dropdown-icon"></i>
             </div>
             <div id="addContentMenu" class="collapse">
-                <div onclick="window.location.href = '/admins/1/{{ user_id }}/new/content'" class="ms-4 sidebar-item"
+                <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/new/content'" class="ms-4 sidebar-item"
                     data-bs-toggle="tooltip" data-bs-placement="right" title="Create New Content">
                     <i class="bi bi-pencil-square"></i>
                     <span class="sidebar-item-text">Create New Content</span>
                 </div>
-                <div onclick="window.location.href = '/admins/1/{{ user_id }}/edit/content'" class="ms-4 sidebar-item"
+                <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/edit/content'" class="ms-4 sidebar-item"
                     data-bs-toggle="tooltip" data-bs-placement="right" title="Edit Content">
                     <i class="bi bi-folder2-open"></i>
                     <span class="sidebar-item-text">Edit Content</span>
                 </div>
             </div>
-            <div class="sidebar-item" data-bs-toggle="collapse" data-bs-target="#adminMenu" title="Admin">
+            <!-- <div class="sidebar-item" data-bs-toggle="collapse" data-bs-target="#adminMenu" title="Admin">
                 <i class="bi bi-person-badge"></i>
                 <span class="sidebar-item-text">Admin</span>
                 <i class="bi bi-chevron-down dropdown-icon"></i>
-            </div>
+            </div> -->
             <div id="adminMenu" class="collapse">
-                <div onclick="window.location.href = '/admins/1/{{ user_id }}/new/subadmin'" class="ms-4 sidebar-item"
+                <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/new/subadmin'" class="ms-4 sidebar-item"
                     data-bs-toggle="tooltip" data-bs-placement="right" title="Create Subadmin">
                     <i class="bi bi-person-plus"></i>
                     <span class="sidebar-item-text">Create Subadmin</span>
                 </div>
-                <div onclick="window.location.href = '/admins/1/{{ user_id }}/edit/subadmin'" class="ms-4 sidebar-item"
-                    data-bs-toggle="tooltip" data-bs-placement="right" title="View Subadmins">
+                <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/edit/subadmin'"
+                    class="ms-4 sidebar-item" data-bs-toggle="tooltip" data-bs-placement="right"
+                    title="View Subsubadmin">
                     <i class="bi bi-people"></i>
-                    <span class="sidebar-item-text">Edit Subadmins</span>
+                    <span class="sidebar-item-text">Edit Subadmin</span>
                 </div>
             </div>
             <div class="sidebar-item" data-bs-toggle="collapse" data-bs-target="#courseMenu" data-bs-placement="right"
@@ -306,13 +303,13 @@
                 <i class="bi bi-chevron-down dropdown-icon"></i>
             </div>
             <div id="courseMenu" class="collapse">
-                <div onclick="window.location.href = '/admins/1/{{ user_id }}/allocate/subadmin'"
+                <!-- <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/allocate/subadmin'"
                     class="ms-4 sidebar-item" data-bs-toggle="tooltip" data-bs-placement="right" title="Sub Admin">
                     <i class="bi bi-person-workspace"></i>
                     <span class="sidebar-item-text">Sub Admin</span>
-                </div>
-                <div onclick="window.location.href = '/admins/1/{{ user_id }}/allocate/users'" class="ms-4 sidebar-item"
-                    data-bs-toggle="tooltip" data-bs-placement="right" title="Users">
+                </div> -->
+                <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/allocate/users'"
+                    class="ms-4 sidebar-item" data-bs-toggle="tooltip" data-bs-placement="right" title="Users">
                     <i class="bi bi-people"></i>
                     <span class="sidebar-item-text">Users</span>
                 </div>
@@ -327,70 +324,66 @@
             <div>
                 <!-- Breadcrumb Navigation -->
                 <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
+                    <ol style="padding: 10px;" class="breadcrumb">
                         <li class="breadcrumb-item  highlight" id="bc-home">Home</li>
-                        <li class="breadcrumb-item highlight " id="bc-create">Create Content</li>
+                        <li class="breadcrumb-item highlight " id="bc-create">Edit Content</li>
                         <li class="breadcrumb-item highlight" id="bc-topic">Loading...</li>
                         <li class="breadcrumb-item highlight" id="bc-subtopic">Loading...</li>
-                        <li class="breadcrumb-item highlight" id="bc-title">Loading...</li>
-                        <li class="breadcrumb-item" id="bc-title">Import</li>
+                        <li class="breadcrumb-item" id="bc-title">Loading...</li>
                     </ol>
                 </nav>
                 <div class="container mt-5">
-                    <!-- Breadcrumb Navigation -->
 
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2>Manage Questions</h2>
-                        <div>
-                            <button class="btn btn-info me-2" data-bs-toggle="modal"
-                                data-bs-target="#downloadModal">Download
-                                Sample</button>
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#importModal">Import
-                                Questions</button>
-                        </div>
+                        <h2>Questions Management</h2>
+                    </div>
+
+                    <div id="question-list">
+                        <ul id="questions" class="list-group">
+                            <!-- Questions will be dynamically loaded here -->
+                        </ul>
                     </div>
                 </div>
 
-                <!-- Modal for Download Sample -->
-                <div class="modal fade" id="downloadModal" tabindex="-1" aria-labelledby="downloadModalLabel"
+                <!-- Edit Question Modal -->
+                <div class="modal fade" id="editQuestionModal" tabindex="-1" aria-labelledby="editQuestionModalLabel"
                     aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="downloadModalLabel">Download Sample</h5>
+                                <h5 class="modal-title" id="editQuestionModalLabel">Edit Question</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <form id="downloadForm">
+                                <form id="edit-question-form">
                                     <div class="mb-3">
-                                        <label for="noOfQuestions" class="form-label">Number of Questions</label>
-                                        <input type="number" id="noOfQuestions" class="form-control" min="1" required>
+                                        <label for="edit-question-text" class="form-label">Question</label>
+                                        <textarea id="edit-question-text" class="form-control" rows="2"
+                                            required></textarea>
                                     </div>
-                                    <button type="submit" class="btn btn-primary w-100">Download</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Modal for Import Questions -->
-                <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="importModalLabel">Import Questions</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form id="importForm">
                                     <div class="mb-3">
-                                        <label for="importFile" class="form-label">Select File</label>
-                                        <input type="file" id="importFile" class="form-control" accept=".xlsx" required>
+                                        <label class="form-label">Options</label>
+                                        <input type="text" id="edit-option-1" class="form-control mb-2"
+                                            placeholder="Option 1" required>
+                                        <input type="text" id="edit-option-2" class="form-control mb-2"
+                                            placeholder="Option 2" required>
+                                        <input type="text" id="edit-option-3" class="form-control mb-2"
+                                            placeholder="Option 3" required>
+                                        <input type="text" id="edit-option-4" class="form-control"
+                                            placeholder="Option 4" required>
                                     </div>
-                                    <button type="submit" class="btn btn-primary w-100">Upload</button>
+                                    <div class="mb-3">
+                                        <label for="edit-correct-option" class="form-label">Correct Option (1-4)</label>
+                                        <input type="number" id="edit-correct-option" class="form-control" min="1"
+                                            max="4" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="edit-explanation" class="form-label">Explanation</label>
+                                        <textarea id="edit-explanation" class="form-control" rows="2"></textarea>
+                                    </div>
+                                    <input type="hidden" id="edit-question-id">
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
                                 </form>
                             </div>
                         </div>
@@ -399,10 +392,6 @@
             </div>
         </div>
     </div>
-
-
-
-    <!-- Scripts -->
 
     <script>
 
@@ -422,32 +411,26 @@
 
 
         bc_home.addEventListener('click', () => {
-            window.location.href = '/admins/1/' + uid
+            window.location.href = '/subadmin/2/' + uid
         })
 
         bc_create.addEventListener('click', () => {
 
             //  alert("SW")
 
-            window.location.href = '/admins/1/' + uid + "/new/content"
+            window.location.href = '/subadmin/2/' + uid + "/edit/content"
         })
         bc_topic.addEventListener('click', () => {
 
             //  alert("SW")
 
-            window.location.href = `/admins/1/${uid}/new/content/${top_id}/subtopics`
+            window.location.href = `/subadmin/2/${uid}/edit/content/${top_id}/subtopics`
         })
         bc_subtopic.addEventListener('click', () => {
 
             //  alert("SW")
-
-            window.location.href = `/admins/1/${uid}/new/content/${top_id}/subtopics/${subtop_id}`
-        })
-        bc_title.addEventListener('click', () => {
-
-            //  alert("SW")
             window.history.go(-1);
-            //   window.location.href = `/admins/1/${uid}/new/content/${top_id}/subtopics/${subtop_id}/${_type}/${_title_id}`
+            //window.location.href = `/subadmin/2/${uid}/edit/content/${top_id}/subtopics/${subtop_id}`
         })
 
         apiBaseUrl = "http://localhost:4000";
@@ -496,40 +479,133 @@
         loadTitleNames();
         // loadSubtopicNames();
 
-        function handleFileUpload(event) {
-            event.preventDefault();
-            const fileInput = document.getElementById("importFile");
-            if (!fileInput.files[0]) {
-                alert("Please select a file to upload.");
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append("file", fileInput.files[0]);
-            importQuestions(formData);
-        }
-
     </script>
 
     <script>
-        document.getElementById("downloadForm").addEventListener("submit", (e) => {
-            e.preventDefault();
-            const noOfQuestions = parseInt(document.getElementById("noOfQuestions").value);
-            if (isNaN(noOfQuestions) || noOfQuestions < 1) {
-                alert("Please enter a valid number of questions.");
-                return;
-            }
-            downloadSample(noOfQuestions);
-            bootstrap.Modal.getInstance(document.getElementById('downloadModal')).hide();
-        });
+        const user_id = "{{user_id}}";
+        const topic_id = "{{topic_id}}" || "Default Topic ID";
+        const subtopic_id = "{{subtopic_id}}" || "Default Subtopic ID";
+        const type = "{{type}}" || "Practices";
+        const title_id = "{{title_id}}" || "1";
+        const apiBaseUrl = "http://localhost:4000";
 
-        document.getElementById("importForm").addEventListener("submit", handleFileUpload);
+
+        async function fetchQuestions() {
+            try {
+                const response = await fetch(`${apiBaseUrl}/questions/${title_id}?topic_id=${topic_id}&subtopic_id=${subtopic_id}&utils=${type}`);
+                if (!response.ok) throw new Error("Failed to fetch questions");
+
+                const data = await response.json();
+                const questions = data.questions || [];
+                const questionsList = document.getElementById("questions");
+                questionsList.innerHTML = '';
+
+                questions.forEach((question, index) => {
+                    const li = document.createElement('li');
+                    li.classList.add("list-group-item");
+
+                    li.innerHTML = `
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>Q${index + 1}:</strong> ${question.question}
+                                    <ul class="list-unstyled mt-2">
+                                        ${question.options.map((option, i) => `
+                                            <li class="${i + 1 === question.correct_option ? 'text-success fw-bold' : ''}">
+                                                Option ${i + 1}: ${option}
+                                            </li>`).join('')}
+                                    </ul>
+                                    <strong>Correct Option:</strong> Option ${question.correct_option}<br>
+                                    <strong>Explanation:</strong> ${question.explanation}
+                                </div>
+                                <div>
+                                    <button class="btn btn-sm btn-warning me-2" onclick="openEditModal('${question.question_id}', '${question.question}', '${question.options.join(',')}', ${question.correct_option}, '${question.explanation}')">Edit</button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteQuestion('${question.question_id}')">Delete</button>
+                                </div>
+                            </div>`;
+                    questionsList.appendChild(li);
+                });
+            } catch (error) {
+                console.error("Error fetching questions:", error);
+                alert("Failed to load questions. Please try again.");
+            }
+        }
+
+        function openEditModal(id, question, options, correctOption, explanation) {
+            document.getElementById("edit-question-id").value = id;
+            document.getElementById("edit-question-text").value = question;
+
+            // Split options into individual inputs
+            const optionArray = options.split(',');
+            document.getElementById("edit-option-1").value = optionArray[0] || '';
+            document.getElementById("edit-option-2").value = optionArray[1] || '';
+            document.getElementById("edit-option-3").value = optionArray[2] || '';
+            document.getElementById("edit-option-4").value = optionArray[3] || '';
+
+            document.getElementById("edit-correct-option").value = correctOption;
+            document.getElementById("edit-explanation").value = explanation;
+
+            const modal = new bootstrap.Modal(document.getElementById('editQuestionModal'));
+            modal.show();
+        }
+        async function editQuestion(event) {
+            event.preventDefault();
+
+            const id = document.getElementById("edit-question-id").value;
+            const question = document.getElementById("edit-question-text").value;
+
+            // Collect options from individual inputs
+            const options = [
+                document.getElementById("edit-option-1").value,
+                document.getElementById("edit-option-2").value,
+                document.getElementById("edit-option-3").value,
+                document.getElementById("edit-option-4").value,
+            ];
+
+            const correctOption = parseInt(document.getElementById("edit-correct-option").value, 10);
+            const explanation = document.getElementById("edit-explanation").value;
+
+            try {
+                const response = await fetch(`${apiBaseUrl}/update/questions`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ question_id: id, topic_id, subtopic_id, title_id, question, options, correct_option: correctOption, explanation, type }),
+                });
+
+                if (!response.ok) throw new Error("Failed to update question");
+                alert("Question updated successfully");
+                fetchQuestions();
+            } catch (error) {
+                console.error("Error updating question:", error);
+                alert("Failed to update question. Please try again.");
+            }
+        }
+        async function deleteQuestion(id) {
+            try {
+                const response = await fetch(`${apiBaseUrl}/delete/questions`, {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ question_id: id, topic_id, subtopic_id, title_id, type }),
+                });
+
+                if (!response.ok) throw new Error("Failed to delete question");
+                alert("Question deleted successfully");
+                fetchQuestions();
+            } catch (error) {
+                console.error("Error deleting question:", error);
+                alert("Failed to delete question. Please try again.");
+            }
+        }
+
+        document.getElementById("edit-question-form").addEventListener("submit", editQuestion);
+        window.onload = fetchQuestions;
     </script>
+
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 
 
     <script>
-        const user_id = '{{ user_id }}'; // Django Template Variable
+        // Django Template Variable
         const profileIcon = document.getElementById('profile-icon');
         const profileTooltip = document.getElementById('profile-tooltip');
         const profileName = document.getElementById('profile-name');
@@ -580,80 +656,9 @@
         manageAccountLink.addEventListener('click', () => {
 
             profileTooltip.style.display = 'none';
-            window.location.href = `/admins/1/${user_id}/setting`
+            window.location.href = `/subadmin/2/${user_id}/setting`
 
         });
-    </script>
-
-    <script>
-
-        const topic_id = "{{topic_id}}" || "Default Topic ID";
-        const subtopic_id = "{{subtopic_id}}" || "Default Subtopic ID";
-        const type = "{{type}}" || "Practices";
-        const title_id = "{{title_id}}" || "1";
-        const apiBaseUrl = "http://localhost:4000";
-
-        async function downloadSample(noOfQuestions) {
-            const requestBody = {
-                topic_id: topic_id,
-                subtopic_id: subtopic_id,
-                title_id: title_id,
-                type: type,
-                no_of_questions: noOfQuestions
-            };
-
-            try {
-                const response = await fetch(apiBaseUrl + "/download-sample", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(requestBody)
-                });
-
-                if (!response.ok) {
-                    throw new Error("Failed to download the file");
-                }
-
-                const contentDisposition = response.headers.get("Content-Disposition");
-                const fileName = contentDisposition
-                    ? contentDisposition.split("filename=")[1].replace(/"/g, "")
-                    : "Sample_Format.xlsx";
-
-                const blob = await response.blob();
-                const downloadLink = document.createElement("a");
-                downloadLink.href = URL.createObjectURL(blob);
-                downloadLink.download = fileName;
-                downloadLink.click();
-                URL.revokeObjectURL(downloadLink.href);
-            } catch (error) {
-                console.error("Error:", error.message);
-                alert("Failed to download the file. Please try again.");
-            }
-        }
-
-        async function importQuestions(formData) {
-            try {
-                const response = await fetch(apiBaseUrl + "/add/questions/import", {
-                    method: "POST",
-                    body: formData
-                });
-
-                if (!response.ok) {
-                    throw new Error("Failed to upload the file");
-                }
-
-                const data = await response.json();
-                alert(data.message || "Questions imported successfully.");
-
-                window.location.href = `/admins/1/${user_id}/new/content/${topic_id}/subtopics/${subtopic_id}/${type}/${title_id}`
-            } catch (error) {
-                console.error("Error:", error.message);
-                alert("Failed to import questions. Please try again.");
-            }
-        }
-
-
     </script>
 
     <script>

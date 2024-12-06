@@ -191,8 +191,63 @@
             }
         }
 
+        /* Custom Styles */
         body {
-            background-color: #f4f7fc;
+            background-color: #f8fafc;
+        }
+
+        .container {
+            max-width: 1200px;
+        }
+
+        .clickable-row {
+            cursor: pointer;
+        }
+
+        .clickable-row:hover {
+            background-color: #f1f5f9;
+        }
+
+
+
+        .modal-header {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .modal-footer .btn-primary {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+
+        .modal-footer .btn-secondary {
+            background-color: #6c757d;
+            border-color: #5a6268;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #0069d9;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+
+        .topic-name-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .back-icon {
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .back-icon:hover {
+            color: #007bff;
         }
 
         .breadcrumb-item+.breadcrumb-item::before {
@@ -222,7 +277,7 @@
             <div id="nav-toggler" class="navbar-toggler">
                 <i class="bi bi-list text-white fs-4"></i>
             </div>
-            <a onclick="window.location.href = '/admins/1/{{ user_id }}'" class="navbar-brand ms-3"
+            <a onclick="window.location.href = '/subadmin/2/{{ user_id }}'" class="navbar-brand ms-3"
                 href="#">Dashboard</a>
             <div class="d-flex align-items-center position-relative">
                 <i id="profile-icon" class="bi bi-person-circle fs-4 me-3" data-bs-toggle="tooltip"
@@ -259,7 +314,7 @@
             </div>
 
             <!-- Sidebar items -->
-            <div onclick="window.location.href = '/admins/1/{{ user_id }}'" class="sidebar-item"
+            <div onclick="window.location.href = '/subadmin/2/{{ user_id }}'" class="sidebar-item"
                 data-bs-toggle="tooltip" data-bs-placement="right" title="Home">
                 <i class="bi bi-house-door"></i>
                 <span class="sidebar-item-text">Home</span>
@@ -271,32 +326,33 @@
                 <i class="bi bi-chevron-down dropdown-icon"></i>
             </div>
             <div id="addContentMenu" class="collapse">
-                <div onclick="window.location.href = '/admins/1/{{ user_id }}/new/content'" class="ms-4 sidebar-item"
+                <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/new/content'" class="ms-4 sidebar-item"
                     data-bs-toggle="tooltip" data-bs-placement="right" title="Create New Content">
                     <i class="bi bi-pencil-square"></i>
                     <span class="sidebar-item-text">Create New Content</span>
                 </div>
-                <div onclick="window.location.href = '/admins/1/{{ user_id }}/edit/content'" class="ms-4 sidebar-item"
+                <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/edit/content'" class="ms-4 sidebar-item"
                     data-bs-toggle="tooltip" data-bs-placement="right" title="Edit Content">
                     <i class="bi bi-folder2-open"></i>
                     <span class="sidebar-item-text">Edit Content</span>
                 </div>
             </div>
-            <div class="sidebar-item" data-bs-toggle="collapse" data-bs-target="#adminMenu" title="Admin">
+            <!-- <div class="sidebar-item" data-bs-toggle="collapse" data-bs-target="#adminMenu" title="Admin">
                 <i class="bi bi-person-badge"></i>
                 <span class="sidebar-item-text">Admin</span>
                 <i class="bi bi-chevron-down dropdown-icon"></i>
-            </div>
+            </div> -->
             <div id="adminMenu" class="collapse">
-                <div onclick="window.location.href = '/admins/1/{{ user_id }}/new/subadmin'" class="ms-4 sidebar-item"
+                <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/new/subadmin'" class="ms-4 sidebar-item"
                     data-bs-toggle="tooltip" data-bs-placement="right" title="Create Subadmin">
                     <i class="bi bi-person-plus"></i>
                     <span class="sidebar-item-text">Create Subadmin</span>
                 </div>
-                <div onclick="window.location.href = '/admins/1/{{ user_id }}/edit/subadmin'" class="ms-4 sidebar-item"
-                    data-bs-toggle="tooltip" data-bs-placement="right" title="View Subadmins">
+                <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/edit/subadmin'"
+                    class="ms-4 sidebar-item" data-bs-toggle="tooltip" data-bs-placement="right"
+                    title="View Subsubadmin">
                     <i class="bi bi-people"></i>
-                    <span class="sidebar-item-text">Edit Subadmins</span>
+                    <span class="sidebar-item-text">Edit Subsubadmin</span>
                 </div>
             </div>
             <div class="sidebar-item" data-bs-toggle="collapse" data-bs-target="#courseMenu" data-bs-placement="right"
@@ -306,13 +362,13 @@
                 <i class="bi bi-chevron-down dropdown-icon"></i>
             </div>
             <div id="courseMenu" class="collapse">
-                <div onclick="window.location.href = '/admins/1/{{ user_id }}/allocate/subadmin'"
+                <!-- <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/allocate/subadmin'"
                     class="ms-4 sidebar-item" data-bs-toggle="tooltip" data-bs-placement="right" title="Sub Admin">
                     <i class="bi bi-person-workspace"></i>
                     <span class="sidebar-item-text">Sub Admin</span>
-                </div>
-                <div onclick="window.location.href = '/admins/1/{{ user_id }}/allocate/users'" class="ms-4 sidebar-item"
-                    data-bs-toggle="tooltip" data-bs-placement="right" title="Users">
+                </div> -->
+                <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/allocate/users'"
+                    class="ms-4 sidebar-item" data-bs-toggle="tooltip" data-bs-placement="right" title="Users">
                     <i class="bi bi-people"></i>
                     <span class="sidebar-item-text">Users</span>
                 </div>
@@ -328,70 +384,61 @@
                 <!-- Breadcrumb Navigation -->
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item  highlight" id="bc-home">Home</li>
+                        <li class="breadcrumb-item highlight " id="bc-home">Home</li>
                         <li class="breadcrumb-item highlight " id="bc-create">Create Content</li>
-                        <li class="breadcrumb-item highlight" id="bc-topic">Loading...</li>
-                        <li class="breadcrumb-item highlight" id="bc-subtopic">Loading...</li>
-                        <li class="breadcrumb-item highlight" id="bc-title">Loading...</li>
-                        <li class="breadcrumb-item" id="bc-title">Import</li>
+                        <li class="breadcrumb-item" id="bc-topic">Loading...</li>
                     </ol>
                 </nav>
                 <div class="container mt-5">
-                    <!-- Breadcrumb Navigation -->
 
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h2>Manage Questions</h2>
-                        <div>
-                            <button class="btn btn-info me-2" data-bs-toggle="modal"
-                                data-bs-target="#downloadModal">Download
-                                Sample</button>
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#importModal">Import
-                                Questions</button>
-                        </div>
+
+                    <!-- Header -->
+                    <div class="d-flex align-items-center">
+                        <!-- <i class="bi bi-puzzle me-2" style="font-size: 30px; color: rgb(26, 0, 128);"></i> -->
+                        <h1>Subtopics Management</h1>
                     </div>
+
+
+
+
+                    <button class="btn btn-primary mb-3" id="addSubtopicBtn">Add Subtopic</button>
+
+                    <!-- Subtopics Table -->
+                    <table class="table table-striped table-bordered align-middle text-center">
+                        <thead>
+                            <tr class="table-dark">
+                                <th>S.No</th>
+                                <th>Subtopic</th>
+                                <th>Created By</th>
+                                <th>Created At</th>
+                            </tr>
+                        </thead>
+                        <tbody id="subtopicsTableBody">
+                            <!-- Dynamic content will be added here -->
+                        </tbody>
+                    </table>
                 </div>
 
-                <!-- Modal for Download Sample -->
-                <div class="modal fade" id="downloadModal" tabindex="-1" aria-labelledby="downloadModalLabel"
-                    aria-hidden="true">
+                <!-- Add Subtopic Modal -->
+                <div class="modal" tabindex="-1" id="addSubtopicModal">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="downloadModalLabel">Download Sample</h5>
+                                <h5 class="modal-title">Add Subtopic</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <form id="downloadForm">
+                                <form id="addSubtopicForm">
                                     <div class="mb-3">
-                                        <label for="noOfQuestions" class="form-label">Number of Questions</label>
-                                        <input type="number" id="noOfQuestions" class="form-control" min="1" required>
+                                        <label for="subtopicName" class="form-label">Subtopic Name</label>
+                                        <input type="text" class="form-control" id="subtopicName" required>
                                     </div>
-                                    <button type="submit" class="btn btn-primary w-100">Download</button>
                                 </form>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Modal for Import Questions -->
-                <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="importModalLabel">Import Questions</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form id="importForm">
-                                    <div class="mb-3">
-                                        <label for="importFile" class="form-label">Select File</label>
-                                        <input type="file" id="importFile" class="form-control" accept=".xlsx" required>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary w-100">Upload</button>
-                                </form>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary" id="saveSubtopicBtn">Add</button>
                             </div>
                         </div>
                     </div>
@@ -400,54 +447,27 @@
         </div>
     </div>
 
-
-
     <!-- Scripts -->
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
 
 
         const uid = '{{ user_id }}';
         const top_id = '{{topic_id}}'
-        const subtop_id = '{{subtopic_id}}'
-        const _type = '{{type}}'
-        const _title_id = '{{title_id}}'
-
-        console.log(uid, top_id, subtop_id)
         var bc_home = document.getElementById('bc-home');
         var bc_create = document.getElementById('bc-create');
         var bc_topic = document.getElementById('bc-topic');
-        var bc_subtopic = document.getElementById('bc-subtopic');
-        var bc_title = document.getElementById('bc-title');
 
 
         bc_home.addEventListener('click', () => {
-            window.location.href = '/admins/1/' + uid
+            window.location.href = '/subadmin/2/' + uid
         })
 
         bc_create.addEventListener('click', () => {
 
             //  alert("SW")
-
-            window.location.href = '/admins/1/' + uid + "/new/content"
-        })
-        bc_topic.addEventListener('click', () => {
-
-            //  alert("SW")
-
-            window.location.href = `/admins/1/${uid}/new/content/${top_id}/subtopics`
-        })
-        bc_subtopic.addEventListener('click', () => {
-
-            //  alert("SW")
-
-            window.location.href = `/admins/1/${uid}/new/content/${top_id}/subtopics/${subtop_id}`
-        })
-        bc_title.addEventListener('click', () => {
-
-            //  alert("SW")
             window.history.go(-1);
-            //   window.location.href = `/admins/1/${uid}/new/content/${top_id}/subtopics/${subtop_id}/${_type}/${_title_id}`
+            //  window.location.href = '/subadmin/2/' + uid + "/new/content"
         })
 
         apiBaseUrl = "http://localhost:4000";
@@ -466,67 +486,114 @@
                 console.error("Error fetching topic:", error);
             }
         }
-        async function loadSubtopicNames() {
-            try {
-
-                // Fetch Subtopic Name
-                const subtopicResponse = await fetch(`${apiBaseUrl}/topics/${top_id}/subtopics/${subtop_id}`);
-                const subtopicData = await subtopicResponse.json();
-                bc_subtopic.textContent = subtopicData.name;
-            } catch (error) {
-                console.error('Error loading topic or subtopic names:', error);
-            }
-        }
-        async function loadTitleNames() {
-            try {
-
-                // Fetch Subtopic Name
-                const titleResponse = await fetch(`${apiBaseUrl}/get-title?topic_id=${top_id}&subtopic_id=${subtop_id}&utils_type=${_type}&title_id=${_title_id}`);
-                const titleData = await titleResponse.json();
-
-
-                bc_title.textContent = titleData.title;
-            } catch (error) {
-                console.error('Error loading topic or subtopic names:', error);
-            }
-        }
 
         loadTopicName();
-        loadSubtopicNames();
-        loadTitleNames();
-        // loadSubtopicNames();
-
-        function handleFileUpload(event) {
-            event.preventDefault();
-            const fileInput = document.getElementById("importFile");
-            if (!fileInput.files[0]) {
-                alert("Please select a file to upload.");
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append("file", fileInput.files[0]);
-            importQuestions(formData);
-        }
 
     </script>
 
     <script>
-        document.getElementById("downloadForm").addEventListener("submit", (e) => {
-            e.preventDefault();
-            const noOfQuestions = parseInt(document.getElementById("noOfQuestions").value);
-            if (isNaN(noOfQuestions) || noOfQuestions < 1) {
-                alert("Please enter a valid number of questions.");
-                return;
-            }
-            downloadSample(noOfQuestions);
-            bootstrap.Modal.getInstance(document.getElementById('downloadModal')).hide();
+        // Extract topic_id from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const topicId = '{{topic_id}}';
+        const userId = '{{user_id}}'; // Replace with your user ID logic
+        const apiBaseUrl = "http://localhost:4000";
+
+        // Load Topic Name and Subtopics on Page Load
+        document.addEventListener("DOMContentLoaded", () => {
+
+            loadSubtopics();
+            document.getElementById("addSubtopicBtn").addEventListener("click", openAddSubtopicModal);
+            document.getElementById("saveSubtopicBtn").addEventListener("click", saveSubtopic);
         });
 
-        document.getElementById("importForm").addEventListener("submit", handleFileUpload);
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 
+
+        // Function to Load Subtopics
+        async function loadSubtopics() {
+            try {
+                const response = await fetch(`${apiBaseUrl}/subtopics?topic_id=${topicId}`);
+                const subtopics = await response.json();
+                populateSubtopicsTable(subtopics);
+            } catch (error) {
+                console.error("Error fetching subtopics:", error);
+            }
+        }
+
+        // Function to Populate Subtopics Table
+        function populateSubtopicsTable(subtopics) {
+            const tableBody = document.getElementById("subtopicsTableBody");
+            tableBody.innerHTML = ""; // Clear previous content
+
+            subtopics.forEach((subtopic, index) => {
+                const row = document.createElement("tr");
+                row.className = "clickable-row";
+                row.setAttribute("data-bs-toggle", "tooltip");
+                row.setAttribute("data-bs-placement", "top");
+                row.setAttribute("title", "Click to view details or manage");
+
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${subtopic.name}</td>
+                    <td>${subtopic.created_by}</td>
+                    <td>${new Date(subtopic.created_at).toLocaleString()}</td>
+                `;
+
+                // Redirect to subtopic details on row click
+                row.addEventListener("click", (event) => {
+                    if (!event.target.closest("button")) {
+                        window.location.href = `/subadmin/2/${userId}/new/content/${topicId}/subtopics/${subtopic.subtopic_id}`;
+                    }
+                });
+
+                tableBody.appendChild(row);
+            });
+
+            // Enable Bootstrap tooltips
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        }
+
+        // Function to Open Add Subtopic Modal
+        function openAddSubtopicModal() {
+            const modal = new bootstrap.Modal(document.getElementById("addSubtopicModal"));
+            document.getElementById("addSubtopicForm").reset(); // Clear form
+            modal.show();
+        }
+
+        // Function to Save Subtopic
+        async function saveSubtopic() {
+            const subtopicName = document.getElementById("subtopicName").value.trim();
+            if (!subtopicName) {
+                alert("Subtopic name is required");
+                return;
+            }
+
+            try {
+                const response = await fetch(`${apiBaseUrl}/add/topic/${topicId}/subtopics`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id: userId, subtopic_name: subtopicName }),
+                });
+
+                if (response.ok) {
+                    const newSubtopic = await response.json();
+                    alert("Subtopic added successfully");
+                    loadSubtopics(); // Reload subtopics
+                    const modal = bootstrap.Modal.getInstance(document.getElementById("addSubtopicModal"));
+                    modal.hide();
+                } else {
+                    const errorData = await response.json();
+                    console.error("Error adding subtopic:", errorData);
+                    alert("Failed to add subtopic");
+                }
+            } catch (error) {
+                console.error("Error adding subtopic:", error);
+                alert("Error connecting to the server");
+            }
+        }
+    </script>
 
     <script>
         const user_id = '{{ user_id }}'; // Django Template Variable
@@ -580,80 +647,9 @@
         manageAccountLink.addEventListener('click', () => {
 
             profileTooltip.style.display = 'none';
-            window.location.href = `/admins/1/${user_id}/setting`
+            window.location.href = `/subadmin/2/${user_id}/setting`
 
         });
-    </script>
-
-    <script>
-
-        const topic_id = "{{topic_id}}" || "Default Topic ID";
-        const subtopic_id = "{{subtopic_id}}" || "Default Subtopic ID";
-        const type = "{{type}}" || "Practices";
-        const title_id = "{{title_id}}" || "1";
-        const apiBaseUrl = "http://localhost:4000";
-
-        async function downloadSample(noOfQuestions) {
-            const requestBody = {
-                topic_id: topic_id,
-                subtopic_id: subtopic_id,
-                title_id: title_id,
-                type: type,
-                no_of_questions: noOfQuestions
-            };
-
-            try {
-                const response = await fetch(apiBaseUrl + "/download-sample", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(requestBody)
-                });
-
-                if (!response.ok) {
-                    throw new Error("Failed to download the file");
-                }
-
-                const contentDisposition = response.headers.get("Content-Disposition");
-                const fileName = contentDisposition
-                    ? contentDisposition.split("filename=")[1].replace(/"/g, "")
-                    : "Sample_Format.xlsx";
-
-                const blob = await response.blob();
-                const downloadLink = document.createElement("a");
-                downloadLink.href = URL.createObjectURL(blob);
-                downloadLink.download = fileName;
-                downloadLink.click();
-                URL.revokeObjectURL(downloadLink.href);
-            } catch (error) {
-                console.error("Error:", error.message);
-                alert("Failed to download the file. Please try again.");
-            }
-        }
-
-        async function importQuestions(formData) {
-            try {
-                const response = await fetch(apiBaseUrl + "/add/questions/import", {
-                    method: "POST",
-                    body: formData
-                });
-
-                if (!response.ok) {
-                    throw new Error("Failed to upload the file");
-                }
-
-                const data = await response.json();
-                alert(data.message || "Questions imported successfully.");
-
-                window.location.href = `/admins/1/${user_id}/new/content/${topic_id}/subtopics/${subtopic_id}/${type}/${title_id}`
-            } catch (error) {
-                console.error("Error:", error.message);
-                alert("Failed to import questions. Please try again.");
-            }
-        }
-
-
     </script>
 
     <script>

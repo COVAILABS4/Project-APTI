@@ -313,7 +313,8 @@
             <div id="nav-toggler" class="navbar-toggler">
                 <i class="bi bi-list text-white fs-4"></i>
             </div>
-            <a onclick="window.location.href = '/admins/{{ user_id }}'" class="navbar-brand ms-3" href="#">Dashboard</a>
+            <a onclick="window.location.href = '/admins/1/{{ user_id }}'" class="navbar-brand ms-3"
+                href="#">Dashboard</a>
             <div class="d-flex align-items-center position-relative">
                 <i id="profile-icon" class="bi bi-person-circle fs-4 me-3" data-bs-toggle="tooltip"
                     data-bs-placement="right" title="Profile" style="cursor: pointer;"></i>
@@ -349,8 +350,8 @@
             </div>
 
             <!-- Sidebar items -->
-            <div onclick="window.location.href = '/admins/{{ user_id }}'" class="sidebar-item" data-bs-toggle="tooltip"
-                data-bs-placement="right" title="Home">
+            <div onclick="window.location.href = '/admins/1/{{ user_id }}'" class="sidebar-item"
+                data-bs-toggle="tooltip" data-bs-placement="right" title="Home">
                 <i class="bi bi-house-door"></i>
                 <span class="sidebar-item-text">Home</span>
             </div>
@@ -361,12 +362,12 @@
                 <i class="bi bi-chevron-down dropdown-icon"></i>
             </div>
             <div id="addContentMenu" class="collapse">
-                <div onclick="window.location.href = '/admins/{{ user_id }}/new/content'" class="ms-4 sidebar-item"
+                <div onclick="window.location.href = '/admins/1/{{ user_id }}/new/content'" class="ms-4 sidebar-item"
                     data-bs-toggle="tooltip" data-bs-placement="right" title="Create New Content">
                     <i class="bi bi-pencil-square"></i>
                     <span class="sidebar-item-text">Create New Content</span>
                 </div>
-                <div onclick="window.location.href = '/admins/{{ user_id }}/edit/content'" class="ms-4 sidebar-item"
+                <div onclick="window.location.href = '/admins/1/{{ user_id }}/edit/content'" class="ms-4 sidebar-item"
                     data-bs-toggle="tooltip" data-bs-placement="right" title="Edit Content">
                     <i class="bi bi-folder2-open"></i>
                     <span class="sidebar-item-text">Edit Content</span>
@@ -378,12 +379,12 @@
                 <i class="bi bi-chevron-down dropdown-icon"></i>
             </div>
             <div id="adminMenu" class="collapse">
-                <div onclick="window.location.href = '/admins/{{ user_id }}/new/subadmin'" class="ms-4 sidebar-item"
+                <div onclick="window.location.href = '/admins/1/{{ user_id }}/new/subadmin'" class="ms-4 sidebar-item"
                     data-bs-toggle="tooltip" data-bs-placement="right" title="Create Subadmin">
                     <i class="bi bi-person-plus"></i>
                     <span class="sidebar-item-text">Create Subadmin</span>
                 </div>
-                <div onclick="window.location.href = '/admins/{{ user_id }}/edit/subadmin'" class="ms-4 sidebar-item"
+                <div onclick="window.location.href = '/admins/1/{{ user_id }}/edit/subadmin'" class="ms-4 sidebar-item"
                     data-bs-toggle="tooltip" data-bs-placement="right" title="View Subadmins">
                     <i class="bi bi-people"></i>
                     <span class="sidebar-item-text">Edit Subadmins</span>
@@ -396,12 +397,12 @@
                 <i class="bi bi-chevron-down dropdown-icon"></i>
             </div>
             <div id="courseMenu" class="collapse">
-                <div onclick="window.location.href = '/admins/{{ user_id }}/allocate/subadmin'"
+                <div onclick="window.location.href = '/admins/1/{{ user_id }}/allocate/subadmin'"
                     class="ms-4 sidebar-item" data-bs-toggle="tooltip" data-bs-placement="right" title="Sub Admin">
                     <i class="bi bi-person-workspace"></i>
                     <span class="sidebar-item-text">Sub Admin</span>
                 </div>
-                <div onclick="window.location.href = '/admins/{{ user_id }}/allocate/users'" class="ms-4 sidebar-item"
+                <div onclick="window.location.href = '/admins/1/{{ user_id }}/allocate/users'" class="ms-4 sidebar-item"
                     data-bs-toggle="tooltip" data-bs-placement="right" title="Users">
                     <i class="bi bi-people"></i>
                     <span class="sidebar-item-text">Users</span>
@@ -516,26 +517,26 @@
 
 
         bc_home.addEventListener('click', () => {
-            window.location.href = '/admins/' + uid
+            window.location.href = '/admins/1/' + uid
         })
 
         bc_create.addEventListener('click', () => {
 
             //  alert("SW")
 
-            window.location.href = '/admins/' + uid + "/new/content"
+            window.location.href = '/admins/1/' + uid + "/new/content"
         })
         bc_topic.addEventListener('click', () => {
 
             //  alert("SW")
 
-            window.location.href = `/admins/${uid}/new/content/${top_id}/subtopics`
+            window.location.href = `/admins/1/${uid}/new/content/${top_id}/subtopics`
         })
         bc_subtopic.addEventListener('click', () => {
 
             //  alert("SW")
             window.history.go(-1);
-            //window.location.href = `/admins/${uid}/new/content/${top_id}/subtopics/${subtop_id}`
+            //window.location.href = `/admins/1/${uid}/new/content/${top_id}/subtopics/${subtop_id}`
         })
 
         apiBaseUrl = "http://localhost:4000";
@@ -676,7 +677,7 @@
         });
 
         function redirectToImport() {
-            window.location.href = `/admins/${user_id}/new/content/${topic_id}/subtopics/${subtopic_id}/${type}/${title_id}/import`
+            window.location.href = `/admins/1/${user_id}/new/content/${topic_id}/subtopics/${subtopic_id}/${type}/${title_id}/import`
         }
 
         window.onload = fetchQuestions;
@@ -733,7 +734,7 @@
         manageAccountLink.addEventListener('click', () => {
 
             profileTooltip.style.display = 'none';
-            window.location.href = `/admins/${user_id}/setting`
+            window.location.href = `/admins/1/${user_id}/setting`
 
         });
     </script>

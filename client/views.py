@@ -16,25 +16,19 @@ def login(request):
 # ADMIN
 
 
-def admin_register(request):
+def admin_register(request, role):
 
     return render(request, "admin/register.html")
 
 
 @validate_session
-def admin_profile(request, user_id):
+def admin_setting(request, user_id, role):
     context = {"user_id": user_id}
-    return render(request, "admin/nav-bar/admin_profile.html", context)
+    return render(request, "admin/nav-bar/setting.html", context)
 
 
 @validate_session
-def admin_setting(request, user_id):
-    context = {"user_id": user_id}
-    return render(request, "admin/nav-bar/admin_setting.html", context)
-
-
-@validate_session
-def admin(request, user_id):
+def admin(request, user_id, role):
 
     print("LOGINSSS")
     user_id = request.session.get("user_id", "Unknown")
@@ -46,32 +40,32 @@ def admin(request, user_id):
         "name": name,
         "role": role,
     }
-    return render(request, "admin/admin.html", context)
+    return render(request, "admin/home.html", context)
 
 
 @validate_session
-def new_content(request, user_id):
+def new_content(request, user_id, role):
 
     context = {"user_id": user_id}
     return render(request, "admin/add-content/new-content/new_content.html", context)
 
 
 @validate_session
-def new_subtopic(request, user_id, topic_id):
+def new_subtopic(request, user_id, topic_id, role):
 
     context = {"user_id": user_id, "topic_id": topic_id}
     return render(request, "admin/add-content/new-content/new_subtopic.html", context)
 
 
 @validate_session
-def edit_subtopic(request, user_id, topic_id):
+def edit_subtopic(request, user_id, topic_id, role):
 
     context = {"user_id": user_id, "topic_id": topic_id}
     return render(request, "admin/add-content/edit-content/edit_subtopic.html", context)
 
 
 @validate_session
-def new_title(request, user_id, topic_id, subtopic_id):
+def new_title(request, user_id, topic_id, subtopic_id, role):
 
     context = {
         "user_id": user_id,
@@ -82,7 +76,7 @@ def new_title(request, user_id, topic_id, subtopic_id):
 
 
 @validate_session
-def edit_title(request, user_id, topic_id, subtopic_id):
+def edit_title(request, user_id, topic_id, subtopic_id, role):
 
     context = {
         "user_id": user_id,
@@ -93,7 +87,7 @@ def edit_title(request, user_id, topic_id, subtopic_id):
 
 
 @validate_session
-def new_questions(request, user_id, topic_id, subtopic_id, type, title_id):
+def new_questions(request, user_id, topic_id, subtopic_id, type, title_id, role):
 
     context = {
         "user_id": user_id,
@@ -106,7 +100,7 @@ def new_questions(request, user_id, topic_id, subtopic_id, type, title_id):
 
 
 @validate_session
-def edit_questions(request, user_id, topic_id, subtopic_id, type, title_id):
+def edit_questions(request, user_id, topic_id, subtopic_id, type, title_id, role):
 
     context = {
         "user_id": user_id,
@@ -121,7 +115,7 @@ def edit_questions(request, user_id, topic_id, subtopic_id, type, title_id):
 
 
 @validate_session
-def new_questions_import(request, user_id, topic_id, subtopic_id, type, title_id):
+def new_questions_import(request, user_id, topic_id, subtopic_id, type, title_id, role):
 
     context = {
         "user_id": user_id,
@@ -136,31 +130,31 @@ def new_questions_import(request, user_id, topic_id, subtopic_id, type, title_id
 
 
 @validate_session
-def edit_content(request, user_id):
+def edit_content(request, user_id, role):
     context = {"user_id": user_id}
     return render(request, "admin/add-content/edit-content/edit_content.html", context)
 
 
 @validate_session
-def new_subadmin(request, user_id):
+def new_subadmin(request, user_id, role):
     context = {"user_id": user_id}
     return render(request, "admin/admin-actions/new_subadmin.html", context)
 
 
 @validate_session
-def edit_subadmin(request, user_id):
+def edit_subadmin(request, user_id, role):
     context = {"user_id": user_id}
     return render(request, "admin/admin-actions/edit_subadmin.html", context)
 
 
 @validate_session
-def allocate_subadmin(request, user_id):
+def allocate_subadmin(request, user_id, role):
     context = {"user_id": user_id}
     return render(request, "admin/course-allocation/allocate_subadmin.html", context)
 
 
 @validate_session
-def allocate_user(request, user_id):
+def allocate_user(request, user_id, role):
     context = {"user_id": user_id}
     return render(request, "admin/course-allocation/allocate_user.html", context)
 
@@ -169,7 +163,7 @@ def allocate_user(request, user_id):
 
 
 @validate_session
-def sub_admin(request, user_id):
+def sub_admin(request, user_id, role):
 
     print("LOGINSSS")
     user_id = request.session.get("user_id", "Unknown")
@@ -181,19 +175,151 @@ def sub_admin(request, user_id):
         "name": name,
         "role": role,
     }
-    return render(request, "admin/subadmin.html", context)
+    return render(request, "subadmin/home.html", context)
+
+
+@validate_session
+def sub_admin_setting(request, user_id, role):
+    context = {"user_id": user_id}
+    return render(request, "subadmin/nav-bar/setting.html", context)
+
+
+@validate_session
+def sub_new_content(request, user_id, role):
+
+    context = {"user_id": user_id}
+    return render(request, "subadmin/add-content/new-content/new_content.html", context)
+
+
+@validate_session
+def sub_new_subtopic(request, user_id, topic_id, role):
+
+    context = {"user_id": user_id, "topic_id": topic_id}
+    return render(
+        request, "subadmin/add-content/new-content/new_subtopic.html", context
+    )
+
+
+@validate_session
+def sub_edit_subtopic(request, user_id, topic_id, role):
+
+    context = {"user_id": user_id, "topic_id": topic_id}
+    return render(
+        request, "subadmin/add-content/edit-content/edit_subtopic.html", context
+    )
+
+
+@validate_session
+def sub_new_title(request, user_id, topic_id, subtopic_id, role):
+
+    context = {
+        "user_id": user_id,
+        "topic_id": topic_id,
+        "subtopic_id": subtopic_id,
+    }
+    return render(request, "subadmin/add-content/new-content/new_title.html", context)
+
+
+@validate_session
+def sub_edit_title(request, user_id, topic_id, subtopic_id, role):
+
+    context = {
+        "user_id": user_id,
+        "topic_id": topic_id,
+        "subtopic_id": subtopic_id,
+    }
+    return render(request, "subadmin/add-content/edit-content/edit_title.html", context)
+
+
+@validate_session
+def sub_new_questions(request, user_id, topic_id, subtopic_id, type, title_id, role):
+
+    context = {
+        "user_id": user_id,
+        "topic_id": topic_id,
+        "subtopic_id": subtopic_id,
+        "type": type,
+        "title_id": title_id,
+    }
+    return render(
+        request, "subadmin/add-content/new-content/new_questions.html", context
+    )
+
+
+@validate_session
+def sub_edit_questions(request, user_id, topic_id, subtopic_id, type, title_id, role):
+
+    context = {
+        "user_id": user_id,
+        "topic_id": topic_id,
+        "subtopic_id": subtopic_id,
+        "type": type,
+        "title_id": title_id,
+    }
+    return render(
+        request, "subadmin/add-content/edit-content/edit_questions.html", context
+    )
+
+
+@validate_session
+def sub_new_questions_import(
+    request, user_id, topic_id, subtopic_id, type, title_id, role
+):
+
+    context = {
+        "user_id": user_id,
+        "topic_id": topic_id,
+        "subtopic_id": subtopic_id,
+        "type": type,
+        "title_id": title_id,
+    }
+    return render(
+        request, "subadmin/add-content/new-content/new_questions_import.html", context
+    )
+
+
+@validate_session
+def sub_edit_content(request, user_id, role):
+    context = {"user_id": user_id}
+    return render(
+        request, "subadmin/add-content/edit-content/edit_content.html", context
+    )
+
+
+@validate_session
+def sub_new_subadmin(request, user_id, role):
+    context = {"user_id": user_id}
+    return render(request, "subadmin/admin-actions/new_subadmin.html", context)
+
+
+@validate_session
+def sub_edit_subadmin(request, user_id, role):
+    context = {"user_id": user_id}
+    return render(request, "subadmin/admin-actions/edit_subadmin.html", context)
+
+
+@validate_session
+def sub_allocate_subadmin(request, user_id, role):
+    context = {"user_id": user_id}
+    return render(request, "subadmin/course-allocation/allocate_subadmin.html", context)
+
+
+@validate_session
+def sub_allocate_user(request, user_id, role):
+    context = {"user_id": user_id}
+    return render(request, "subadmin/course-allocation/allocate_user.html", context)
 
 
 # USER
 
 
-def user_register(request):
+def user_register(request, role):
 
     return render(request, "client/register.html")
 
 
 @validate_session
-def user(request, user_id):
+def user(request, user_id, role):
 
     print("LOGINSSS")
     user_id = request.session.get("user_id", "Unknown")
@@ -209,14 +335,14 @@ def user(request, user_id):
 
 
 @validate_session
-def user_content(request, user_id):
+def user_content(request, user_id, role):
 
     context = {"user_id": user_id}
     return render(request, "client/contents.html", context)
 
 
 @validate_session
-def user_questions(request, user_id):
+def user_questions(request, user_id, role):
 
     context = {"user_id": user_id}
 
@@ -225,7 +351,7 @@ def user_questions(request, user_id):
 
 # View to display topic details
 @validate_session
-def topic_detail(request, topic_id, user_id):
+def topic_detail(request, topic_id, user_id, role):
 
     print(topic_id)
 
@@ -235,7 +361,7 @@ def topic_detail(request, topic_id, user_id):
 
 
 @validate_session
-def subtopic_details(request, topic_id, subtopic_id, type, user_id):
+def subtopic_details(request, topic_id, subtopic_id, type, user_id, role):
     print(topic_id, subtopic_id)
 
     try:
@@ -255,7 +381,7 @@ def subtopic_details(request, topic_id, subtopic_id, type, user_id):
 
 
 @validate_session
-def question_details(request, topic_id, subtopic_id, type, title_id, user_id):
+def question_details(request, topic_id, subtopic_id, type, title_id, user_id, role):
     # print(topic_id,subtopic_id)
 
     try:
@@ -275,6 +401,7 @@ def question_details(request, topic_id, subtopic_id, type, title_id, user_id):
         return render(request, "error.html", {"message": str(e)})
 
 
+# UTILS
 @csrf_exempt
 def store_session(request):
     if request.method == "POST":

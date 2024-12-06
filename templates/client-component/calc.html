@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Interactive Calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .calculator {
+            width: 350px;
+            padding: 20px;
+            border-radius: 10px;
+            background: linear-gradient(145deg, #333, #444);
+            box-shadow: 5px 5px 15px #222, -5px -5px 15px #555;
+            cursor: move;
+            position: absolute;
+            top: 50px;
+            left: 50px;
+            color: white;
+        }
+
+        .screen {
+            height: 60px;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: none;
+            background-color: #222;
+            color: white;
+            text-align: right;
+            padding: 10px;
+            outline: none;
+        }
+
+        .btn {
+            margin: 5px;
+            border-radius: 5px;
+            font-size: 1.2rem;
+        }
+
+        .btn-operation {
+            background-color: #ff6f61;
+            color: white;
+            border: none;
+        }
+
+        .btn-equal {
+            background-color: #28a745;
+            color: white;
+            border: none;
+        }
+
+        .btn-clear {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+        }
+
+        .btn-light {
+            background-color: #555;
+            color: white;
+            border: none;
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+        }
+
+        .draggable {
+            position: absolute;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="calculator draggable">
+        <input type="text" id="screen" class="form-control screen" onkeydown="handleKeyboard(event)" />
+        <div class="row g-1">
+            <div class="col-3"><button class="btn btn-light" onclick="appendValue('7')">7</button></div>
+            <div class="col-3"><button class="btn btn-light" onclick="appendValue('8')">8</button></div>
+            <div class="col-3"><button class="btn btn-light" onclick="appendValue('9')">9</button></div>
+            <div class="col-3"><button class="btn btn-operation" onclick="appendValue('/')">/</button></div>
+            <div class="col-3"><button class="btn btn-light" onclick="appendValue('4')">4</button></div>
+            <div class="col-3"><button class="btn btn-light" onclick="appendValue('5')">5</button></div>
+            <div class="col-3"><button class="btn btn-light" onclick="appendValue('6')">6</button></div>
+            <div class="col-3"><button class="btn btn-operation" onclick="appendValue('*')">*</button></div>
+            <div class="col-3"><button class="btn btn-light" onclick="appendValue('1')">1</button></div>
+            <div class="col-3"><button class="btn btn-light" onclick="appendValue('2')">2</button></div>
+            <div class="col-3"><button class="btn btn-light" onclick="appendValue('3')">3</button></div>
+            <div class="col-3"><button class=
