@@ -143,22 +143,26 @@ def edit_content(request, user_id):
 
 @validate_session
 def new_subadmin(request, user_id):
-    return render(request, "admin/admin-actions/new_subadmin.html")
+    context = {"user_id": user_id}
+    return render(request, "admin/admin-actions/new_subadmin.html", context)
 
 
 @validate_session
 def edit_subadmin(request, user_id):
-    return render(request, "admin/admin-actions/edit_subadmin.html")
+    context = {"user_id": user_id}
+    return render(request, "admin/admin-actions/edit_subadmin.html", context)
 
 
 @validate_session
 def allocate_subadmin(request, user_id):
-    return render(request, "admin/course-allocation/allocate_subadmin.html")
+    context = {"user_id": user_id}
+    return render(request, "admin/course-allocation/allocate_subadmin.html", context)
 
 
 @validate_session
 def allocate_user(request, user_id):
-    return render(request, "admin/course-allocation/allocate_user.html")
+    context = {"user_id": user_id}
+    return render(request, "admin/course-allocation/allocate_user.html", context)
 
 
 # SUBADMIN
@@ -207,13 +211,16 @@ def user(request, user_id):
 @validate_session
 def user_content(request, user_id):
 
-    return render(request, "client/contents.html")
+    context = {"user_id": user_id}
+    return render(request, "client/contents.html", context)
 
 
 @validate_session
 def user_questions(request, user_id):
 
-    return render(request, "client/questions.html")
+    context = {"user_id": user_id}
+
+    return render(request, "client/questions.html", context)
 
 
 # View to display topic details
@@ -222,7 +229,9 @@ def topic_detail(request, topic_id, user_id):
 
     print(topic_id)
 
-    return render(request, "client/topics.html", {"topic_id": topic_id})
+    return render(
+        request, "client/topics.html", {"user_id": user_id, "topic_id": topic_id}
+    )
 
 
 @validate_session
@@ -235,6 +244,7 @@ def subtopic_details(request, topic_id, subtopic_id, type, user_id):
             request,
             "client/subtopic_details.html",
             {
+                "user_id": user_id,
                 "topic_id": topic_id,
                 "subtopic_id": subtopic_id,
                 "type": type,
@@ -254,6 +264,7 @@ def question_details(request, topic_id, subtopic_id, type, title_id, user_id):
             request,
             "client/questions.html",
             {
+                "user_id": user_id,
                 "topic_id": topic_id,
                 "subtopic_id": subtopic_id,
                 "type": type,
