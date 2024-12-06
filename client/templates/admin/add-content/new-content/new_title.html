@@ -211,7 +211,6 @@
         .breadcrumb {
             background-color: #f8f9fa;
             padding: 10px 15px;
-            border-radius: .375rem;
             border: 1px solid gray;
         }
 
@@ -333,16 +332,17 @@
         </div>
         <div class="flex-grow-1 dynamic-body">
             <div>
+                <!-- Breadcrumb Navigation -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item  highlight" id="bc-home">Home</li>
+                        <li class="breadcrumb-item highlight " id="bc-create">Create Content</li>
+                        <li class="breadcrumb-item highlight" id="bc-topic">Loading...</li>
+                        <li class="breadcrumb-item" id="bc-subtopic">Loading...</li>
+                    </ol>
+                </nav>
                 <div class="container mt-5">
-                    <!-- Breadcrumb Navigation -->
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item  highlight" id="bc-home">Home</li>
-                            <li class="breadcrumb-item highlight " id="bc-create">Create Content</li>
-                            <li class="breadcrumb-item highlight" id="bc-topic">Loading...</li>
-                            <li class="breadcrumb-item" id="bc-subtopic">Loading...</li>
-                        </ol>
-                    </nav>
+
 
                     <h1 class="mb-4">Manage Topics</h1>
 
@@ -449,7 +449,7 @@
             // window.location.href = `/admins/${uid}/new/content/${top_id}/subtopics`
         })
 
-        apiBaseUrl = "http://192.168.1.34:4000";
+        apiBaseUrl = "http://localhost:4000";
 
         // Function to Load Topic Name
         async function loadTopicName() {
@@ -483,7 +483,7 @@
 
     </script>
     <script>
-        const apiBaseUrl = "http://192.168.1.34:4000";
+        const apiBaseUrl = "http://localhost:4000";
         const topic_id = '{{topic_id}}';
         const subtopic_id = '{{subtopic_id}}';
         const userId = '{{user_id}}';
@@ -595,7 +595,7 @@
         const logoutButton = document.getElementById('profile-logout');
         const profileClose = document.getElementById('profile-close');
 
-        const ip = "http://192.168.1.34:4000";
+        const ip = "http://localhost:4000";
 
         // Fetch user data from API
         fetch(`${ip}/api/users/${user_id}`)

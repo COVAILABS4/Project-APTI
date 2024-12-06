@@ -226,7 +226,6 @@
         .breadcrumb {
             background-color: #f8f9fa;
             padding: 10px 15px;
-            border-radius: .375rem;
             border: 1px solid gray;
         }
 
@@ -348,14 +347,15 @@
         </div>
         <div class="flex-grow-1 dynamic-body">
             <div>
+                <!-- Breadcrumb Navigation -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item highlight" id="bc-home">Home</li>
+                        <li class="breadcrumb-item">Edit SubAdmins</li>
+                    </ol>
+                </nav>
                 <div class="container mt-5">
-                    <!-- Breadcrumb Navigation -->
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item highlight" id="bc-home">Home</li>
-                            <li class="breadcrumb-item">Edit Sub-Admins</li>
-                        </ol>
-                    </nav>
+
 
                     <h1 class="text-center mb-4">Manage Sub-admins</h1>
 
@@ -436,7 +436,7 @@
 
     </script>
     <script>
-        const apiBaseUrl = "http://192.168.1.34:4000";
+        const apiBaseUrl = "http://localhost:4000";
 
         document.addEventListener("DOMContentLoaded", () => {
             const subAdminsTableBody = document.getElementById("subAdminsTableBody");
@@ -562,7 +562,7 @@
         const logoutButton = document.getElementById('profile-logout');
         const profileClose = document.getElementById('profile-close');
 
-        const ip = "http://192.168.1.34:4000";
+        const ip = "http://localhost:4000";
 
         // Fetch user data from API
         fetch(`${ip}/api/users/${user_id}`)

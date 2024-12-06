@@ -208,7 +208,6 @@
         .breadcrumb {
             background-color: #f8f9fa;
             padding: 10px 15px;
-            border-radius: .375rem;
             border: 1px solid gray;
         }
 
@@ -330,15 +329,16 @@
         </div>
         <div class="flex-grow-1 dynamic-body">
             <div>
+                <!-- Breadcrumb Navigation -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item highlight " id="bc-home">Home</li>
+                        <li class="breadcrumb-item highlight " id="bc-create">Edit Content</li>
+                        <li class="breadcrumb-item" id="bc-topic">Loading...</li>
+                    </ol>
+                </nav>
                 <div class="container mt-5">
-                    <!-- Breadcrumb Navigation -->
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item highlight " id="bc-home">Home</li>
-                            <li class="breadcrumb-item highlight " id="bc-create">Edit Content</li>
-                            <li class="breadcrumb-item" id="bc-topic">Loading...</li>
-                        </ol>
-                    </nav>
+
                     <h1 class="mb-4" id="topicTitle">Subtopics Management</h1>
                     <table class="table table-striped table-bordered align-middle text-center">
                         <thead>
@@ -426,7 +426,7 @@
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 
     <script>
-        const apiBaseUrl = "http://192.168.1.34:4000";
+        const apiBaseUrl = "http://localhost:4000";
         const topic_id = "{{topic_id}}";
         const user_id = "{{user_id}}";
 
@@ -668,7 +668,7 @@
         const logoutButton = document.getElementById('profile-logout');
         const profileClose = document.getElementById('profile-close');
 
-        const ip = "http://192.168.1.34:4000";
+        const ip = "http://localhost:4000";
 
         // Fetch user data from API
         fetch(`${ip}/api/users/${user_id}`)
