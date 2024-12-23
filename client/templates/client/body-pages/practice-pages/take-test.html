@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MCQ Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .question {
+            margin-bottom: 20px;
+        }
+
+        .explanation {
+            display: none;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">MCQ Test</h1>
+        <div id="questions" class="mt-4"></div>
+        <div class="result alert alert-success d-none" id="result"></div>
+    </div>
+
+    <script>
+        const userId = "{{user_id}}"; // Replace with actual user_id
+        const topicId = "{{ topic_id }}";
+        const subtopicId = "{{ subtopic_id }}";
+        const utils = "Practices";
+        const titleId = "{{ title_id }}";
+        const ip = "http://localhost:4000";
+
+        let startTime = new Date().toLocaleString("en-GB");
+
+        async function startTest() {
+            const payload = {
+                user_id: userId,
+                topic_id: topicId,
+                subtopic_id: subtopicId,
+                title_id: titleId,
+                type: utils,
+                start_at: startTime,
+                finished_at: null,
+                status: "in-progress",
+            };
+
+            try {
+                const response = await fetch(`${ip}/start-test`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                if (response.ok) {
+                    fetchQuestions();
+                } else {
+                    alert("Failed to start test. Please try again.");
+                }
+            } catch (error) {
+                console.error("Error starting test:", error);
+            }
+        }
+
+        async function fetchQuestions() {
+            try {
+                const response = await fetch(
+                    `${ip}/questions/${titleId}?subtopic_id=${subtopicId}&utils=${utils}&topic_id=${topicId}`
+                );
+                const data = await response.json();
+                displayQuestions(data);
+            } catch (error) {
+                console.error("Error fetching questions:", error);
+                document.getElementById(
+                    "questions"
+                ).innerHTML = `<p class='text-danger'>Failed to load questions. Please try again later.</p>`;
+            }
+        }
+
+        function displayQuestions(data) {
+            const questionsDiv = document.getElementById("questions");
+            questionsDiv.innerHTML = `
+                <h2>${data.title}</h2>
+                ${data.questions
+                    .map(
+                        (q, i) => `
+                        <div class="question">
+                            <p><strong>Q${i + 1}:</strong> ${q.question}</p>
+                            ${q.options
+                                .map(
+                                    (opt, j) => `
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="question_${q.question_id}" value="${j + 1}" id="option_${q.question_id}_${j + 1}" />
+                                        <label class="form-check-label" for="option_${q.question_id}_${j + 1}">
+                                            ${opt}
+                                        </label>
+                                    </div>
+                                `
+                                )
+                                .join("")}
+                            <button class="btn btn-link p-0" onclick="showExplanation(${q.question_id})">Show Answer</button>
+                            <div class="explanation" id="explanation_${q.question_id}">
+                                <p class="text-muted">Correct Answer: Option ${q.correct_option}</p>
+                                <p>${q.explanation}</p>
+                            </div>
+                        </div>
+                    `
+                    )
+                    .join("")}
+                <button class="btn btn-primary mt-3" onclick="finishTest(${JSON.stringify(data).replace(/"/g, '&quot;')})">Finish Test</button>
+            `;
+        }
+
+        function showExplanation(questionId) {
+            const explanationDiv = document.getElementById(`explanation_${questionId}`);
+            explanationDiv.style.display = explanationDiv.style.display === "block" ? "none" : "block";
+        }
+
+        async function finishTest(data) {
+            const report = [];
+            data.questions.forEach((q, index) => {
+                const selectedOption = document.querySelector(`input[name="question_${q.question_id}"]:checked`);
+                report.push({
+                    question_number: index + 1,
+                    correct_option: q.correct_option,
+                    selected_option: selectedOption ? parseInt(selectedOption.value) : null,
+                });
+            });
+
+            const payload = {
+                user_id: userId,
+                topic_id: topicId,
+                subtopic_id: subtopicId,
+                title_id: titleId,
+                type: utils,
+                start_at: startTime,
+                finished_at: new Date().toLocaleString("en-GB"),
+                status: "completed",
+                report: report,
+            };
+
+            try {
+                const response = await fetch(`${ip}/finish-test`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                if (response.ok) {
+                    const score = report.filter((r) => r.correct_option === r.selected_option).length;
+                    document.getElementById("result").classList.remove("d-none");
+                    document.getElementById("result").textContent = `Your Score: ${score}/${data.questions.length}`;
+                } else {
+                    alert("Failed to finish test. Please try again.");
+                }
+            } catch (error) {
+                console.error("Error finishing test:", error);
+            }
+        }
+
+        window.onload = startTest;
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

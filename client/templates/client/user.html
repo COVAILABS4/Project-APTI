@@ -1,83 +1,146 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>User Dashboard</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online Tests</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
-
-    li {
-      margin: 8px 0;
-    }
-
-    a {
-      text-decoration: none;
-      color: blue;
+    .test-card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      padding: 10px;
       cursor: pointer;
     }
 
-    a:hover {
-      text-decoration: underline;
+    .test-card img {
+      width: 100px;
+      height: 100px;
+      background-color: #d4edda;
+      display: inline-block;
+      border-radius: 4px;
+    }
+
+    .test-name {
+      color: #28a745;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .breadcrumb a {
+      text-decoration: none;
+      color: #28a745;
+    }
+
+    .search-bar {
+      margin-bottom: 20px;
     }
   </style>
 </head>
 
 <body>
-  <h1>Welcome, {{ name }}</h1>
-  <p>User ID: {{ user_id }}</p>
-  <p>Your role: {{ role }}</p>
+  <div class="container my-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#" id="homeLink">Home</a></li>
+        <li class="breadcrumb-item"><a href="#" id="onlineTestLink">Online Test</a></li>
+        <li class="breadcrumb-item"><a href="#" id="aptitudeTestLink">Online Aptitude Test</a></li>
+        <li class="breadcrumb-item active" aria-current="page">All Tests</li>
+      </ol>
+    </nav>
 
-  <button onclick="logout({{ user_id }})">Logout</button>
+    <!-- Search Bar -->
+    <input type="text" id="searchInput" class="form-control search-bar" placeholder="Search Topic">
 
-  <p>This is the user dashboard.</p>
+    <!-- Cards Grid -->
+    <div class="row g-3" id="cardsContainer">
+      <!-- Cards will be dynamically generated here -->
+    </div>
+  </div>
 
-  <button onclick="window.location.href = 'user/3/{{user_id}}/contents'">Contents</button>
-  <button onclick="window.location.href = 'user/3/{{user_id}}/questions'">Take Test</button>
-
-  <h2>Topics</h2>
-  <ul id="topicsList"></ul>
-
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    const apiUrl = "http://localhost:4000";
+    const apiBaseUrl = "http://localhost:4000";
 
-    const userId = '{{ user_id }}'
+    const user_id = '{{user_id}}';
 
-    // Function to fetch topics and display them as a list
-    async function fetchTopics() {
+    let topics = []; // To store the fetched topics
+
+    // Function to load topics from API
+    async function loadTopics() {
       try {
-        const response = await fetch(`${apiUrl}/user-topics?user_id=${userId}`);
+        const response = await fetch(`${apiBaseUrl}/topic`);
         if (!response.ok) {
-          throw new Error(`Error fetching topics: ${response.statusText}`);
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const topics = await response.json();
-        const topicsList = document.getElementById("topicsList");
-
-        topics.forEach(topic => {
-          const listItem = document.createElement("li");
-          const link = document.createElement("a");
-          link.href = `topic/${topic.topic_id}`;
-          link.textContent = topic.name;
-          listItem.appendChild(link);
-          topicsList.appendChild(listItem);
-        });
+        topics = await response.json(); // Save topics globally
+        populateTopicsGrid(topics);
       } catch (error) {
-        console.error(error.message);
-        alert("Failed to load topics.");
+        console.error("Error fetching topics:", error);
       }
     }
 
-    // Call fetchTopics on page load
-    window.onload = fetchTopics;
+    // Function to populate the topics grid
+    function populateTopicsGrid(filteredTopics) {
+      const cardsContainer = document.getElementById('cardsContainer');
+      cardsContainer.innerHTML = ''; // Clear existing content
 
-    function logout(userId) {
-      alert(`Logging out user: ${userId}`);
-      window.location.href = "/";
+      if (filteredTopics.length === 0) {
+        cardsContainer.innerHTML = `<div class="col-12 text-center text-muted">No matching tests found.</div>`;
+        return;
+      }
+
+      filteredTopics.forEach(topic => {
+        const card = document.createElement('div');
+        card.className = 'col-12 col-md-4 col-lg-3';
+        card.innerHTML = `
+          <div class="test-card" onclick="navigateToTopic('${topic.topic_id}')">
+            <img src="{% static 'icon.png' %}" alt="${topic.name}">
+            <p class="test-name">${topic.name}</p>
+          </div>
+        `;
+        cardsContainer.appendChild(card);
+      });
     }
+
+    // Function to handle navigation to a topic
+    function navigateToTopic(topicId) {
+      window.location.href = `/user/3/${user_id}/${topicId}`;
+    }
+
+    // Function to filter topics based on search input
+    function filterTopics(event) {
+      const searchTerm = event.target.value.toLowerCase();
+      const filteredTopics = topics.filter(topic =>
+        topic.name.toLowerCase().includes(searchTerm)
+      );
+      populateTopicsGrid(filteredTopics);
+    }
+
+    // Attach the filter function to the search input's onChange event
+    document.getElementById('searchInput').addEventListener('input', filterTopics);
+
+    // Initialize the page by loading topics
+    loadTopics();
+
+    // Make breadcrumbs clickable
+    document.getElementById('homeLink').addEventListener('click', () => {
+      alert('Navigating to Home');
+    });
+    document.getElementById('onlineTestLink').addEventListener('click', () => {
+      alert('Navigating to Online Test');
+    });
+    document.getElementById('aptitudeTestLink').addEventListener('click', () => {
+      alert('Navigating to Online Aptitude Test');
+    });
   </script>
 </body>
 

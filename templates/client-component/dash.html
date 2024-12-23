@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layout</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        #sidebar {
+            width: 300px;
+            /* Increased sidebar width */
+            background-color: #f8f9fa;
+            border-right: 1px solid #ddd;
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            transition: transform 0.3s ease;
+        }
+
+        #sidebar.hidden {
+            transform: translateX(-100%);
+        }
+
+        #main-content {
+            flex-grow: 1;
+            margin-left: 300px;
+            /* Adjusted for wider sidebar */
+            padding: 1rem;
+            transition: margin-left 0.3s ease;
+        }
+
+        #main-content.expanded {
+            margin-left: 0;
+        }
+
+        .navbar {
+            background-color: #fff;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-toggler {
+            border: none;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            /* Increased padding for spacing */
+            color: #333;
+            font-weight: 500;
+        }
+
+        .sidebar-item i {
+            margin-right: 1rem;
+        }
+
+        .sidebar-item:hover {
+            background-color: #e9ecef;
+            cursor: pointer;
+            text-decoration: underline;
+            /* Highlight with underline on hover */
+        }
+
+        .sidebar-logo {
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        .sidebar-logo img {
+            max-width: 80%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <div id="sidebar">
+        <div class="sidebar-logo">
+            <img src="https://via.placeholder.com/150" alt="Logo"> <!-- Placeholder for logo -->
+        </div>
+        <div class="sidebar-item"><i class="material-icons">home</i> Home</div>
+        <div class="sidebar-item"><i class="material-icons">history</i> Test History</div>
+        <div class="sidebar-item"><i class="material-icons">contact_mail</i> Contact Us</div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="main-content">
+        <nav class="navbar navbar-light">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" id="toggleSidebar">
+                    <i class="material-icons">menu</i>
+                </button>
+                <span class="navbar-brand">IndiaBIX</span>
+                <div class="dropdown">
+                    <button class="btn" id="profileBtn">
+                        <i class="material-icons">account_circle</i>
+                    </button>
+                    <!-- Updated Profile Tooltip -->
+                    <div id="profile-tooltip" class="position-absolute bg-white border rounded shadow p-3"
+                        style="display: none; top: 40px; right: 0; width: 250px; z-index: 1000;">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex align-items-center">
+                                <img id="profile-image" src="https://via.placeholder.com/50" alt="Profile Image"
+                                    class="rounded-circle me-2" style="width: 50px; height: 50px; object-fit: cover;">
+                                <div>
+                                    <p id="profile-name" style="color: black;" class="mb-0 fw-bold">John Doe</p>
+                                    <p id="profile-email" class="mb-0 text-muted small">john.doe@example.com</p>
+                                </div>
+                            </div>
+                            <button id="profile-close" class="btn-close" aria-label="Close"></button>
+                        </div>
+                        <a href="#" id="profile-manage-account" class="btn btn-primary btn-sm w-100 mb-2">Manage Your
+                            Account</a>
+                        <button id="profile-logout" class="btn btn-danger btn-sm w-100">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <div>
+            <h1>Body Content</h1>
+            <p>This is the main body area where content will be displayed dynamically.</p>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('main-content');
+        const toggleSidebar = document.getElementById('toggleSidebar');
+        const profileBtn = document.getElementById('profileBtn');
+        const profileTooltip = document.getElementById('profile-tooltip');
+        const profileClose = document.getElementById('profile-close');
+
+        toggleSidebar.addEventListener('click', () => {
+            sidebar.classList.toggle('hidden');
+            mainContent.classList.toggle('expanded');
+        });
+
+        profileBtn.addEventListener('click', () => {
+            profileTooltip.style.display = profileTooltip.style.display === 'none' ? 'block' : 'none';
+        });
+
+        profileClose.addEventListener('click', () => {
+            profileTooltip.style.display = 'none';
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!profileBtn.contains(e.target) && !profileTooltip.contains(e.target)) {
+                profileTooltip.style.display = 'none';
+            }
+        });
+
+        // Example dynamic user data
+        const userData = {
+            name: 'John Doe',
+            email: 'john.doe@example.com'
+        };
+
+        // Update profile with user data
+        document.getElementById('profile-name').textContent = userData.name;
+        document.getElementById('profile-email').textContent = userData.email;
+    </script>
+</body>
+
+</html>

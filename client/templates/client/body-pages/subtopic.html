@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subtopics</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .subtopic-card {
+            text-align: left;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .subtopic-card h5 {
+            color: #28a745;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .subtopic-card p {
+            display: block;
+            color: #007bff;
+            text-decoration: none;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        .subtopic-card p::before {
+            content: '\2192';
+            /* Unicode for the arrow symbol */
+            margin-right: 10px;
+            color: #28a745;
+        }
+
+        .subtopic-card p:hover {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container my-4">
+
+        <!-- Search Filter -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search Subtopics..."
+                    oninput="filterSubtopics()">
+            </div>
+        </div>
+
+        <!-- Cards Grid -->
+        <div class="row g-3" id="subtopicsContainer">
+            <!-- Subtopic cards will be dynamically generated here -->
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const apiBaseUrl = "http://localhost:4000";
+        const user_id = '{{ user_id }}';
+        const topic_id = '{{ topic_id }}';
+
+        let subtopicsList = [];
+
+        // Function to fetch and display subtopics
+        async function loadSubtopics() {
+            try {
+                const response = await fetch(`${apiBaseUrl}/subtopics?topic_id=${topic_id}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const subtopics = await response.json();
+                subtopicsList = subtopics;
+                populateSubtopicsGrid(subtopics);
+            } catch (error) {
+                console.error("Error fetching subtopics:", error);
+            }
+        }
+
+        // Function to populate subtopic cards grid
+        function populateSubtopicsGrid(subtopics) {
+            const subtopicsContainer = document.getElementById('subtopicsContainer');
+            subtopicsContainer.innerHTML = ''; // Clear existing content
+
+            if (subtopics.length === 0) {
+                subtopicsContainer.innerHTML = `<div class="col-12 text-center text-muted">No subtopics found.</div>`;
+                return;
+            }
+
+            subtopics.forEach(subtopic => {
+                const card = document.createElement('div');
+                card.className = 'col-12 col-md-6 col-lg-4';
+                card.innerHTML = `
+                    <div class="subtopic-card">
+                        <h5>${subtopic.name}</h5>
+                        <p onclick="openContent('${subtopic.subtopic_id}')">Learning Material</p>
+                        <p onclick="startPractice('${subtopic.subtopic_id}')">Practice</p>
+                        <p onclick="startTest('${subtopic.subtopic_id}')">Test</p>
+                    </div>
+                `;
+                subtopicsContainer.appendChild(card);
+            });
+        }
+
+        // Function to handle Content button click
+        function openContent(subtopicId) {
+            //  alert(`Opening content for Subtopic ID: ${subtopicId}`);
+
+            window.location.href = `/user/3/${user_id}/${topic_id}/${subtopicId}/learning`
+            // Implement your logic to open content here
+        }
+
+        // Function to handle Practice button click
+        function startPractice(subtopicId) {
+            window.location.href = `/user/3/${user_id}/${topic_id}/${subtopicId}/practice`
+            // Implement your logic to start practice here
+        }
+
+        // Function to handle Test button click
+        function startTest(subtopicId) {
+            window.location.href = `/user/3/${user_id}/${topic_id}/${subtopicId}/test`
+            // Implement your logic to start test here
+        }
+
+        // Function to filter subtopics based on search input
+        function filterSubtopics() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const filteredSubtopics = subtopicsList.filter(subtopic =>
+                subtopic.name.toLowerCase().includes(searchInput)
+            );
+            populateSubtopicsGrid(filteredSubtopics);
+        }
+
+        // Initialize the page by loading subtopics
+        loadSubtopics();
+    </script>
+</body>
+
+</html>

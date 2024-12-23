@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Circular Percentage Indicator</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .circle-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .circle {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            padding: 15px;
+        }
+
+        .circle svg {
+            transform: rotate(-90deg);
+        }
+
+        .circle .bg-circle {
+            fill: none;
+            stroke: #dee2e6;
+            stroke-width: 12;
+        }
+
+        .circle .progress-circle {
+            fill: none;
+            stroke: #0d6efd;
+            stroke-width: 12;
+            stroke-linecap: round;
+            stroke-dasharray: 0 100;
+        }
+
+        .circle .percentage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #0d6efd;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="circle-container">
+            <div class="circle">
+                <svg width="150" height="150">
+                    <!-- Background Circle -->
+                    <circle class="bg-circle" cx="75" cy="75" r="65"></circle>
+                    <!-- Progress Circle -->
+                    <circle class="progress-circle" cx="75" cy="75" r="65"></circle>
+                </svg>
+                <div class="percentage" id="percentage">0%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const result = 1; // The value (can be a float)
+        const total = 7;  // Out of value
+        const percentage = (result / total) * 100; // Calculate percentage
+        const progressCircle = document.querySelector('.progress-circle');
+        const percentageText = document.getElementById('percentage');
+        const radius = 65; // Radius of the circle
+        const circumference = 2 * Math.PI * radius; // Circumference of the circle
+
+        progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
+        progressCircle.style.strokeDashoffset = circumference;
+
+        // Function to animate the percentage with floating-point values
+        function animatePercentage(targetPercentage) {
+            let progress = 0;
+            const animationSpeed = 5; // Lower value = faster animation
+
+            const interval = setInterval(() => {
+                progress += 0.1; // Increment by smaller steps for float precision
+                const offset = circumference - (progress / 100) * circumference;
+                progressCircle.style.strokeDashoffset = offset;
+
+                // Round the percentage to 1 decimal place for float values
+                percentageText.textContent = `${progress.toFixed(1)}%`;
+
+                if (progress >= targetPercentage) {
+                    clearInterval(interval);
+                }
+            }, animationSpeed);
+        }
+
+        // Start the animation
+        animatePercentage(percentage);
+    </script>
+</body>
+
+</html>

@@ -5,7 +5,49 @@ urlpatterns = [
     # LOGIN
     path("", views.login, name="index"),
     # USER
+    # --Home
+    path("<str:role>/3/<str:user_id>/sample", views.sample, name="sample"),
+    # -- Nav Bar
+    path("<str:role>/3/<str:user_id>/setting", views.user_setting, name="user-manage"),
+    # --SideBar
+    path(
+        "<str:role>/3/<str:user_id>/test_history",
+        views.test_history,
+        name="user-manage",
+    ),
+    path(
+        "<str:role>/3/<str:user_id>/contact_us",
+        views.contact_us,
+        name="user-manage",
+    ),
+    # --Body
     path("<str:role>/3/<str:user_id>/", views.user, name="user"),
+    path(
+        "<str:role>/3/<str:user_id>/<str:topic_id>",
+        views.user_subtopic,
+        name="user_subtopic",
+    ),
+    path(
+        "<str:role>/3/<str:user_id>/<str:topic_id>/<str:subtopic_id>/learning",
+        views.user_learning,
+        name="user_learning",
+    ),
+    path(
+        "<str:role>/3/<str:user_id>/<str:topic_id>/<str:subtopic_id>/practice",
+        views.user_practice,
+        name="user_practice",
+    ),
+    path(
+        "<str:role>/3/<str:user_id>/<str:topic_id>/<str:subtopic_id>/practice/<str:title_id>",
+        views.user_practice_take_test,
+        name="user_practice_take_test",
+    ),
+    path(
+        "<str:role>/3/<str:user_id>/<str:topic_id>/<str:subtopic_id>/test",
+        views.user_test,
+        name="user_test",
+    ),
+    # ------------------------------
     path("<str:role>/3/register", views.user_register, name="user-register"),
     path(
         "<str:role>/3/<str:user_id>/contents", views.user_content, name="user-content"

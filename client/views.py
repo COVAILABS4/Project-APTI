@@ -13,7 +13,7 @@ def login(request):
     return render(request, "login.html")
 
 
-# ADMIN
+# ADMIN1
 
 
 def admin_register(request, role):
@@ -159,7 +159,7 @@ def allocate_user(request, user_id, role):
     return render(request, "admin/course-allocation/allocate_user.html", context)
 
 
-# SUBADMIN
+# SUBADMIN2
 
 
 @validate_session
@@ -310,12 +310,30 @@ def sub_allocate_user(request, user_id, role):
     return render(request, "subadmin/course-allocation/allocate_user.html", context)
 
 
-# USER
+# USER3
 
 
 def user_register(request, role):
 
     return render(request, "client/register.html")
+
+
+@validate_session
+def user_setting(request, user_id, role):
+    context = {"user_id": user_id}
+    return render(request, "client/nav-bar/setting.html", context)
+
+
+@validate_session
+def test_history(request, user_id, role):
+    context = {"user_id": user_id}
+    return render(request, "client/side-bar/test-history.html", context)
+
+
+@validate_session
+def contact_us(request, user_id, role):
+    context = {"user_id": user_id}
+    return render(request, "client/side-bar/contact-us.html", context)
 
 
 @validate_session
@@ -331,7 +349,108 @@ def user(request, user_id, role):
         "name": name,
         "role": role,
     }
+    return render(request, "client/body-pages/home.html", context)
+
+
+@validate_session
+def sample(request, user_id, role):
+
+    print("LOGINSSS")
+    user_id = request.session.get("user_id", "Unknown")
+    name = request.session.get("name", "Guest")
+    role = request.session.get("role", "Unknown")
+
+    context = {
+        "user_id": user_id,
+        "name": name,
+        "role": role,
+    }
     return render(request, "client/user.html", context)
+
+
+@validate_session
+def user_subtopic(request, user_id, role, topic_id):
+
+    print("LOGINSSS")
+    user_id = request.session.get("user_id", "Unknown")
+    name = request.session.get("name", "Guest")
+    role = request.session.get("role", "Unknown")
+
+    context = {"user_id": user_id, "name": name, "role": role, "topic_id": topic_id}
+    return render(request, "client/body-pages/subtopic.html", context)
+
+
+@validate_session
+def user_learning(request, user_id, role, topic_id, subtopic_id):
+
+    print("LOGINSSS")
+    user_id = request.session.get("user_id", "Unknown")
+    name = request.session.get("name", "Guest")
+    role = request.session.get("role", "Unknown")
+
+    context = {
+        "user_id": user_id,
+        "name": name,
+        "role": role,
+        "topic_id": topic_id,
+        "subtopic_id": subtopic_id,
+    }
+    return render(request, "client/body-pages/learning.html", context)
+
+
+@validate_session
+def user_test(request, user_id, role, topic_id, subtopic_id):
+
+    print("LOGINSSS")
+    user_id = request.session.get("user_id", "Unknown")
+    name = request.session.get("name", "Guest")
+    role = request.session.get("role", "Unknown")
+
+    context = {
+        "user_id": user_id,
+        "name": name,
+        "role": role,
+        "topic_id": topic_id,
+        "subtopic_id": subtopic_id,
+    }
+    return render(request, "client/body-pages/test-pages/test.html", context)
+
+
+@validate_session
+def user_practice(request, user_id, role, topic_id, subtopic_id):
+
+    print("LOGINSSS")
+    user_id = request.session.get("user_id", "Unknown")
+    name = request.session.get("name", "Guest")
+    role = request.session.get("role", "Unknown")
+
+    context = {
+        "user_id": user_id,
+        "name": name,
+        "role": role,
+        "topic_id": topic_id,
+        "subtopic_id": subtopic_id,
+    }
+    return render(request, "client/body-pages/practice-pages/practice.html", context)
+
+
+@validate_session
+def user_practice_take_test(request, user_id, role, topic_id, subtopic_id, title_id):
+
+    print("LOGINSSS")
+    user_id = request.session.get("user_id", "Unknown")
+    name = request.session.get("name", "Guest")
+    role = request.session.get("role", "Unknown")
+
+    context = {
+        "user_id": user_id,
+        "name": name,
+        "role": role,
+        "topic_id": topic_id,
+        "subtopic_id": subtopic_id,
+        "title_id": title_id,
+    }
+    return render(request, "client/body-pages/practice-pages/take-test.html", context)
 
 
 @validate_session

@@ -75,7 +75,7 @@
 
 <body>
     <div class="calculator draggable">
-        <input type="text" id="screen" class="form-control screen" onkeydown="handleKeyboard(event)" />
+        <input type="text" id="screen" class="form-control screen" value="0" onkeydown="handleKeyboard(event)" />
         <div class="row g-1">
             <div class="col-3"><button class="btn btn-light" onclick="appendValue('7')">7</button></div>
             <div class="col-3"><button class="btn btn-light" onclick="appendValue('8')">8</button></div>
@@ -88,4 +88,90 @@
             <div class="col-3"><button class="btn btn-light" onclick="appendValue('1')">1</button></div>
             <div class="col-3"><button class="btn btn-light" onclick="appendValue('2')">2</button></div>
             <div class="col-3"><button class="btn btn-light" onclick="appendValue('3')">3</button></div>
-            <div class="col-3"><button class=
+            <div class="col-3"><button class="btn btn-operation" onclick="appendValue('-')">-</button></div>
+            <div class="col-3"><button class="btn btn-light" onclick="appendValue('0')">0</button></div>
+            <div class="col-3"><button class="btn btn-light" onclick="appendValue('.')">.</button></div>
+            <div class="col-3"><button class="btn btn-equal" onclick="calculate()">=</button></div>
+            <div class="col-3"><button class="btn btn-operation" onclick="appendValue('+')">+</button></div>
+            <div class="col-12"><button class="btn btn-clear w-100" onclick="clearScreen()">Clear</button></div>
+        </div>
+    </div>
+
+    <script>
+        let calculator = document.querySelector(".calculator");
+
+        let offsetX, offsetY, isDragging = false;
+
+        calculator.addEventListener("mousedown", (e) => {
+            isDragging = true;
+            offsetX = e.offsetX;
+            offsetY = e.offsetY;
+        });
+
+        document.addEventListener("mousemove", (e) => {
+            if (isDragging) {
+                const calcRect = calculator.getBoundingClientRect();
+                const newLeft = e.pageX - offsetX;
+                const newTop = e.pageY - offsetY;
+
+                // Ensure the calculator stays within the screen
+                const maxLeft = window.innerWidth - calcRect.width;
+                const maxTop = window.innerHeight - calcRect.height;
+
+                calculator.style.left = `${Math.min(Math.max(newLeft, 0), maxLeft)}px`;
+                calculator.style.top = `${Math.min(Math.max(newTop, 0), maxTop)}px`;
+            }
+        });
+
+        document.addEventListener("mouseup", () => {
+            isDragging = false;
+        });
+
+
+        function appendValue(value) {
+            const screen = document.getElementById("screen");
+            if (screen.value === "0") {
+                screen.value = value;
+            } else {
+                screen.value += value;
+            }
+        }
+
+        function calculate() {
+            const screen = document.getElementById("screen");
+            try {
+                let result = eval(screen.value);
+                screen.value = result;
+            } catch {
+                screen.value = "Error";
+            }
+        }
+
+        function clearScreen() {
+            document.getElementById("screen").value = "0";
+        }
+
+        function handleKeyboard(event) {
+            const allowedKeys = "0123456789.+-*/()";
+            const screen = document.getElementById("screen");
+
+            if (event.key === "Enter") {
+                event.preventDefault();
+                calculate();
+            } else if (event.key === "Backspace") {
+                if (screen.value.length === 1 || screen.value === "0") {
+                    screen.value = "0";
+                    event.preventDefault();
+                }
+            } else if (!allowedKeys.includes(event.key)) {
+                event.preventDefault(); // Block other keys
+            } else if (screen.value === "0" && allowedKeys.includes(event.key)) {
+                screen.value = event.key;
+                event.preventDefault();
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Titles</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        .title-item {
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .title-item:hover {
+            transform: translateY(-3px);
+            background-color: #f8f9fa;
+        }
+
+        .title-item .folder-icon {
+            font-size: 24px;
+            color: #ffc107;
+            margin-right: 10px;
+        }
+
+        .titles-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="h4">Practice Questions</h1>
+            <input id="filter-input" type="text" class="form-control w-25" placeholder="Filter titles..."
+                oninput="filterTitles()">
+        </div>
+
+        <div class="titles-container row mt-4" id="titlesContainer">
+            <!-- Titles will be dynamically injected here -->
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const apiBaseUrl = "http://localhost:4000"; // Replace with your actual API base URL
+
+        const user_id = '{{user_id}}'
+        const topic_id = "{{topic_id}}"; // Replace dynamically if using a template engine
+        const subtopic_id = "{{subtopic_id}}"; // Replace dynamically if using a template engine
+        const utils_type = "Practices"; // Hardcoded utils_type as Practices
+        let titles = []; // Store all titles globally
+
+        // Fetch titles from the API
+        async function fetchTitles() {
+            try {
+                const response = await fetch(`${apiBaseUrl}/title?topic_id=${topic_id}&subtopic_id=${subtopic_id}&utils_type=${utils_type}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    titles = data; // Store fetched titles
+                    renderTitles(titles); // Render initially
+                } else {
+                    console.error("Error fetching titles:", data.error || "Unknown error");
+                }
+            } catch (error) {
+                console.error("Error fetching titles:", error);
+            }
+        }
+
+        // Render titles into the container
+        function renderTitles(filteredTitles) {
+            const container = document.getElementById("titlesContainer");
+            container.innerHTML = ""; // Clear existing content
+
+            if (filteredTitles.length === 0) {
+                container.innerHTML = `<p class="text-muted">No titles available.</p>`;
+                return;
+            }
+
+            filteredTitles.forEach(({ title, title_id }) => {
+                const colDiv = document.createElement("div");
+                colDiv.classList.add("col-md-4", "mb-4");
+
+                colDiv.innerHTML = `
+                    <div onclick='takeTest(${title_id})' class="title-item">
+                        <i class="bi bi-folder-fill folder-icon"></i>
+                        <span>${title}</span>
+                    </div>
+                `;
+
+                container.appendChild(colDiv);
+            });
+        }
+
+        // Filter titles based on input
+        function filterTitles() {
+            const filterValue = document.getElementById("filter-input").value.toLowerCase();
+            const filteredTitles = titles.filter(({ title }) => title.toLowerCase().includes(filterValue));
+            renderTitles(filteredTitles); // Render filtered results
+        }
+
+
+        function takeTest(titleId) {
+            // alert(titleId)
+            window.location.href = `/user/3/${user_id}/${topic_id}/${subtopic_id}/practice/${titleId}`
+        }
+
+        // Initialize page content
+        document.addEventListener("DOMContentLoaded", fetchTitles);
+    </script>
+</body>
+
+</html>
