@@ -321,8 +321,10 @@
             }
         }
 
+
+        const apiUrl = 'http://localhost:4000'
         // Fetch data from the API
-        fetch(`http://localhost:4000/questions/${title_id}?topic_id=${topicId}&subtopic_id=${subtopicId}&utils=${utils}`)
+        fetch(`${apiUrl}/questions/${title_id}?topic_id=${topicId}&subtopic_id=${subtopicId}&utils=${utils}`)
             .then(response => response.json())
             .then(fetchedData => {
                 data = fetchedData;
