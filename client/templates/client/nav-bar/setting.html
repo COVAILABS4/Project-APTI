@@ -83,6 +83,10 @@
                     <input type="text" id="name" name="name" class="form-control" readonly>
                 </div>
                 <div class="mb-3">
+                    <label for="phonenumber" class="form-label">Phone Number</label>
+                    <input type="text" id="phonenumber" name="phonenumber" class="form-control" readonly>
+                </div>
+                <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
                     <input type="email" id="email" name="email" class="form-control" readonly>
                 </div>
@@ -144,6 +148,7 @@
             document.getElementById('city').value = data.city || '';
             document.getElementById('state').value = data.state || '';
             document.getElementById('country').value = data.country || '';
+            document.getElementById('phonenumber').value = data.phone_number || '';
         }
 
         // Toggle view/edit mode
@@ -166,6 +171,7 @@
                 city: document.getElementById('city').value,
                 state: document.getElementById('state').value,
                 country: document.getElementById('country').value,
+                phone_number: document.getElementById('phonenumber').value
             };
 
             try {

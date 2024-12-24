@@ -126,7 +126,7 @@
 
 <body class="bg-white">
     <div class="container mt-5">
-        <h1 class="text-center">Practice Questions</h1>
+        <h1 class="text-center">MCQ Test</h1>
         <form id="mcq-form" class="mt-4">
             <div id="mcq-container"></div>
             <button style="display: none;" type="submit" class="btn btn-primary mt-3">Submit</button>
@@ -195,10 +195,9 @@
     </script>
 
     <script>
-        const userId = '{{user_id}}';
-        const topicId = '{{topic_id}}';
-        const subtopicId = '{{subtopic_id}}';
-        const title_id = '{{title_id}}';
+        const userId = "1212121212";
+        const topicId = "495808967";
+        const subtopicId = "183267604";
         const utils = "Practices";
 
         let currentPage = 1;
@@ -252,9 +251,7 @@
 
             // Highlight correct option
             options.forEach((option, i) => {
-
-                console.log(option, i)
-                if (i + 1 == correctOption) {
+                if (i + 1 === correctOption) {
                     option.classList.add('highlight-correct');
                 } else {
                     option.classList.remove('highlight-correct');
@@ -322,7 +319,7 @@
         }
 
         // Fetch data from the API
-        fetch(`http://localhost:4000/questions/${title_id}?topic_id=${topicId}&subtopic_id=${subtopicId}&utils=${utils}`)
+        fetch(`http://localhost:4000/questions/778166280?topic_id=${topicId}&subtopic_id=${subtopicId}&utils=${utils}`)
             .then(response => response.json())
             .then(fetchedData => {
                 data = fetchedData;

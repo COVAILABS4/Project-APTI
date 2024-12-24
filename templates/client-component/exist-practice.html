@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCQ Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .question {
+            padding: 15px 0;
+        }
+
+        .question:not(:last-child) {
+            border-bottom: 1px solid #ddd;
+        }
+
+        .question-header {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .option:hover {
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+
+        .explanation,
+        .workspace {
+            display: none;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            font-size: 0.9rem;
+        }
+
+        .workspace textarea {
+            width: 100%;
+            height: 100px;
+            border-radius: 5px;
+            padding: 10px;
+            resize: none;
+            font-size: 0.9rem;
+        }
+
+        .btn-finish {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-size: 0.8rem;
+            padding: 10px 15px;
+        }
+
+        .result-summary {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f1f1f1;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">MCQ Test</h1>
+        <div id="questions"></div>
+        <button class="btn btn-success w-100 btn-finish d-none" id="finish-button" onclick="finishTest()">Finish
+            Test</button>
+        <div class="result-summary d-none" id="result-summary"></div>
+    </div>
+
+    <script>
+        const userId = "{{user_id}}"; // Replace with actual user_id
+        const topicId = "{{ topic_id }}";
+        const subtopicId = "{{ subtopic_id }}";
+        const utils = "Practices";
+        const titleId = "{{ title_id }}";
+        const ip = "http://localhost:4000";
+
+        let startTime = new Date().toLocaleString("en-GB");
+
+        async function fetchQuestions() {
+            try {
+                const response = await fetch(
+                    `${ip}/questions/${titleId}?subtopic_id=${subtopicId}&utils=${utils}&topic_id=${topicId}`
+                );
+                const data = await response.json();
+                displayQuestions(data);
+            } catch (error) {
+                console.error("Error fetching questions:", error);
+                document.getElementById(
+                    "questions"
+                ).innerHTML = `<p class='text-danger'>Failed to load questions. Please try again later.</p>`;
+            }
+        }
+
+        function displayQuestions(data) {
+            const questionsDiv = document.getElementById("questions");
+            questionsDiv.innerHTML = data.questions
+                .map(
+                    (q, i) => `
+                        <div class="question">
+                            <div class="question-header"><strong>Q${i + 1}:</strong> ${q.question}</div>
+                            ${q.options
+                            .map(
+                                (opt, j) => `
+                                <div class="form-check option">
+                                    <input class="form-check-input" type="radio" name="question_${q.question_id}" value="${j + 1}" id="option_${q.question_id}_${j + 1}">
+                                    <label class="form-check-label" for="option_${q.question_id}_${j + 1}">
+                                        ${opt}
+                                    </label>
+                                </div>
+                            `).join("")}
+                            <div class="d-flex justify-content-between mt-3">
+                                <button class="btn btn-outline-secondary btn-sm" onclick="toggleVisibility('explanation_${q.question_id}', this)">
+                                    <i class="fas fa-eye"></i> Show Answer
+                                </button>
+                                <button class="btn btn-outline-primary btn-sm" onclick="toggleVisibility('workspace_${q.question_id}', this)">
+                                    <i class="fas fa-pencil-alt"></i> Workspace
+                                </button>
+                            </div>
+                            <div class="explanation" id="explanation_${q.question_id}">
+                                <p class="text-muted">Correct Answer: Option ${q.correct_option}</p>
+                                <p>${q.explanation}</p>
+                            </div>
+                            <div class="workspace" id="workspace_${q.question_id}">
+                                <textarea placeholder="Write your reasoning here..."></textarea>
+                            </div>
+                        </div>
+                    `
+                )
+                .join("");
+
+            // Show finish button
+            document.getElementById("finish-button").classList.remove("d-none");
+        }
+
+        function toggleVisibility(elementId, button) {
+            const element = document.getElementById(elementId);
+            const isExplanation = elementId.startsWith('explanation');
+            const isWorkspace = elementId.startsWith('workspace');
+
+            if (element.style.display === "block") {
+                element.style.display = "none";
+                if (isExplanation) {
+                    button.innerHTML = `<i class="fas fa-eye"></i> Show Answer`;
+                } else if (isWorkspace) {
+                    button.innerHTML = `<i class="fas fa-pencil-alt"></i> Workspace`;
+                }
+            } else {
+                element.style.display = "block";
+                if (isExplanation) {
+                    button.innerHTML = `<i class="fas fa-eye-slash"></i> Hide Answer`;
+                } else if (isWorkspace) {
+                    button.innerHTML = `<i class="fas fa-pencil-alt"></i> Hide Workspace`;
+                }
+            }
+        }
+
+        async function finishTest() {
+            const questions = document.querySelectorAll('.question');
+            const report = Array.from(questions).map((q, index) => {
+                const selectedOption = q.querySelector('input[type="radio"]:checked');
+                const correctOption = q.querySelector('.explanation p').textContent.match(/\d+/)[0];
+                return {
+                    question_number: index + 1,
+                    correct_option: parseInt(correctOption),
+                    selected_option: selectedOption ? parseInt(selectedOption.value) : null,
+                };
+            });
+
+            const payload = {
+                user_id: userId,
+                topic_id: topicId,
+                subtopic_id: subtopicId,
+                title_id: titleId,
+                type: utils,
+                start_at: startTime,
+                finished_at: new Date().toLocaleString("en-GB"),
+                status: "completed",
+                report: report,
+            };
+
+            try {
+                const response = await fetch(`${ip}/finish-test`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(payload),
+                });
+
+                if (response.ok) {
+                    const score = report.filter((r) => r.correct_option === r.selected_option).length;
+                    document.getElementById("result-summary").classList.remove("d-none");
+                    document.getElementById("result-summary").innerHTML = `
+                        <h3>Your Score: ${score}/${questions.length}</h3>
+                        <p>Thank you for completing the test!</p>
+                    `;
+                    document.getElementById("finish-button").classList.add("d-none");
+                } else {
+                    alert("Failed to finish test. Please try again.");
+                }
+            } catch (error) {
+                console.error("Error finishing test:", error);
+            }
+        }
+
+        fetchQuestions();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

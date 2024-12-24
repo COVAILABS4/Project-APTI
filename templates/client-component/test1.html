@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCQ Test Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Link to Bootstrap Icons -->
+    <style>
+        .question-container {
+            padding: 15px;
+            background-color: #ffffff;
+            margin-bottom: 20px;
+        }
+
+        .answer-section {
+            background-color: #ffffff;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-icon {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+        }
+
+        .separator {
+            border-top: 1px solid #ddd;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+
+<body class="bg-white">
+    <div class="container mt-5">
+        <h1 class="text-center">MCQ Test</h1>
+        <form id="mcq-form" class="mt-4">
+            <div id="mcq-container"></div>
+            <button style="display: none;" type="submit" class="btn btn-primary mt-3">Submit</button>
+        </form>
+        <div id="result" class="mt-5"></div>
+    </div>
+
+    <script>
+        const data = {
+            user_id: "1212121212",
+            topic_id: "12321",
+            subtopic_id: "4545456",
+            type: "Practices",
+            title: "Sample",
+            title_id: "778166280",
+            questions: [
+                {
+                    question_id: "310329894",
+                    question: "A can do a work in 15 days and B in 20 days. If they work on it together for 4 days, then the fraction of the work that is left is:",
+                    options: ["1/4", "1/10", "7/15", "8/15"],
+                    correct_option: 4,
+                    explanation: "A's 1 day's work = 1/15, B's 1 day's work = 1/20. Their combined 1 day's work is 7/60. After 4 days, they complete 7/15 of the work. Remaining work = 1 - 7/15 = 8/15."
+                },
+                {
+                    question_id: "166959003",
+                    question: "What is LED?",
+                    options: [
+                        "Light Emitting Diode",
+                        "Low Energy Device",
+                        "Light Energy Device",
+                        "Linear Energy Diode"
+                    ],
+                    correct_option: 1,
+                    explanation: "An LED is a semiconductor device that emits light when an electric current passes through it."
+                }
+            ]
+        };
+
+        function renderQuestions(questions, container) {
+            questions.forEach((question, index) => {
+                const questionHtml = `
+                    <div class="question-container">
+                        <h5>${index + 1}. ${question.question}</h5>
+                        ${question.options
+                        .map(
+                            (option, i) => `
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="question-${index}" value="${i + 1}" id="question-${index}-option-${i}">
+                                    <label class="form-check-label" for="question-${index}-option-${i}">${option}</label>
+                                </div>`
+                        )
+                        .join("")}
+                        
+                        <div id="answer-${index}" style="display: none;" class="answer-section mt-3" >
+                            <strong class="text-success" >Correct Answer:</strong> ${question.options[question.correct_option - 1]}<br>
+                            <strong class="text-success" >Explanation:</strong> ${question.explanation}
+                        </div>
+                        <div class="workspace border rounded p-3 bg-white mt-2" style="display: none;" id="workspace-${index}">
+                            <label class="text-success" for="workspace-text-${index}"><strong>Workspace:</strong></label>
+                            <textarea class="form-control mt-2" id="workspace-text-${index}" rows="3" placeholder="Write your thoughts here..."></textarea>
+                        </div>
+
+                        <div class="action-buttons">
+                            <!-- Using Bootstrap Icons -->
+                            <button type="button" class="btn btn-success btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Explanation" onclick="toggleAnswer(${index})">
+                                <i class="bi bi-info-circle text-white"></i> <!-- Info Icon -->
+                            </button>
+                            <button type="button" class="btn btn-success btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Workspace" onclick="toggleWorkspace(${index})">
+                                <i class="bi bi-pencil text-white"></i> <!-- Pencil Icon -->
+                            </button>
+                        </div>
+                    </div>
+                    <div class="separator"></div>`;
+                container.insertAdjacentHTML("beforeend", questionHtml);
+            });
+        }
+
+        function toggleAnswer(index) {
+            const answerDiv = document.getElementById(`answer-${index}`);
+            answerDiv.style.display = answerDiv.style.display === "none" ? "block" : "none";
+        }
+
+        function toggleWorkspace(index) {
+            const workspaceDiv = document.getElementById(`workspace-${index}`);
+            workspaceDiv.style.display = workspaceDiv.style.display === "none" ? "block" : "none";
+        }
+
+        function evaluateAnswers(questions) {
+            let score = 0;
+            const report = [];
+
+            questions.forEach((question, index) => {
+                const selectedOption = parseInt(
+                    document.querySelector(`input[name="question-${index}"]:checked`)?.value || "0"
+                );
+                const isCorrect = selectedOption === question.correct_option;
+
+                if (isCorrect) score++;
+
+                report.push({
+                    question_number: index + 1,
+                    correct_option: question.correct_option,
+                    selected_option: selectedOption,
+                    is_correct: isCorrect
+                });
+            });
+
+            return { score, report };
+        }
+
+        function displayResults(resultContainer, results) {
+            resultContainer.innerHTML = `
+                <h4>Results</h4>
+                <p><strong>Score:</strong> ${results.score} / ${results.total_questions}</p>
+                <pre>${JSON.stringify(results, null, 2)}</pre>
+            `;
+        }
+
+        const startTime = new Date().toLocaleString();
+
+        function handleSubmit(event) {
+            event.preventDefault();
+
+            const { score, report } = evaluateAnswers(data.questions);
+            const endTime = new Date().toLocaleString();
+
+            const results = {
+                user_id: data.user_id,
+                topic_id: data.topic_id,
+                subtopic_id: data.subtopic_id,
+                title_id: data.title_id,
+                type: data.type,
+                start_at: startTime,
+                finished_at: endTime,
+                status: "completed",
+                score,
+                total_questions: data.questions.length,
+                report
+            };
+
+            displayResults(resultContainer, results);
+        }
+
+        const mcqContainer = document.getElementById("mcq-container");
+        const resultContainer = document.getElementById("result");
+        const form = document.getElementById("mcq-form");
+
+        renderQuestions(data.questions, mcqContainer);
+
+        form.addEventListener("submit", handleSubmit);
+
+        // Initialize Bootstrap tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.forEach((tooltipTriggerEl) => {
+            new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
