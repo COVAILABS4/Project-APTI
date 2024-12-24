@@ -7,19 +7,12 @@
     <title>MCQ Test Platform</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <!-- Link to Bootstrap Icons -->
     <style>
         .question-container {
             padding: 15px;
             background-color: #ffffff;
             margin-bottom: 20px;
-        }
-
-        .answer-section {
-            background-color: #ffffff;
-            border-radius: 5px;
-            padding: 10px;
-            margin-top: 10px;
+            width: 80%;
         }
 
         .action-buttons {
@@ -41,17 +34,98 @@
             border-top: 1px solid #ddd;
             margin: 20px 0;
         }
+
+        .result-container {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        .timer-calculator {
+            display: flex;
+            flex-direction: column;
+            width: 20%;
+            position: fixed;
+            right: 0;
+            top: 0;
+            padding: 10px;
+        }
+
+        .calculator {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .calculator input {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            text-align: right;
+        }
+
+        .calculator button {
+            width: 23%;
+            margin: 1%;
+            font-size: 18px;
+        }
+
+        .timer {
+            padding: 10px;
+            background-color: #e0ffe0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
     </style>
 </head>
 
 <body class="bg-white">
-    <div class="container mt-5">
-        <h1 class="text-center">MCQ Test</h1>
-        <form id="mcq-form" class="mt-4">
-            <div id="mcq-container"></div>
-            <button style="display: none;" type="submit" class="btn btn-primary mt-3">Submit</button>
-        </form>
-        <div id="result" class="mt-5"></div>
+    <div class="container mt-5 d-flex">
+        <div class="w-80">
+            <h1 class="text-center">MCQ Test</h1>
+            <form id="mcq-form" class="mt-4">
+                <div id="mcq-container"></div>
+                <button id="submit-button" type="submit" class="btn btn-primary mt-3">Submit</button>
+            </form>
+            <div id="result" class="mt-5 result-container"></div>
+        </div>
+        <div class="timer-calculator">
+            <div class="timer">
+                <h4>Remaining Time</h4>
+                <p id="time-display" class="text-danger">15:00</p>
+            </div>
+            <div class="calculator">
+                <h5>Calculator</h5>
+                <input id="calc-screen" type="text" disabled>
+                <div>
+                    <button onclick="appendCalc('1')">1</button>
+                    <button onclick="appendCalc('2')">2</button>
+                    <button onclick="appendCalc('3')">3</button>
+                    <button onclick="appendCalc('+')">+</button>
+                </div>
+                <div>
+                    <button onclick="appendCalc('4')">4</button>
+                    <button onclick="appendCalc('5')">5</button>
+                    <button onclick="appendCalc('6')">6</button>
+                    <button onclick="appendCalc('-')">-</button>
+                </div>
+                <div>
+                    <button onclick="appendCalc('7')">7</button>
+                    <button onclick="appendCalc('8')">8</button>
+                    <button onclick="appendCalc('9')">9</button>
+                    <button onclick="appendCalc('*')">*</button>
+                </div>
+                <div>
+                    <button onclick="clearCalc()">C</button>
+                    <button onclick="appendCalc('0')">0</button>
+                    <button onclick="appendCalc('.')">.</button>
+                    <button onclick="appendCalc('/')">/</button>
+                </div>
+                <button onclick="calculate()" class="w-100">=</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -95,43 +169,13 @@
                             (option, i) => `
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="question-${index}" value="${i + 1}" id="question-${index}-option-${i}">
-                                    <label class="form-check-label" for="question-${index}-option-${i}">${option}</label>
+                                    <label class="form-check-label" for="question-${index}-option-${i}">${i + 1}) ${option}</label>
                                 </div>`
                         )
                         .join("")}
-                        
-                        <div id="answer-${index}" style="display: none;" class="answer-section mt-3" >
-                            <strong class="text-success" >Correct Answer:</strong> ${question.options[question.correct_option - 1]}<br>
-                            <strong class="text-success" >Explanation:</strong> ${question.explanation}
-                        </div>
-                        <div class="workspace border rounded p-3 bg-white mt-2" style="display: none;" id="workspace-${index}">
-                            <label class="text-success" for="workspace-text-${index}"><strong>Workspace:</strong></label>
-                            <textarea class="form-control mt-2" id="workspace-text-${index}" rows="3" placeholder="Write your thoughts here..."></textarea>
-                        </div>
-
-                        <div class="action-buttons">
-                            <!-- Using Bootstrap Icons -->
-                            <button type="button" class="btn btn-success btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Explanation" onclick="toggleAnswer(${index})">
-                                <i class="bi bi-info-circle text-white"></i> <!-- Info Icon -->
-                            </button>
-                            <button type="button" class="btn btn-success btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Workspace" onclick="toggleWorkspace(${index})">
-                                <i class="bi bi-pencil text-white"></i> <!-- Pencil Icon -->
-                            </button>
-                        </div>
-                    </div>
-                    <div class="separator"></div>`;
+                        <div class="separator"></div>`;
                 container.insertAdjacentHTML("beforeend", questionHtml);
             });
-        }
-
-        function toggleAnswer(index) {
-            const answerDiv = document.getElementById(`answer-${index}`);
-            answerDiv.style.display = answerDiv.style.display === "none" ? "block" : "none";
-        }
-
-        function toggleWorkspace(index) {
-            const workspaceDiv = document.getElementById(`workspace-${index}`);
-            workspaceDiv.style.display = workspaceDiv.style.display === "none" ? "block" : "none";
         }
 
         function evaluateAnswers(questions) {
@@ -165,44 +209,74 @@
             `;
         }
 
-        const startTime = new Date().toLocaleString();
+        function startTimer(duration, display) {
+            let timer = duration, minutes, seconds;
+            const interval = setInterval(() => {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
 
-        function handleSubmit(event) {
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + ":" + seconds;
+
+                if (timer === 300 || timer === 60) {
+                    alert(`Only ${timer / 60} minute(s) left!`);
+                }
+
+                if (--timer < 0) {
+                    clearInterval(interval);
+                    alert("Time's up! Submitting the test automatically.");
+                    document.getElementById("mcq-form").submit();
+                }
+            }, 1000);
+        }
+
+        const calcScreen = document.getElementById("calc-screen");
+        let calcExpression = "";
+
+        function appendCalc(value) {
+            calcExpression += value;
+            calcScreen.value = calcExpression;
+        }
+
+        function clearCalc() {
+            calcExpression = "";
+            calcScreen.value = "";
+        }
+
+        function calculate() {
+            try {
+                calcExpression = eval(calcExpression);
+                calcScreen.value = calcExpression;
+            } catch {
+                calcScreen.value = "Error";
+            }
+        }
+
+        const mcqContainer = document.getElementById("mcq-container");
+        const resultContainer = document.getElementById("result");
+        const form = document.getElementById("mcq-form");
+        const timerDisplay = document.getElementById("time-display");
+
+        renderQuestions(data.questions, mcqContainer);
+        form.addEventListener("submit", (event) => {
             event.preventDefault();
-
             const { score, report } = evaluateAnswers(data.questions);
-            const endTime = new Date().toLocaleString();
-
             const results = {
                 user_id: data.user_id,
                 topic_id: data.topic_id,
                 subtopic_id: data.subtopic_id,
                 title_id: data.title_id,
                 type: data.type,
-                start_at: startTime,
-                finished_at: endTime,
-                status: "completed",
                 score,
                 total_questions: data.questions.length,
                 report
             };
-
             displayResults(resultContainer, results);
-        }
-
-        const mcqContainer = document.getElementById("mcq-container");
-        const resultContainer = document.getElementById("result");
-        const form = document.getElementById("mcq-form");
-
-        renderQuestions(data.questions, mcqContainer);
-
-        form.addEventListener("submit", handleSubmit);
-
-        // Initialize Bootstrap tooltips
-        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        tooltipTriggerList.forEach((tooltipTriggerEl) => {
-            new bootstrap.Tooltip(tooltipTriggerEl);
         });
+
+        startTimer(15 * 60, timerDisplay);
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
