@@ -1,0 +1,210 @@
+<style>
+    .question-container {
+        padding: 20px;
+        background-color: #ffffff;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        width: 80%;
+    }
+
+   
+    .timer-controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+        background-color: #fff;
+        margin: 15% auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 80%;
+        max-width: 500px;
+    }
+</style>
+
+
+.timer-calculator {
+background-color: #f8f9fa;
+border-radius: 8px;
+padding: 15px;
+width: 320px;
+position: fixed;
+right: 20px;
+top: 20px;
+}
+
+.timer {
+background-color: #e8f5e9;
+border-radius: 6px;
+padding: 15px;
+margin-bottom: 15px;
+text-align: center;
+}
+
+#time-display {
+font-size: 24px;
+font-weight: bold;
+margin: 10px 0;
+color: #2e7d32;
+}
+
+.calculator {
+background-color: #fff;
+border-radius: 6px;
+padding: 15px;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.calculator input {
+width: 100%;
+padding: 10px;
+margin-bottom: 10px;
+font-size: 18px;
+text-align: right;
+border: 1px solid #dee2e6;
+border-radius: 4px;
+background-color: #f8f9fa;
+}
+
+.calculator button {
+width: 20%;
+margin: 1%;
+font-size: 18px;
+border-radius: 4px;
+border: 1px solid #dee2e6;
+background-color: #fff;
+transition: all 0.2s;
+}
+
+.calculator button:hover {
+background-color: #e9ecef;
+}
+
+.calculator button.operator {
+background-color: #e3f2fd;
+}
+
+.calculator button.equals {
+background-color: #1976d2;
+color: white;
+width: 100%;
+margin-top: 5px;
+}
+
+
+
+<div class="calculator"><input id="calc-screen" value="0" type="text" readonly>
+    <div class="calc-buttons"><button onclick="appendCalc('7')">7</button><button
+            onclick="appendCalc('8')">8</button><button onclick="appendCalc('9')">9</button><button
+            onclick="appendCalc('+')" class="operator">+</button><button onclick="appendCalc('4')">4</button><button
+            onclick="appendCalc('5')">5</button><button onclick="appendCalc('6')">6</button><button
+            onclick="appendCalc('-')" class="operator">-</button><button onclick="appendCalc('1')">1</button><button
+            onclick="appendCalc('2')">2</button><button onclick="appendCalc('3')">3</button><button
+            onclick="appendCalc('*')" class="operator">×</button><button onclick="clearCalc()">C</button><button
+            onclick="appendCalc('0')">0</button><button onclick="appendCalc('.')">.</button><button
+            onclick="appendCalc('/')" class="operator">÷</button><button onclick="calculate()" class="equals">=</button>
+    </div>
+</div>
+
+
+
+// Calculator functions
+const calcScreen = document.getElementById('calc-screen');
+let calcExpression = '';
+
+function appendCalc(value) {
+if (calcScreen.value === 'Error') {
+clearCalc();
+}
+calcExpression += value;
+calcScreen.value = calcExpression;
+}
+
+function clearCalc() {
+calcExpression = '';
+calcScreen.value = '';
+}
+
+function calculate() {
+try {
+// Sanitize the expression
+if (!/^[0-9+\-*/.() ]+$/.test(calcExpression)) {
+throw new Error('Invalid expression');
+}
+const result = Function('"use strict";return (' + calcExpression + ')')();
+if (isFinite(result)) {
+calcExpression = result.toString();
+calcScreen.value = calcExpression;
+} else {
+throw new Error('Invalid result');
+}
+} catch (error) {
+calcScreen.value = 'Error';
+calcExpression = '';
+}
+}
+
+// Modal functions
+function showConfirmationModal(title, message, onConfirm) {
+const modal = document.getElementById('confirmModal');
+document.getElementById('modal-title').textContent = title;
+document.getElementById('modal-message').textContent = message;
+document.getElementById('modal-confirm').onclick = () => {
+onConfirm();
+closeModal();
+};
+modal.style.display = 'block';
+}
+
+function closeModal() {
+document.getElementById('confirmModal').style.display = 'none';
+}
+
+// Event Listeners
+document.getElementById('pause-resume').addEventListener('click', () => {
+isPaused = !isPaused;
+const button = document.getElementById('pause-resume');
+button.textContent = isPaused ? 'Resume' : 'Pause';
+button.classList.toggle('btn-outline-primary');
+button.classList.toggle('btn-primary');
+});
+
+document.getElementById('restart').addEventListener('click', () => {
+showConfirmationModal(
+'Restart Test',
+'Are you sure you want to restart the test? All your answers will be cleared.',
+() => {
+remainingTime = 15 * 60;
+isPaused = false;
+document.getElementById('pause-resume').textContent = 'Pause';
+document.getElementById('mcq-form').reset();
+startTimer();
+}
+);
+});
+
+document.getElementById('mcq-form').addEventListener('submit', (event) => {
+event.preventDefault();
+showConfirmationModal(
+'Submit Test',
+'Are you sure you want to submit your test?',
+() => {
+clearInterval(timerInterval);
+const results = evaluateAnswers(data.questions);
+displayResults(results);
+}
+);
+});
