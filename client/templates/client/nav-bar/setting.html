@@ -60,12 +60,31 @@
         #cancelButton:hover {
             background: #868e96;
         }
+
+        .breadcrumb .highlight {
+            text-decoration: none;
+            color: #28a745;
+            cursor: pointer;
+        }
+
+        .breadcrumb .highlight:hover {
+            text-decoration: underline;
+
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 
 <body>
-    <div class="container mt-5">
+    <div class="container my-4">
+
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item highlight" id="bc-home">Home</li>
+                <li class="breadcrumb-item active">Setting</li>
+            </ol>
+        </nav>
         <div class="text-center mb-4">
             <h1 class="text-primary">My Profile</h1>
             <!-- <p class="text-secondary">Manage your profile information and keep it up-to-date.</p> -->
@@ -113,6 +132,16 @@
             </form>
         </div>
     </div>
+
+    <script>
+
+        var bc_home = document.getElementById('bc-home');
+
+
+        bc_home.addEventListener('click', () => {
+            window.history.go(-1);
+        })
+    </script>
 
     <script>
         const user_id = '{{user_id}}'; // Replace with dynamic user ID

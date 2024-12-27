@@ -12,17 +12,46 @@
         .cell {
             cursor: pointer;
         }
+
+        .breadcrumb .highlight {
+            text-decoration: none;
+            color: #28a745;
+            cursor: pointer;
+        }
+
+        .breadcrumb .highlight:hover {
+            text-decoration: underline;
+
+        }
     </style>
 </head>
 
 <body>
-    <div class="container mt-5">
+    <div class="container mt-4">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item highlight" id="bc-home">Home</li>
+                <li class="breadcrumb-item active">History</li>
+            </ol>
+        </nav>
+
+
+        <script>
+
+            var bc_home = document.getElementById('bc-home');
+
+
+            bc_home.addEventListener('click', () => {
+                window.history.go(-1);
+            })
+        </script>
         <h1 class="text-center">Test History</h1>
         <table class="table table-bordered table-striped mt-4">
             <thead class="table-dark">
                 <tr>
                     <th>S.No</th>
-                    <th>Title ID</th>
+                    <th>Title</th>
                     <th>Start Time</th>
                     <th>End Time</th>
                     <th>Total Questions</th>
@@ -61,7 +90,7 @@
                     const row = `
                     <tr class="cell" onclick="handleRowClick('${user_id}', '${test.topic_id}','${test.subtopic_id}','${test.title_id}','${test.test_id}')">
                         <td>${index + 1}</td>
-                        <td>${test.title_id}</td>
+                        <td>${test.title}</td>
                         <td>${test.start_at}</td>
                         <td>${test.finished_at}</td>
                         <td>${test.total_questions}</td>

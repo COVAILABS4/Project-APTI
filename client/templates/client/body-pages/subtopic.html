@@ -42,11 +42,30 @@
             text-decoration: underline;
             cursor: pointer;
         }
+
+        .breadcrumb .highlight {
+            text-decoration: none;
+            color: #28a745;
+            cursor: pointer;
+        }
+
+        .breadcrumb .highlight:hover {
+            text-decoration: underline;
+
+        }
     </style>
 </head>
 
 <body>
     <div class="container my-4">
+
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item highlight" id="bc-home">Home</li>
+                <li class="breadcrumb-item" id="bc-topic">All Tests</li>
+            </ol>
+        </nav>
 
         <!-- Search Filter -->
         <div class="row mb-4">
@@ -62,10 +81,49 @@
         </div>
     </div>
 
+    <script>
+
+
+        const apiBaseUrl = "http://localhost:4000";
+
+
+        const uid = '{{ user_id }}';
+        const top_id = '{{topic_id}}'
+        var bc_home = document.getElementById('bc-home');
+        var bc_topic = document.getElementById('bc-topic');
+
+
+        bc_home.addEventListener('click', () => {
+            window.history.go(-1);
+        })
+
+
+
+
+        // Function to Load Topic Name
+        async function loadTopicName() {
+            try {
+                const response = await fetch(`${apiBaseUrl}/topic/${top_id}`);
+                const topic = await response.json();
+                if (topic && topic.name) {
+                    bc_topic.textContent = topic.name;
+                } else {
+                    console.error("Topic not found");
+                }
+            } catch (error) {
+                console.error("Error fetching topic:", error);
+            }
+        }
+
+        loadTopicName();
+
+    </script>
+
+
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const apiBaseUrl = "http://localhost:4000";
+
         const user_id = '{{ user_id }}';
         const topic_id = '{{ topic_id }}';
 

@@ -121,11 +121,32 @@
             background-color: #218838;
             cursor: pointer;
         }
+
+        .breadcrumb .highlight {
+            text-decoration: none;
+            color: #28a745;
+            cursor: pointer;
+        }
+
+        .breadcrumb .highlight:hover {
+            text-decoration: underline;
+
+        }
     </style>
 </head>
 
 <body class="bg-white">
     <div class="container mt-5">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item highlight" id="bc-home">Home</li>
+                <li class="breadcrumb-item highlight" id="bc-topic">All Tests</li>
+                <li class="breadcrumb-item highlight" id="bc-subtopic">All Tests</li>
+                <li class="breadcrumb-item highlight" id="bc_practice">Practice</li>
+                <li class="breadcrumb-item active" id="bc_title">title</li>
+            </ol>
+        </nav>
         <h1 class="text-center">Practice Questions</h1>
         <form id="mcq-form" class="mt-4">
             <div id="mcq-container"></div>
@@ -164,6 +185,104 @@
     <button class="btn-floating" onclick="toggleCalculator()">
         <i class="bi bi-calculator"></i>
     </button>
+
+    <script>
+
+        const apiBaseUrl = "http://localhost:4000"; // Replace with your actual API base URL
+
+        const uid = '{{ user_id }}';
+        const top_id = '{{topic_id}}'
+        const subtop_id = '{{subtopic_id}}'
+        const _type = "Practices"
+        const _title_id = '{{title_id}}'
+
+        // var header = "NETWORL";
+
+        //     console.log(uid, top_id, subtop_id)
+        var bc_home = document.getElementById('bc-home');
+        var bc_create = document.getElementById('bc-create');
+        var bc_topic = document.getElementById('bc-topic');
+        var bc_subtopic = document.getElementById('bc-subtopic');
+        var bc_practice = document.getElementById('bc_practice');
+        var bc_tilte = document.getElementById('bc_tilte');
+
+
+        bc_home.addEventListener('click', () => {
+            window.location.href = '/user/3/' + uid
+        })
+
+
+        bc_topic.addEventListener('click', () => {
+
+            //  alert("SW")
+            window.location.href = `/user/3/${uid}/${top_id}`
+        })
+        bc_subtopic.addEventListener('click', () => {
+
+            //  alert("SW")
+            window.location.href = `/user/3/${uid}/${top_id}`
+
+            // window.location.href = `/admins/1/${uid}/new/content/${top_id}/subtopics`
+        })
+
+
+        bc_practice.addEventListener('click', () => {
+
+            //  alert("SW")
+            window.history.go(-1);
+            // window.location.href = `/admins/1/${uid}/new/content/${top_id}/subtopics`
+        })
+
+
+        // Function to Load Topic Name
+        async function loadTopicName() {
+            try {
+                const response = await fetch(`${apiBaseUrl}/topic/${top_id}`);
+                const topic = await response.json();
+                if (topic && topic.name) {
+                    bc_topic.textContent = topic.name;
+                } else {
+                    console.error("Topic not found");
+                }
+            } catch (error) {
+                console.error("Error fetching topic:", error);
+            }
+        }
+        async function loadSubtopicNames() {
+            try {
+
+                // Fetch Subtopic Name
+                const subtopicResponse = await fetch(`${apiBaseUrl}/topics/${top_id}/subtopics/${subtop_id}`);
+                const subtopicData = await subtopicResponse.json();
+                bc_subtopic.textContent = subtopicData.name;
+
+
+
+            } catch (error) {
+                console.error('Error loading topic or subtopic names:', error);
+            }
+        }
+
+        async function loadTitleNames() {
+            try {
+
+                // Fetch Subtopic Name
+                const titleResponse = await fetch(`${apiBaseUrl}/get-title?topic_id=${top_id}&subtopic_id=${subtop_id}&utils_type=${_type}&title_id=${_title_id}`);
+                const titleData = await titleResponse.json();
+
+
+                bc_title.textContent = titleData.title;
+            } catch (error) {
+                console.error('Error loading topic or subtopic names:', error);
+            }
+        }
+
+        loadTopicName();
+        loadSubtopicNames();
+        loadTitleNames();
+
+    </script>
+
 
     <script>
         function toggleCalculator() {
@@ -224,12 +343,12 @@
                             </div>
                         `).join('')}
                         <div id="answer-${i}" style="display: none;" class="answer-section mt-3">
-                            <strong class="text-success">Correct Answer:</strong> ${question.options[question.correct_option - 1]}<br>
+                            <strong class="text-success">Correct Answer:</strong> ${question.correct_option}) ${question.options[question.correct_option - 1]}<br>
                             <strong class="text-success">Explanation:</strong> ${question.explanation}
                         </div>
                         <div class="workspace border rounded p-3 bg-white mt-2" style="display: none;" id="workspace-${i}">
                             <label class="text-success" for="workspace-text-${i}"><strong>Workspace:</strong></label>
-                            <textarea class="form-control mt-2" id="workspace-text-${i}" rows="3" placeholder="Write your thoughts here..."></textarea>
+                            <textarea class="form-control mt-2" id="workspace-text-${i}" rows="3" placeholder="..."></textarea>
                         </div>
                         <div class="action-buttons">
                             <button type="button" class="btn btn-success btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Explanation" onclick="toggleAnswer(${i}, ${question.correct_option})">
@@ -275,6 +394,12 @@
             let pageStart = currentPage - 2 < 1 ? 1 : currentPage - 2;
             let pageEnd = currentPage + 2 > totalPages ? totalPages : currentPage + 2;
 
+            // Previous button
+            paginationHtml.push(`
+                <li class="page-item">
+                    <p class="page-link" style="cursor : pointer" onclick="goToPagePrompt()">GO</p>
+                </li>
+            `);
             // Previous button
             paginationHtml.push(`
                 <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">

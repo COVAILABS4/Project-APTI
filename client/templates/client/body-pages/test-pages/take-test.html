@@ -281,12 +281,17 @@
         }
 
         // Function to generate result data
-        function generateResultData(results) {
+        async function generateResultData(results) {
             const endTime = new Date();
+            // Fetch Subtopic Name
+            const titleResponse = await fetch(`${apiUrl}/get-title?topic_id=${topicId}&subtopic_id=${subtopicId}&utils_type=Test&title_id=${title_id}`);
+            const titleData = await titleResponse.json();
+
             return {
                 user_id: userId,
                 topic_id: topicId,
                 subtopic_id: subtopicId,
+                title: titleData.title,
                 title_id: title_id,
                 type: utils,
                 start_at: startTime.toLocaleString(),
@@ -298,7 +303,7 @@
             };
         }
 
-        function displayResults(results) {
+        async function displayResults(results) {
             const container = document.getElementById('result');
             container.innerHTML = `
         <div class="alert alert-info">
@@ -309,7 +314,12 @@
         </div>`;
 
             // Prepare data to send to the endpoint
-            const resultData = generateResultData(results);
+            const resultData = await generateResultData(results);
+
+
+            console.log(resultData)
+
+
 
             // Send data to the /save-result endpoint
             fetch(apiUrl + '/save-result', {
