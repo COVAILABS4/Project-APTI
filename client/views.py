@@ -454,6 +454,47 @@ def user_practice_take_test(request, user_id, role, topic_id, subtopic_id, title
 
 
 @validate_session
+def user_test_take_test(request, user_id, role, topic_id, subtopic_id, title_id):
+
+    print("LOGINSSS")
+    user_id = request.session.get("user_id", "Unknown")
+    name = request.session.get("name", "Guest")
+    role = request.session.get("role", "Unknown")
+
+    context = {
+        "user_id": user_id,
+        "name": name,
+        "role": role,
+        "topic_id": topic_id,
+        "subtopic_id": subtopic_id,
+        "title_id": title_id,
+    }
+    return render(request, "client/body-pages/test-pages/take-test.html", context)
+
+
+@validate_session
+def user_test_take_test_res(
+    request, user_id, role, topic_id, subtopic_id, title_id, test_id
+):
+
+    print("LOGINSSS")
+    user_id = request.session.get("user_id", "Unknown")
+    name = request.session.get("name", "Guest")
+    role = request.session.get("role", "Unknown")
+
+    context = {
+        "user_id": user_id,
+        "name": name,
+        "role": role,
+        "topic_id": topic_id,
+        "subtopic_id": subtopic_id,
+        "title_id": title_id,
+        "test_id": test_id,
+    }
+    return render(request, "client/body-pages/test-pages/res.html", context)
+
+
+@validate_session
 def user_content(request, user_id, role):
 
     context = {"user_id": user_id}

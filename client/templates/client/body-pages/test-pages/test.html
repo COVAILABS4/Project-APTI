@@ -4,12 +4,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Dynamic Titles</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        .title-item {
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .title-item:hover {
+            transform: translateY(-3px);
+            background-color: #f8f9fa;
+        }
+
+        .title-item .folder-icon {
+            font-size: 24px;
+            color: #ffc107;
+            margin-right: 10px;
+        }
+
+        .titles-container {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 
 <body>
-    topic_id : {{topic_id}}
-    subtopic_id : {{subtopic_id}}
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="h4">Test Questions</h1>
+            <input id="filter-input" type="text" class="form-control w-25" placeholder="Filter titles..."
+                oninput="filterTitles()">
+        </div>
+
+        <div class="titles-container row mt-4" id="titlesContainer">
+            <!-- Titles will be dynamically injected here -->
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="testModal" tabindex="-1" aria-labelledby="testModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-success">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="testModalLabel">Test Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-success text-center" role="alert">
+                        <strong>Prepare to Ace Your Test!</strong>
+                    </div>
+                    <p class="mb-2">
+                        <strong class="text-success">Number of Questions:</strong>
+                        <span id="numQuestions" class="fw-bold"></span>
+                    </p>
+                    <p class="mb-2">
+                        <strong class="text-success">Time:</strong>
+                        <span class="fw-bold">15 minutes</span>
+                    </p>
+                    <p class="mb-2">
+                        <strong class="text-success">Number of Attempts:</strong>
+                        <span id="numAttempts" class="fw-bold"></span>
+                    </p>
+                    <div id="attemptsWarning" class="alert alert-danger mt-3 text-center" style="display: none;">
+                        <i class="bi bi-exclamation-triangle-fill"></i> You have already exceeded the attempt limit.
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Close
+                    </button>
+                    <button id="startTestButton" type="button" class="btn btn-success" onclick="startTest()" disabled>
+                        <i class="bi bi-play-circle"></i> Start Test
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const apiBaseUrl = "http://localhost:4000"; // Replace with your actual API base URL
+
+        const user_id = '{{user_id}}';
+        const topic_id = "{{topic_id}}"; // Replace dynamically if using a template engine
+        const subtopic_id = "{{subtopic_id}}"; // Replace dynamically if using a template engine
+        const utils_type = "Test"; // Hardcoded utils_type as Test
+        let titles = []; // Store all titles globally
+        let selectedTitleId = null; // Store the currently selected title ID
+
+        async function fetchTitles() {
+            try {
+                const response = await fetch(`${apiBaseUrl}/title?topic_id=${topic_id}&subtopic_id=${subtopic_id}&utils_type=${utils_type}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    titles = data;
+                    renderTitles(titles);
+                } else {
+                    console.error("Error fetching titles:", data.error || "Unknown error");
+                }
+            } catch (error) {
+                console.error("Error fetching titles:", error);
+            }
+        }
+
+        function renderTitles(filteredTitles) {
+            const container = document.getElementById("titlesContainer");
+            container.innerHTML = "";
+
+            if (filteredTitles.length === 0) {
+                container.innerHTML = `<p class="text-muted">No titles available.</p>`;
+                return;
+            }
+
+            filteredTitles.forEach(({ title, title_id }) => {
+                const colDiv = document.createElement("div");
+                colDiv.classList.add("col-md-4", "mb-4");
+
+                colDiv.innerHTML = `
+                    <div onclick='takeTest("${title}" , ${title_id})' class="title-item">
+                        <i class="bi bi-folder-fill folder-icon"></i>
+                        <span>${title}</span>
+                    </div>
+                `;
+
+                container.appendChild(colDiv);
+            });
+        }
+
+        function filterTitles() {
+            const filterValue = document.getElementById("filter-input").value.toLowerCase();
+            const filteredTitles = titles.filter(({ title }) => title.toLowerCase().includes(filterValue));
+            renderTitles(filteredTitles);
+        }
+
+        async function takeTest(title, titleId) {
+            selectedTitleId = titleId;
+            try {
+                const response1 = await fetch(`${apiBaseUrl}/attempts/${user_id}/${titleId}`);
+                const response2 = await fetch(`${apiBaseUrl}/api/questions/count?topic_id=${topic_id}&subtopic_id=${subtopic_id}&title_id=${titleId}&util_type=Test`);
+                const data1 = await response1.json();
+                const data2 = await response2.json();
+
+                console.log(data1, data2)
+
+                if (response1.ok && response2.ok) {
+                    document.getElementById("testModalLabel").innerText = title;
+                    document.getElementById("numAttempts").innerText = data1.attempts;
+                    document.getElementById("numQuestions").innerText = data2.question_count;
+
+                    if (data1.attempts > 0) {
+                        document.getElementById("attemptsWarning").style.display = "block";
+                        document.getElementById("startTestButton").disabled = true;
+                    } else {
+                        document.getElementById("attemptsWarning").style.display = "none";
+                        document.getElementById("startTestButton").disabled = false;
+                    }
+
+                    const modal = new bootstrap.Modal(document.getElementById("testModal"));
+                    modal.show();
+                } else {
+                    console.error("Error fetching test info:", data.error || "Unknown error");
+                }
+            } catch (error) {
+                console.error("Error fetching test info:", error);
+            }
+        }
+
+        function startTest() {
+            if (selectedTitleId) {
+                const url = `/user/3/${user_id}/${topic_id}/${subtopic_id}/test/${selectedTitleId}`;
+
+                window.open(url, '_blank');
+
+
+                window.location.reload()
+            }
+        }
+
+
+        document.addEventListener("DOMContentLoaded", fetchTitles);
+    </script>
 </body>
 
 </html>

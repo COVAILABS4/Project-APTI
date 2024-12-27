@@ -47,6 +47,16 @@ urlpatterns = [
         views.user_test,
         name="user_test",
     ),
+    path(
+        "<str:role>/3/<str:user_id>/<str:topic_id>/<str:subtopic_id>/test/<str:title_id>",
+        views.user_test_take_test,
+        name="user_test_take_test",
+    ),
+    path(
+        "<str:role>/3/<str:user_id>/<str:topic_id>/<str:subtopic_id>/test/<str:title_id>/<str:test_id>",
+        views.user_test_take_test_res,
+        name="user_test_take_test_res",
+    ),
     # ------------------------------
     path("<str:role>/3/register", views.user_register, name="user-register"),
     path(

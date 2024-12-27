@@ -182,55 +182,39 @@
     </div>
 
     <script>
-        const resultData = {
-            "user_id": "1212121212",
-            "topic_id": "12321",
-            "subtopic_id": "4545456",
-            "title_id": "778166280",
-            "type": "Practices",
-            "start_at": "24/12/2024, 4:19:37 pm",
-            "finished_at": "24/12/2024, 4:21:17 pm",
-            "status": "completed",
-            "score": 1,
-            "total_questions": 2,
-            "report": [
-                {
-                    "question_number": 1,
-                    "correct_option": 4,
-                    "selected_option": 4,
-                    "is_correct": true
-                },
-                {
-                    "question_number": 2,
-                    "correct_option": 1,
-                    "selected_option": 0,
-                    "is_correct": false
-                }
-            ]
-        };
+        const apiUrl = 'http://localhost:4000';
 
-        const data = {
-            "questions": [
-                {
-                    "question": "A can do a work in 15 days and B in 20 days. If they work on it together for 4 days, then the fraction of the work that is left is:",
-                    "options": ["1/4", "1/10", "7/15", "8/15"],
-                    "correct_option": 4,
-                    "explanation": "A's 1 day's work = 1/15, B's 1 day's work = 1/20. Their combined 1 day's work is 7/60. After 4 days, they complete 7/15 of the work. Remaining work = 1 - 7/15 = 8/15."
-                },
-                {
-                    "question": "What is LED?",
-                    "options": [
-                        "Light Emitting Diode",
-                        "Low Energy Device",
-                        "Light Energy Device",
-                        "Linear Energy Diode"
-                    ],
-                    "correct_option": 1,
-                    "explanation": "An LED is a semiconductor device that emits light when an electric current passes through it."
-                }
-            ]
-        };
+        // Use dynamic variables for the URL params
+        const userId = "{{user_id}}";
+        const topicId = "{{topic_id}}";
+        const subtopicId = "{{subtopic_id}}";
+        const title_id = "{{title_id}}";
+        const test_id = "{{test_id}}";
+        const utils = "Test";
 
+
+        // Function to fetch question data
+        async function fetchQuestions() {
+            const questionsUrl = `${apiUrl}/questions/${title_id}?topic_id=${topicId}&subtopic_id=${subtopicId}&utils=${utils}`;
+            const response = await fetch(questionsUrl);
+            const data = await response.json();
+
+            console.log(data)
+            return data;
+        }
+
+        // Function to fetch result data
+        async function fetchResults() {
+            const resultUrl = `${apiUrl}/test-history/${userId}/${test_id}`;
+            const response = await fetch(resultUrl);
+            const resultData = await response.json();
+
+            console.log(resultData)
+
+            return resultData;
+        }
+
+        // Function to render results
         function renderResults(resultData, data) {
             let mcqContainer = document.getElementById("mcq-container");
 
@@ -287,6 +271,7 @@
             animatePercentage(percentage);
         }
 
+        // Function to animate percentage
         function animatePercentage(targetPercentage) {
             const progressCircle = document.querySelector('.progress-circle');
             const percentageText = document.getElementById('percentage');
@@ -311,7 +296,19 @@
             }, animationSpeed);
         }
 
-        renderResults(resultData, data);
+        // Fetch data and render results
+        async function fetchDataAndRender() {
+            try {
+                const questionData = await fetchQuestions();
+                const resultData = await fetchResults();
+                renderResults(resultData, questionData);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        // Call the function to fetch and render data
+        fetchDataAndRender();
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
