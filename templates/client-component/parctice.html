@@ -319,7 +319,7 @@
         }
 
         // Fetch data from the API
-        fetch(`http://localhost:4000/questions/778166280?topic_id=${topicId}&subtopic_id=${subtopicId}&utils=${utils}`)
+        fetch(`http://127.0.0.1:5000/questions/778166280?topic_id=${topicId}&subtopic_id=${subtopicId}&utils=${utils}`)
             .then(response => response.json())
             .then(fetchedData => {
                 data = fetchedData;

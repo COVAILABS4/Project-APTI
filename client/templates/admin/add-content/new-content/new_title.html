@@ -450,7 +450,7 @@
             // window.location.href = `/admins/1/${uid}/new/content/${top_id}/subtopics`
         })
 
-        apiBaseUrl = "http://localhost:4000";
+        apiBaseUrl = "http://127.0.0.1:5000";
 
         // Function to Load Topic Name
         async function loadTopicName() {
@@ -484,7 +484,7 @@
 
     </script>
     <script>
-        const apiBaseUrl = "http://localhost:4000";
+        const apiBaseUrl = "http://127.0.0.1:5000";
         const topic_id = '{{topic_id}}';
         const subtopic_id = '{{subtopic_id}}';
         const userId = '{{user_id}}';
@@ -596,7 +596,7 @@
         const logoutButton = document.getElementById('profile-logout');
         const profileClose = document.getElementById('profile-close');
 
-        const ip = "http://localhost:4000";
+        const ip = "http://127.0.0.1:5000";
 
         // Fetch user data from API
         fetch(`${ip}/api/users/${user_id}`)

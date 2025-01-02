@@ -408,7 +408,7 @@
     </script>
 
     <script>
-        const apiBaseUrl = "http://localhost:4000";
+        const apiBaseUrl = "http://127.0.0.1:5000";
 
         async function fetchSubadmins() {
             const response = await fetch(`${apiBaseUrl}/users?role=subadmin`);
@@ -502,7 +502,7 @@
         const logoutButton = document.getElementById('profile-logout');
         const profileClose = document.getElementById('profile-close');
 
-        const ip = "http://localhost:4000";
+        const ip = "http://127.0.0.1:5000";
 
         // Fetch user data from API
         fetch(`${ip}/api/users/${user_id}`)
