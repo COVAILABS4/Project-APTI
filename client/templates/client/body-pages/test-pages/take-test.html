@@ -322,7 +322,7 @@
 
 
             // Send data to the /save-result endpoint
-            fetch(apiUrl + '/save-result', {
+            await fetch(apiUrl + '/save-result', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -338,7 +338,6 @@
                 .then(data => {
                     //console.log('Result ID:', data.testID); // Log the result ID
 
-                    // Open a new tab with Google
                     window.open(`/user/3/${userId}/${topicId}/${subtopicId}/test/${title_id}/${data.testID}`, '_blank');
 
                     // Close the current tab

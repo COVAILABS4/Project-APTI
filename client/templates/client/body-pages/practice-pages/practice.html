@@ -187,7 +187,7 @@
                 colDiv.classList.add("col-md-4", "mb-4");
 
                 colDiv.innerHTML = `
-                    <div onclick='takeTest(${title_id})' class="title-item">
+                    <div onclick='takeTest("${title_id}")' class="title-item">
                         <i class="bi bi-folder-fill folder-icon"></i>
                         <span>${title}</span>
                     </div>
@@ -207,6 +207,9 @@
 
         function takeTest(titleId) {
             // alert(titleId)
+
+
+            //   console.log(`/user/3/${user_id}/${topic_id}/${subtopic_id}/practice/${titleId}`)
             window.location.href = `/user/3/${user_id}/${topic_id}/${subtopic_id}/practice/${titleId}`
         }
 
