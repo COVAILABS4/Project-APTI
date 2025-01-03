@@ -246,7 +246,7 @@
 
         // Fetching user data based on user_id
         const user_id = '{{ user_id }}';  // Django Template Variable
-        const ip = "http://127.0.0.1:5000";
+        const ip = "/aapi3";
 
         // Fetch user data from API
         fetch(`${ip}/api/users/${user_id}`)

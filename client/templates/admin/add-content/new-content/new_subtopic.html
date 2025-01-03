@@ -469,7 +469,7 @@
             //  window.location.href = '/admins/1/' + uid + "/new/content"
         })
 
-        apiBaseUrl = "http://127.0.0.1:5000";
+        apiBaseUrl = "/aapi3";
 
         // Function to Load Topic Name
         async function loadTopicName() {
@@ -495,7 +495,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const topicId = '{{topic_id}}';
         const userId = '{{user_id}}'; // Replace with your user ID logic
-        const apiBaseUrl = "http://127.0.0.1:5000";
+        const apiBaseUrl = "/aapi3";
 
         // Load Topic Name and Subtopics on Page Load
         document.addEventListener("DOMContentLoaded", () => {
@@ -604,7 +604,7 @@
         const logoutButton = document.getElementById('profile-logout');
         const profileClose = document.getElementById('profile-close');
 
-        const ip = "http://127.0.0.1:5000";
+        const ip = "/aapi3";
 
         // Fetch user data from API
         fetch(`${ip}/api/users/${user_id}`)

@@ -451,7 +451,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
 
-        const apiBaseUrl = "http://127.0.0.1:5000"; // Replace with your actual API base URL
+        const apiBaseUrl = "/aapi3"; // Replace with your actual API base URL
 
         const uid = '{{ user_id }}';
         const top_id = '{{topic_id}}'
@@ -710,7 +710,7 @@
         }
 
 
-        const apiUrl = 'http://127.0.0.1:5000'
+        const apiUrl = '/aapi3'
         // Fetch data from the API
         fetch(`${apiUrl}/questions/${title_id}?topic_id=${topicId}&subtopic_id=${subtopicId}&utils=${utils}`)
             .then(response => response.json())
@@ -737,7 +737,7 @@
 
         // Fetching user data based on user_id
         const user_id = '{{ user_id }}';  // Django Template Variable
-        const ip = "http://127.0.0.1:5000";
+        const ip = "/aapi3";
 
         // Fetch user data from API
         fetch(`${ip}/api/users/${user_id}`)
@@ -778,7 +778,7 @@
         profileLogoutBtn.addEventListener('click', () => {
             if (confirm("Are you sure you want to logout?")) {
                 // Redirect to logout URL (modify as per your logout endpoint)
-                window.location.href = '/logout';
+                window.location.href = '/';
             }
         });
 

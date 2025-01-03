@@ -405,7 +405,7 @@
                 <script>
                     const user_id = '{{user_id}}'; // Replace with dynamic user ID
 
-                    const apiBaseUrl = "http://127.0.0.1:5000";
+                    const apiBaseUrl = "/aapi3";
 
                     const apiUrl = `${apiBaseUrl}/api/users/${user_id}`;
                     const updateApiUrl = `${apiBaseUrl}/api/users/${user_id}/update`;
@@ -497,7 +497,7 @@
         const logoutButton = document.getElementById('profile-logout');
         const profileClose = document.getElementById('profile-close');
 
-        const ip = "http://127.0.0.1:5000";
+        const ip = "/aapi3";
 
         // Fetch user data from API
         fetch(`${ip}/api/users/${user_id}`)

@@ -403,7 +403,7 @@
     <script>
         // Global Variables
         const userId = '{{ user_id }}'; // Simulating a logged-in user
-        const apiBaseUrl = "http://127.0.0.1:5000";
+        const apiBaseUrl = "/aapi3";
 
         // Load Topics on Page Load
         document.addEventListener("DOMContentLoaded", () => {
@@ -559,7 +559,7 @@
         const logoutButton = document.getElementById('profile-logout');
         const profileClose = document.getElementById('profile-close');
 
-        const ip = "http://127.0.0.1:5000";
+        const ip = "/aapi3";
 
         // Fetch user data from API
         fetch(`${ip}/api/users/${user_id}`)

@@ -433,7 +433,7 @@
             //window.location.href = `/subadmin/2/${uid}/edit/content/${top_id}/subtopics/${subtop_id}`
         })
 
-        apiBaseUrl = "http://127.0.0.1:5000";
+        apiBaseUrl = "/aapi3";
 
         // Function to Load Topic Name
         async function loadTopicName() {
@@ -487,7 +487,7 @@
         const subtopic_id = "{{subtopic_id}}" || "Default Subtopic ID";
         const type = "{{type}}" || "Practices";
         const title_id = "{{title_id}}" || "1";
-        const apiBaseUrl = "http://127.0.0.1:5000";
+        const apiBaseUrl = "/aapi3";
 
 
         async function fetchQuestions() {
@@ -614,7 +614,7 @@
         const logoutButton = document.getElementById('profile-logout');
         const profileClose = document.getElementById('profile-close');
 
-        const ip = "http://127.0.0.1:5000";
+        const ip = "/aapi3";
 
         // Fetch user data from API
         fetch(`${ip}/api/users/${user_id}`)

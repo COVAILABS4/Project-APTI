@@ -448,7 +448,7 @@
 
 
     <script>
-        const apiBaseUrl = "http://127.0.0.1:5000";
+        const apiBaseUrl = "/aapi3";
 
         async function fetchStats() {
             try {
@@ -510,7 +510,7 @@
         const logoutButton = document.getElementById('profile-logout');
         const profileClose = document.getElementById('profile-close');
 
-        const ip = "http://127.0.0.1:5000";
+        const ip = "/aapi3";
 
         // Fetch user data from API
         fetch(`${ip}/api/users/${user_id}`)

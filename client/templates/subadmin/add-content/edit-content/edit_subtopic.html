@@ -428,7 +428,7 @@
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 
     <script>
-        const apiBaseUrl = "http://127.0.0.1:5000";
+        const apiBaseUrl = "/aapi3";
         const topic_id = "{{topic_id}}";
         const user_id = "{{user_id}}";
 
@@ -670,7 +670,7 @@
         const logoutButton = document.getElementById('profile-logout');
         const profileClose = document.getElementById('profile-close');
 
-        const ip = "http://127.0.0.1:5000";
+        const ip = "/aapi3";
 
         // Fetch user data from API
         fetch(`${ip}/api/users/${user_id}`)
