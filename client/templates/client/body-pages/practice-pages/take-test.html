@@ -1,13 +1,173 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MCQ Test Platform</title>
+    <title>Layout</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <style>
+        body {
+            display: flex;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        #sidebar {
+            width: 300px;
+            /* Increased sidebar width */
+            background-color: #f8f9fa;
+            border-right: 1px solid #ddd;
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            transition: transform 0.3s ease;
+        }
+
+        #sidebar.hidden {
+            transform: translateX(-100%);
+        }
+
+        #main-content {
+            flex-grow: 1;
+            margin-left: 300px;
+            /* Adjusted for wider sidebar */
+            padding: 1rem;
+            transition: margin-left 0.3s ease;
+        }
+
+        #main-content.expanded {
+            margin-left: 0;
+        }
+
+        .navbar {
+            background-color: #fff;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            padding-left: 10px;
+        }
+
+        .navbar-toggler {
+            border: none;
+        }
+
+        .profile-menu {
+            position: absolute;
+            right: 1rem;
+            top: 100%;
+            background: white;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            display: none;
+            padding: 1rem;
+            width: 250px;
+        }
+
+        .profile-menu.active {
+            display: block;
+        }
+
+        .profile-menu .dropdown-item {
+            padding: 0.5rem 1rem;
+            color: #333;
+            text-align: center;
+        }
+
+        .profile-menu .dropdown-item img {
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-menu .btn {
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            /* Increased padding for spacing */
+            color: #333;
+            font-weight: 500;
+        }
+
+        .sidebar-item i {
+            margin-right: 1rem;
+        }
+
+        .sidebar-item:hover {
+            background-color: #e9ecef;
+            cursor: pointer;
+            text-decoration: underline;
+            /* Highlight with underline on hover */
+        }
+
+        .sidebar-logo {
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        .sidebar-logo img {
+            max-width: 80%;
+        }
+
+        .separator {
+            border-top: 1px solid #ddd;
+            margin: 1rem 0;
+        }
+
+        /* Profile Tooltip Style */
+        #profile-tooltip {
+            display: none;
+            position: absolute;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            width: 250px;
+            z-index: 1000;
+            top: 40px;
+            right: 0;
+        }
+
+        #profile-tooltip .d-flex {
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        #profile-tooltip img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        #profile-tooltip button {
+            width: 100%;
+        }
+
+        #profile-tooltip .btn-close {
+            border: none;
+        }
+
+
         .question-container {
             padding: 15px;
             background-color: #ffffff;
@@ -135,57 +295,160 @@
     </style>
 </head>
 
-<body class="bg-white">
-    <div class="container mt-5">
-        <!-- Breadcrumb -->
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item highlight" id="bc-home">Home</li>
-                <li class="breadcrumb-item highlight" id="bc-topic">All Tests</li>
-                <li class="breadcrumb-item highlight" id="bc-subtopic">All Tests</li>
-                <li class="breadcrumb-item highlight" id="bc_practice">Practice</li>
-                <li class="breadcrumb-item active" id="bc_title">title</li>
-            </ol>
-        </nav>
-        <h1 class="text-center">Practice Questions</h1>
-        <form id="mcq-form" class="mt-4">
-            <div id="mcq-container"></div>
-            <button style="display: none;" type="submit" class="btn btn-primary mt-3">Submit</button>
-        </form>
-        <div id="result" class="mt-5"></div>
-        <nav aria-label="Page navigation" class="mt-4">
-            <ul class="pagination justify-content-center" id="pagination"></ul>
-        </nav>
-    </div>
+<body>
 
-    <!-- Floating Calculator -->
-    <div id="floating-calculator" class="calculator">
-        <input type="text" id="screen" class="form-control screen" value="0" onkeydown="handleKeyboard(event)" />
-        <div class="row g-1">
-            <div class="col-3"><button class="btn btn-light" onclick="appendValue('7')">7</button></div>
-            <div class="col-3"><button class="btn btn-light" onclick="appendValue('8')">8</button></div>
-            <div class="col-3"><button class="btn btn-light" onclick="appendValue('9')">9</button></div>
-            <div class="col-3"><button class="btn btn-operation" onclick="appendValue('/')">/</button></div>
-            <div class="col-3"><button class="btn btn-light" onclick="appendValue('4')">4</button></div>
-            <div class="col-3"><button class="btn btn-light" onclick="appendValue('5')">5</button></div>
-            <div class="col-3"><button class="btn btn-light" onclick="appendValue('6')">6</button></div>
-            <div class="col-3"><button class="btn btn-operation" onclick="appendValue('*')">*</button></div>
-            <div class="col-3"><button class="btn btn-light" onclick="appendValue('1')">1</button></div>
-            <div class="col-3"><button class="btn btn-light" onclick="appendValue('2')">2</button></div>
-            <div class="col-3"><button class="btn btn-light" onclick="appendValue('3')">3</button></div>
-            <div class="col-3"><button class="btn btn-operation" onclick="appendValue('-')">-</button></div>
-            <div class="col-3"><button class="btn btn-light" onclick="appendValue('0')">0</button></div>
-            <div class="col-3"><button class="btn btn-clear" onclick="clearScreen()">C</button></div>
-            <div class="col-3"><button class="btn btn-equal" onclick="calculate()">=</button></div>
-            <div class="col-3"><button class="btn btn-operation" onclick="appendValue('+')">+</button></div>
+    <!-- Sidebar -->
+    <div id="sidebar">
+        <div class="sidebar-logo">
+            <img src="{% static 'icon.png' %}" alt="Logo"> <!-- Placeholder for logo -->
+        </div>
+        <div onclick="window.location.href = '/user/3/{{user_id}}/'" class="sidebar-item" title="Go to Home"><i
+                class="material-icons">home</i> Home</div>
+        <div class="separator"></div>
+        <div onclick="window.location.href = '/user/3/{{user_id}}/test_history'" class="sidebar-item"
+            title="View Test History"><i class="material-icons">history</i> Test History</div>
+        <div class="separator"></div>
+        <div onclick="window.location.href = '/user/3/{{user_id}}/contact_us'" class="sidebar-item" title="Contact Us">
+            <i class="material-icons">contact_mail</i> Contact Us
         </div>
     </div>
 
-    <!-- Floating Button -->
-    <button class="btn-floating" onclick="toggleCalculator()">
-        <i class="bi bi-calculator"></i>
-    </button>
+    <!-- Main Content -->
+    <div id="main-content">
+        <nav class="navbar navbar-light">
+            <div class="container-fluid">
+                <div class="d-flex ">
+                    <button class="navbar-toggler" type="button" id="toggleSidebar" title="Toggle Sidebar">
+                        <i class="material-icons">menu</i>
+                    </button>
+                    <a onclick="window.location.href = '/user/3/{{user_id}}/'" href="#" class="navbar-brand"
+                        title="Go to Dashboard">
+                        <i class="material-icons">dashboard</i> KRISHTEC
+                    </a>
+                </div>
+                <div class="dropdown">
+                    <button class="btn" id="profileBtn" title="View Profile">
+                        <i class="material-icons">account_circle</i>
+                    </button>
+                    <!-- Profile Tooltip -->
+                    <div id="profile-tooltip">
+                        <div class="d-flex">
+                            <div class="d-flex align-items-center">
+                                <img id="profile-image" src="{% static 'profile.png' %}" alt="Profile Image"
+                                    class="rounded-circle me-2">
 
+                                <div>
+                                    <p id="profile-name" class="mb-0 fw-bold">John Doe</p>
+                                    <p id="profile-email" class="mb-0 text-muted small">john.doe@example.com</p>
+                                </div>
+                            </div>
+                            <button id="profile-close" class="btn-close" aria-label="Close"></button>
+                        </div>
+                        <a onclick="window.location.href = '/user/3/{{user_id}}/setting'" href="#"
+                            id="profile-manage-account" class="btn btn-primary btn-sm w-100 mb-2">Manage Your
+                            Account</a>
+                        <button onclick="window.location.href = '/login'" id="profile-logout"
+                            class="btn btn-danger btn-sm w-100">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <div>
+            <div class="bg-white">
+                <div class="container mt-5">
+                    <!-- Breadcrumb -->
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item highlight" id="bc-home">Home</li>
+                            <li class="breadcrumb-item highlight" id="bc-topic">All Tests</li>
+                            <li class="breadcrumb-item highlight" id="bc-subtopic">All Tests</li>
+                            <li class="breadcrumb-item highlight" id="bc_practice">Practice</li>
+                            <li class="breadcrumb-item active" id="bc_title">title</li>
+                        </ol>
+                    </nav>
+                    <h1 class="text-center">Practice Questions</h1>
+                    <form id="mcq-form" class="mt-4">
+                        <div id="mcq-container"></div>
+                        <button style="display: none;" type="submit" class="btn btn-primary mt-3">Submit</button>
+                    </form>
+                    <div id="result" class="mt-5"></div>
+                    <nav aria-label="Page navigation" class="mt-4">
+                        <ul class="pagination justify-content-center" id="pagination"></ul>
+                    </nav>
+                </div>
+
+                <!-- Floating Calculator -->
+                <div id="floating-calculator" class="calculator"
+                    style="position: fixed; bottom: 20px; right: 20px; background-color: #1a1a1a; padding: 20px; border-radius: 15px; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); width: 280px; z-index: 999;">
+                    <input type="text" id="screen" class="form-control screen" value="0"
+                        style="width: 100%; height: 50px; text-align: right; background-color: #2d2d2d; color: #fff; border: none; border-radius: 10px; font-size: 1.5em; padding: 10px; margin-bottom: 15px;"
+                        onkeydown="handleKeyboard(event)" />
+                    <div class="row g-1">
+                        <div class="col-3"><button class="btn btn-light"
+                                style="font-size: 1.2em; padding: 15px; border-radius: 10px; margin: 5px; cursor: pointer; background-color: #2c3e50; color: #ecf0f1; border: none;"
+                                onclick="appendValue('7')">7</button></div>
+                        <div class="col-3"><button class="btn btn-light"
+                                style="font-size: 1.2em; padding: 15px; border-radius: 10px; margin: 5px; cursor: pointer; background-color: #2c3e50; color: #ecf0f1; border: none;"
+                                onclick="appendValue('8')">8</button></div>
+                        <div class="col-3"><button class="btn btn-light"
+                                style="font-size: 1.2em; padding: 15px; border-radius: 10px; margin: 5px; cursor: pointer; background-color: #2c3e50; color: #ecf0f1; border: none;"
+                                onclick="appendValue('9')">9</button></div>
+                        <div class="col-3"><button class="btn btn-warning"
+                                style="font-size: 1.2em; padding: 15px; border-radius: 10px; margin: 5px; cursor: pointer; background-color: #e67e22; color: #fff; border: none;"
+                                onclick="appendValue('/')">/</button></div>
+
+                        <div class="col-3"><button class="btn btn-light"
+                                style="font-size: 1.2em; padding: 15px; border-radius: 10px; margin: 5px; cursor: pointer; background-color: #2c3e50; color: #ecf0f1; border: none;"
+                                onclick="appendValue('4')">4</button></div>
+                        <div class="col-3"><button class="btn btn-light"
+                                style="font-size: 1.2em; padding: 15px; border-radius: 10px; margin: 5px; cursor: pointer; background-color: #2c3e50; color: #ecf0f1; border: none;"
+                                onclick="appendValue('5')">5</button></div>
+                        <div class="col-3"><button class="btn btn-light"
+                                style="font-size: 1.2em; padding: 15px; border-radius: 10px; margin: 5px; cursor: pointer; background-color: #2c3e50; color: #ecf0f1; border: none;"
+                                onclick="appendValue('6')">6</button></div>
+                        <div class="col-3"><button class="btn btn-warning"
+                                style="font-size: 1.2em; padding: 15px; border-radius: 10px; margin: 5px; cursor: pointer; background-color: #e67e22; color: #fff; border: none;"
+                                onclick="appendValue('*')">*</button></div>
+
+                        <div class="col-3"><button class="btn btn-light"
+                                style="font-size: 1.2em; padding: 15px; border-radius: 10px; margin: 5px; cursor: pointer; background-color: #2c3e50; color: #ecf0f1; border: none;"
+                                onclick="appendValue('1')">1</button></div>
+                        <div class="col-3"><button class="btn btn-light"
+                                style="font-size: 1.2em; padding: 15px; border-radius: 10px; margin: 5px; cursor: pointer; background-color: #2c3e50; color: #ecf0f1; border: none;"
+                                onclick="appendValue('2')">2</button></div>
+                        <div class="col-3"><button class="btn btn-light"
+                                style="font-size: 1.2em; padding: 15px; border-radius: 10px; margin: 5px; cursor: pointer; background-color: #2c3e50; color: #ecf0f1; border: none;"
+                                onclick="appendValue('3')">3</button></div>
+                        <div class="col-3"><button class="btn btn-warning"
+                                style="font-size: 1.2em; padding: 15px; border-radius: 10px; margin: 5px; cursor: pointer; background-color: #e67e22; color: #fff; border: none;"
+                                onclick="appendValue('-')">-</button></div>
+
+                        <div class="col-3"><button class="btn btn-light"
+                                style="font-size: 1.2em; padding: 15px; border-radius: 10px; margin: 5px; cursor: pointer; background-color: #2c3e50; color: #ecf0f1; border: none;"
+                                onclick="appendValue('0')">0</button></div>
+                        <div class="col-3"><button class="btn btn-danger"
+                                style="font-size: 1.2em; padding: 15px; border-radius: 10px; margin: 5px; cursor: pointer; background-color: #e74c3c; color: #fff; border: none;"
+                                onclick="clearScreen()">C</button></div>
+                        <div class="col-3"><button class="btn btn-success"
+                                style="font-size: 1.2em; padding: 15px; border-radius: 10px; margin: 5px; cursor: pointer; background-color: #27ae60; color: #fff; border: none;"
+                                onclick="calculate()">=</button></div>
+                        <div class="col-3"><button class="btn btn-warning"
+                                style="font-size: 1.2em; padding: 15px; border-radius: 10px; margin: 5px; cursor: pointer; background-color: #e67e22; color: #fff; border: none;"
+                                onclick="appendValue('+')">+</button></div>
+                    </div>
+                </div>
+
+
+                <!-- Floating Button -->
+                <button class="btn-floating" onclick="toggleCalculator()">
+                    <i class="bi bi-calculator"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
 
         const apiBaseUrl = "http://127.0.0.1:5000"; // Replace with your actual API base URL
@@ -462,6 +725,70 @@
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('main-content');
+        const toggleSidebar = document.getElementById('toggleSidebar');
+        const profileBtn = document.getElementById('profileBtn');
+        const profileTooltip = document.getElementById('profile-tooltip');
+        const profileCloseBtn = document.getElementById('profile-close');
+        const profileLogoutBtn = document.getElementById('profile-logout');
+
+        // Fetching user data based on user_id
+        const user_id = '{{ user_id }}';  // Django Template Variable
+        const ip = "http://127.0.0.1:5000";
+
+        // Fetch user data from API
+        fetch(`${ip}/api/users/${user_id}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.email) {
+                    document.getElementById('profile-email').textContent = data.email;
+                    document.getElementById('profile-name').textContent = data.name;
+
+                    // Optionally set profile image if available
+                    if (data.profileImage) {
+                        document.getElementById('profile-image').src = data.profileImage;
+                    }
+                }
+            })
+            .catch(err => {
+                console.error('Error fetching user data:', err);
+            });
+
+        // Toggle Sidebar visibility
+        toggleSidebar.addEventListener('click', () => {
+            sidebar.classList.toggle('hidden');
+            mainContent.classList.toggle('expanded');
+        });
+
+        // Toggle Profile Tooltip visibility
+        profileBtn.addEventListener('click', () => {
+            profileTooltip.style.display = profileTooltip.style.display === 'none' ? 'block' : 'none';
+        });
+
+        profileTooltip.style.display = 'none';
+        // Close Profile Tooltip
+        profileCloseBtn.addEventListener('click', () => {
+            profileTooltip.style.display = 'none';
+        });
+
+        // Logout confirmation
+        profileLogoutBtn.addEventListener('click', () => {
+            if (confirm("Are you sure you want to logout?")) {
+                // Redirect to logout URL (modify as per your logout endpoint)
+                window.location.href = '/logout';
+            }
+        });
+
+        // Close profile tooltip if clicked outside
+        document.addEventListener('click', (e) => {
+            if (!profileBtn.contains(e.target) && !profileTooltip.contains(e.target)) {
+                profileTooltip.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 
 </html>

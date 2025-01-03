@@ -284,7 +284,7 @@
         // Function to load topics from API
         async function loadTopics() {
             try {
-                const response = await fetch(`${apiBaseUrl}/user-topics?user_id=${user_id}`);
+                const response = await fetch(`${apiBaseUrl}/topic`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }

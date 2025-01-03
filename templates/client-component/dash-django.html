@@ -176,11 +176,15 @@
         <div class="sidebar-logo">
             <img src="{% static 'icon.png' %}" alt="Logo"> <!-- Placeholder for logo -->
         </div>
-        <div class="sidebar-item" title="Go to Home"><i class="material-icons">home</i> Home</div>
+        <div onclick="window.location.href = '/user/3/{{user_id}}/'" class="sidebar-item" title="Go to Home"><i
+                class="material-icons">home</i> Home</div>
         <div class="separator"></div>
-        <div class="sidebar-item" title="View Test History"><i class="material-icons">history</i> Test History</div>
+        <div onclick="window.location.href = '/user/3/{{user_id}}/test_history'" class="sidebar-item"
+            title="View Test History"><i class="material-icons">history</i> Test History</div>
         <div class="separator"></div>
-        <div class="sidebar-item" title="Contact Us"><i class="material-icons">contact_mail</i> Contact Us</div>
+        <div onclick="window.location.href = '/user/3/{{user_id}}/contact_us'" class="sidebar-item" title="Contact Us">
+            <i class="material-icons">contact_mail</i> Contact Us
+        </div>
     </div>
 
     <!-- Main Content -->
@@ -191,7 +195,8 @@
                     <button class="navbar-toggler" type="button" id="toggleSidebar" title="Toggle Sidebar">
                         <i class="material-icons">menu</i>
                     </button>
-                    <a href="#" class="navbar-brand" title="Go to Dashboard">
+                    <a onclick="window.location.href = '/user/3/{{user_id}}/'" href="#" class="navbar-brand"
+                        title="Go to Dashboard">
                         <i class="material-icons">dashboard</i> KRISHTEC
                     </a>
                 </div>
@@ -213,9 +218,11 @@
                             </div>
                             <button id="profile-close" class="btn-close" aria-label="Close"></button>
                         </div>
-                        <a href="#" id="profile-manage-account" class="btn btn-primary btn-sm w-100 mb-2">Manage Your
+                        <a onclick="window.location.href = '/user/3/{{user_id}}/setting'" href="#"
+                            id="profile-manage-account" class="btn btn-primary btn-sm w-100 mb-2">Manage Your
                             Account</a>
-                        <button id="profile-logout" class="btn btn-danger btn-sm w-100">Logout</button>
+                        <button onclick="window.location.href = '/login'" id="profile-logout"
+                            class="btn btn-danger btn-sm w-100">Logout</button>
                     </div>
                 </div>
             </div>
