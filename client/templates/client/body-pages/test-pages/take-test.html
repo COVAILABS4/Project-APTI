@@ -22,7 +22,7 @@
         }
 
         #sidebar {
-            width: 300px;
+            width: 180px;
             /* Increased sidebar width */
             background-color: #f8f9fa;
             border-right: 1px solid #ddd;
@@ -39,7 +39,7 @@
 
         #main-content {
             flex-grow: 1;
-            margin-left: 300px;
+            margin-left: 180px;
             /* Adjusted for wider sidebar */
             padding: 1rem;
             transition: margin-left 0.3s ease;
@@ -291,9 +291,62 @@
             margin-top: 5px;
         }
     </style>
+
+    <style>
+        .modal-backdrop {
+            opacity: 0.5;
+            /* Slightly transparent backdrop */
+        }
+
+        /* Center the loader on the screen */
+        .modal-dialog {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            border: none;
+            /* Remove the border around the modal */
+        }
+
+        /* Customize loader color to bright green and make it bigger */
+        .spinner-border {
+            color: #00FF00;
+            /* Bright Green color */
+            width: 5rem;
+            height: 5rem;
+            border-width: 0.25rem;
+        }
+
+        /* Remove any background color around the spinner */
+        .modal-content {
+            background: transparent;
+            /* Remove the background */
+            border: none;
+            /* Remove the border */
+        }
+    </style>
 </head>
 
 <body>
+
+    <!-- Loader Modal (Hidden initially) -->
+    <div class="modal fade" id="loaderModal" tabindex="-1" aria-labelledby="loaderModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <!-- Custom Bright Green and Larger Loader -->
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+
 
     <!-- Sidebar -->
     <div id="sidebar">
@@ -372,7 +425,7 @@
                 <div class="modal fade" id="attemptsExceededModal" tabindex="-1"
                     aria-labelledby="attemptsExceededModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
-                        <div class="modal-content">
+                        <div style="background: white;" class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="attemptsExceededModalLabel">Attempts Exceeded</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -416,7 +469,7 @@
                 </div>
 
                 <div id="confirmModal" class="modal">
-                    <div class="modal-content">
+                    <div style="background: white;" class="modal-content">
                         <h4 id="modal-title"></h4>
                         <p id="modal-message"></p>
                         <div class="d-flex justify-content-end gap-2">
@@ -485,18 +538,26 @@
                         submitButton.style.display = 'none'
 
                     }
+
+
                 })
-                .catch(error => console.error('Error fetching data:', error));
+                .catch(error => {
+                    console.error('Error fetching data:', error)
+
+
+                });
+
+
         }
 
         // Function to evaluate the answers
         function evaluateAnswers() {
             let score = 0;
             const report = data.questions.map((q, i) => {
-                const selected = document.querySelector(`input[name="question-${i}"]:checked`);
-                const selectedOption = selected ? parseInt(selected.value) : 0;
-                const isCorrect = selectedOption === q.correct_option;
+                const selectedOption = selectedAnswers[i] || 0; // Get saved answer
+                const isCorrect = selectedOption == q.correct_option;
                 if (isCorrect) score++;
+
                 return {
                     question_number: i + 1,
                     correct_option: q.correct_option,
@@ -504,15 +565,22 @@
                     is_correct: isCorrect,
                 };
             });
+
             return { score, total: data.questions.length, report };
         }
 
+
         // Function to generate result data
         async function generateResultData(results) {
+
+
+
+
             const endTime = new Date();
             // Fetch Subtopic Name
             const titleResponse = await fetch(`${apiUrl}/get-title?topic_id=${topicId}&subtopic_id=${subtopicId}&utils_type=Test&title_id=${title_id}`);
             const titleData = await titleResponse.json();
+
 
             return {
                 user_id: userId,
@@ -548,6 +616,8 @@
 
 
 
+
+
             // Send data to the /save-result endpoint
             await fetch(apiUrl + '/save-result', {
                 method: 'POST',
@@ -560,10 +630,13 @@
                     if (!response.ok) {
                         throw new Error('Failed to save result.');
                     }
+
+
                     return response.json();
                 })
                 .then(data => {
                     //console.log('Result ID:', data.testID); // Log the result ID
+
 
                     window.open(`/user/3/${userId}/${topicId}/${subtopicId}/test/${title_id}/${data.testID}`, '_blank');
                     isSubmitted = true;
@@ -572,6 +645,7 @@
                 })
                 .catch(error => {
                     console.error('Error saving result:', error.message);
+
                 });
         }
 
@@ -635,36 +709,52 @@
             window.location.reload();
         });
 
+
+        let selectedAnswers = {}; // Store user answers
+
+
+
+
+
         function renderQuestions(mcqContainer) {
             mcqContainer.innerHTML = "";
             const startIndex = (currentPage - 1) * questionsPerPage;
             const endIndex = Math.min(startIndex + questionsPerPage, data.questions.length);
 
             data.questions.slice(startIndex, endIndex).forEach((q, index) => {
+                const questionIndex = startIndex + index; // Actual question index
+                const savedAnswer = selectedAnswers[questionIndex] || null; // Check if already selected
+
                 const questionHtml = `
         <div class="card mb-4 p-3 border-white shadow-sm">
             <div class="card-body">
-                <h5 class="card-title text-primary">${startIndex + index + 1}: ${q.question}</h5>
+                <h5 class="card-title text-primary">${questionIndex + 1}: ${q.question}</h5>
                 ${q.options.map((option, i) => `
                     <div class="form-check mb-3">
-                        <input type="radio" name="question-${startIndex + index}" value="${i + 1}" id="q${startIndex + index}o${i}" class="form-check-input">
-                        <label for="q${startIndex + index}o${i}" class="form-check-label">${option}</label>
+                        <input type="radio" name="question-${questionIndex}" value="${i + 1}" id="q${questionIndex}o${i}" class="form-check-input"
+                        ${savedAnswer == i + 1 ? 'checked' : ''} onchange="saveAnswer(${questionIndex}, ${i + 1})">
+                        <label for="q${questionIndex}o${i}" class="form-check-label">${option}</label>
                     </div>
                 `).join('')}
-                
                 <div class="workspace border rounded p-3 bg-white mt-3" style="display: none;" id="workspace-${startIndex + index}">
                     <label class="text-success" for="workspace-text-${startIndex + index}"><strong>Workspace:</strong></label>
                     <textarea class="form-control mt-2" id="workspace-text-${startIndex + index}" rows="3" placeholder="Type your work here..."></textarea>
                 </div>
-
-                <button type="button" class="btn btn-outline-success btn-sm mt-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Workspace" onclick="toggleWorkspace(${startIndex + index})">
+                 <button type="button" class="btn btn-outline-success btn-sm mt-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Workspace" onclick="toggleWorkspace(${startIndex + index})">
                     <i class="bi bi-pencil text-success"></i> Show Workspace
                 </button>
                 <hr />
             </div>
         </div>`;
+
                 mcqContainer.innerHTML += questionHtml;
             });
+        }
+        // Save selected answers before switching pages
+
+
+        function saveAnswer(questionIndex, selectedOption) {
+            selectedAnswers[questionIndex] = selectedOption;
         }
 
         function toggleWorkspace(index) {
@@ -744,12 +834,16 @@
         }
 
         async function fetchAndDisplayAttempts() {
+
+
             try {
                 // Call the API endpoint to get the attempts
                 const response = await fetch(`${apiUrl}/attempts/${userId}/${title_id}`);
 
                 // Check if the response is successful
                 if (!response.ok) {
+
+
                     throw new Error(`Failed to fetch attempts: ${response.statusText}`);
                 }
 
@@ -780,6 +874,8 @@
                     startTimer()
                 }
             } catch (error) {
+
+
                 // Handle and log any errors
                 console.error('Error fetching attempts:', error.message);
             }
@@ -881,7 +977,7 @@
                 'Are you sure you want to submit your test?',
                 () => {
                     clearInterval(timerInterval);
-                    const results = evaluateAnswers(data.questions);
+                    const results = evaluateAnswers();
                     displayResults(results);
                 }
             );
@@ -969,6 +1065,9 @@
                 return message;          // Standard for older browsers
             }
         });
+        window.onload = function () {
+            setTimeout(stopLoader, 2000)
+        };
     </script>
 
 </body>
