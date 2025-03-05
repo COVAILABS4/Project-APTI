@@ -230,6 +230,30 @@ def get_user(request, user_id):
         return JsonResponse({"error": f"Internal server error: {str(e)}"}, status=500)
 
 
+# Get all user 
+def get_all_users(request):
+    try:
+        users = User.objects.filter(role='user')
+        user_data = [
+            {
+                "user_id": user.user_id,
+                "name": user.name,
+                "phone_number": user.phone_number,
+                "email": user.email,
+                "dob": user.dob,
+                "city": user.city,
+                "state": user.state,
+                "country": user.country,
+                "role": user.role,
+            }
+            for user in users
+        ]
+        return JsonResponse({"users": user_data}, status=200)
+    except Exception as e:
+        return JsonResponse({"error": f"Internal server error: {str(e)}"}, status=500)
+
+
+
 def update_user(request, user_id):
     if request.method == "POST":
         try:

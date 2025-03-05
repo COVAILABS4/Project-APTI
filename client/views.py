@@ -16,6 +16,58 @@ def login(request):
 # ADMIN1
 
 
+# New
+
+@validate_session
+def user_list_view(request,role,user_id):
+    context = {"user_id": user_id }
+    return render(request, "admin/users/user_list.html",context) 
+
+
+@validate_session
+def user_profile_views(request, user_id, role,user2_id):
+    context = { "user_id" : user_id  ,  "user2_id": user2_id}
+    return render(request, "admin/users/profile.html", context)
+
+
+
+@validate_session
+def user_test_history(request, user_id, role,user2_id):
+    context = { "user_id": user_id  ,  "user2_id": user2_id}
+    return render(request, "admin/users/test_history_list.html", context)
+
+
+
+@validate_session
+def admin_user_test_take_test_res(
+    request, user_id, role,user2_id, topic_id, subtopic_id, title_id, test_id
+):
+
+    print("LOGINSSS")
+    user_id = request.session.get("user_id", "Unknown")
+    name = request.session.get("name", "Guest")
+    role = request.session.get("role", "Unknown")
+
+    context = {
+        "user_id":user_id,
+        "user2_id": user2_id,
+        "name": name,
+        "role": role,
+        "topic_id": topic_id,
+        "subtopic_id": subtopic_id,
+        "title_id": title_id,
+        "test_id": test_id,
+    }
+    return render(request, "admin/users/test_history.html", context)
+
+
+
+
+
+# ------------------------------------>
+
+
+
 def admin_register(request, role):
 
     return render(request, "admin/register.html")

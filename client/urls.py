@@ -88,6 +88,25 @@ urlpatterns = [
     path(
         "<str:role>/1/<str:user_id>/new/content", views.new_content, name="new-content"
     ),
+     # new -------------------->
+    path('<str:role>/1/<str:user_id>/users-list',views.user_list_view, name='user_list_view'),  
+    path(
+            "<str:role>/1/<str:user_id>/users-list/<str:user2_id>/profile",
+            views.user_profile_views,
+            name="userss-profile",
+        ),
+    
+    path(
+        "<str:role>/1/<str:user_id>/users-list/<str:user2_id>/test_history",
+        views.user_test_history,
+        name="user-manage-test",
+    ),
+    path(
+        "<str:role>/1/<str:user_id>/users-list/<str:user2_id>/test_history/<str:topic_id>/<str:subtopic_id>/test/<str:title_id>/<str:test_id>",
+        views.admin_user_test_take_test_res,
+        name="admin_user_test_take_test_res",
+    ),
+    # new end ------------------>
     path(
         "<str:role>/1/<str:user_id>/new/content/<str:topic_id>/subtopics",
         views.new_subtopic,

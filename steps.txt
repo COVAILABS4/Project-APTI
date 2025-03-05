@@ -1,0 +1,23 @@
+pip install -r requirements.txt
+
+django-admin startproject apti_project .
+
+
+cd apti_project
+
+
+
+python manage.py startapp client
+python manage.py startapp server
+
+
+python manage.py makemigrations
+python manage.py migrate
+
+
+
+python manage.py runserver
+
+
+
+
