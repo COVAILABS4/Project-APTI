@@ -3,3 +3,5 @@ mysqlclient
 pandas 
 django-cors-headers
 openpyxl
+gspread 
+google-auth

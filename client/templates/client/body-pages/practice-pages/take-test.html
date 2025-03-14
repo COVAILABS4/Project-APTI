@@ -13,6 +13,18 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
+    <!-- width: calc(100% - 250px); -->
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+        </script>
+
     <style>
         body {
             display: flex;
@@ -696,6 +708,7 @@
             const paginationContainer = document.getElementById('pagination');
             renderQuestions(data.questions, mcqContainer, currentPage);
             generatePagination(data.questions, paginationContainer);
+            MathJax.typesetPromise();
         }
 
         function goToPagePrompt() {
@@ -720,6 +733,8 @@
                 const paginationContainer = document.getElementById('pagination');
                 renderQuestions(data.questions, mcqContainer, currentPage);
                 generatePagination(data.questions, paginationContainer);
+
+                MathJax.typesetPromise();
             })
             .catch(error => console.error('Error fetching data:', error));
     </script>

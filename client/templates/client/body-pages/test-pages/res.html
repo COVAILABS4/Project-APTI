@@ -13,6 +13,20 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
+    <!-- width: calc(100% - 250px); -->
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+        </script>
+
+
+
     <style>
         body {
             display: flex;
@@ -648,6 +662,8 @@
                 const questionData = await fetchQuestions();
                 const resultData = await fetchResults();
                 renderResults(resultData, questionData);
+
+                MathJax.typesetPromise();
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -655,6 +671,7 @@
 
         // Call the function to fetch and render data
         fetchDataAndRender();
+
     </script>
     <script>
         const sidebar = document.getElementById('sidebar');

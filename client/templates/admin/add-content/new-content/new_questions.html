@@ -9,7 +9,18 @@
     <title>Admin Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
     <!-- width: calc(100% - 250px); -->
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+        </script>
     <style>
         body {
             margin: 0;
@@ -636,6 +647,7 @@
                 console.error("Error fetching questions:", error);
                 alert("Failed to load questions. Please try again.");
             }
+             MathJax.typesetPromise();
         }
 
         document.getElementById("questionForm").addEventListener("submit", async (e) => {
@@ -781,6 +793,7 @@
         // Enable tooltips
         const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         const tooltipList = tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
     </script>
 </body>
 

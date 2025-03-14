@@ -19,6 +19,9 @@ import uuid
 import json
 from datetime import datetime
 
+import gspread
+from google.oauth2.service_account import Credentials
+
 from django.shortcuts import get_object_or_404
 
 import pandas as pd
@@ -230,10 +233,10 @@ def get_user(request, user_id):
         return JsonResponse({"error": f"Internal server error: {str(e)}"}, status=500)
 
 
-# Get all user 
+# Get all user
 def get_all_users(request):
     try:
-        users = User.objects.filter(role='user')
+        users = User.objects.filter(role="user")
         user_data = [
             {
                 "user_id": user.user_id,
@@ -251,7 +254,6 @@ def get_all_users(request):
         return JsonResponse({"users": user_data}, status=200)
     except Exception as e:
         return JsonResponse({"error": f"Internal server error: {str(e)}"}, status=500)
-
 
 
 def update_user(request, user_id):
@@ -1712,6 +1714,17 @@ def get_question_count(request):
         )
 
 
+from django.conf import settings
+
+SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
+creds = Credentials.from_service_account_file(
+    settings.GOOGLE_CREDENTIALS_PATH, scopes=SCOPES
+)
+client = gspread.authorize(creds)
+SHEET_URL = "https://docs.google.com/spreadsheets/d/1VA89fyCd3_DF54p3JCg5DG1dqHMjrNOa66KDqUgN-2U/edit"
+sheet = client.open_by_url(SHEET_URL).sheet1  # Access the first sheet
+
+
 def finish_test(request):
     if request.method != "POST":
         return JsonResponse({"error": "Invalid request method"}, status=405)
@@ -1720,13 +1733,12 @@ def finish_test(request):
         # Parse the incoming JSON payload
         payload = json.loads(request.body)
 
-        # Extract data from the payload
+        # Extract required data
         user_id = payload.get("user_id")
         topic_id = payload.get("topic_id")
         subtopic_id = payload.get("subtopic_id")
         title_id = payload.get("title_id")
         type = payload.get("type")
-        title = payload.get("title")
         start_at = payload.get("start_at")
         finished_at = payload.get("finished_at")
         status = payload.get("status")
@@ -1735,7 +1747,7 @@ def finish_test(request):
         report_data = payload.get("report", [])
 
         # Validate required fields
-        if not all([user_id, topic_id, subtopic_id, title_id, type, title]):
+        if not all([user_id, topic_id, subtopic_id, title_id, type]):
             return JsonResponse(
                 {"error": "Missing required fields in payload"}, status=400
             )
@@ -1752,9 +1764,10 @@ def finish_test(request):
                 status=404,
             )
 
-        # Create a new TestHistory entry
-
+        # Generate unique test ID
         test_u_id = str(uuid.uuid4())
+
+        # Create a new TestHistory entry
         test_history = TestHistory.objects.create(
             test_id=test_u_id,
             user_id=user,
@@ -1762,7 +1775,7 @@ def finish_test(request):
             subtopic_id=subtopic,
             title_id=test,
             type=type,
-            title=title,
+            title=test.title,  # Fetching title from Test model
             start_at=start_at,
             finished_at=finished_at,
             status=status,
@@ -1777,8 +1790,35 @@ def finish_test(request):
                 report=report_item,
             )
 
+        # Retrieve User Details (Name, Phone Number)
+        user_name = user.name
+        user_phone = user.phone_number
+
+        # Retrieve Title from Test
+        test_title = test.title
+
+        # Get existing row count (excluding header)
+        existing_data = sheet.get_all_values()
+        row_count = len(existing_data)
+
+        # Prepare Data for Google Sheet
+        new_entry = [
+            user_name,  # User Name
+            user_phone,  # User Phone Number
+            test_title,  # Test Title
+            total_questions,  # Total Questions
+            score,  # Score
+        ]
+
+        # Append Data to Google Sheet
+        new_row = [row_count] + new_entry  # S.No is row count
+        sheet.append_row(new_row)
+
         return JsonResponse(
-            {"message": "Test finished successfully", "testID": test_u_id},
+            {
+                "message": "Test finished successfully and stored in Google Sheets",
+                "testID": test_u_id,
+            },
             status=200,
         )
 
@@ -1878,7 +1918,7 @@ def update_question(request):
         question_type = data.get("type")  # "Practice" or "Test"
 
         # Fetch the question based on type
-        if question_type == "Practice":
+        if question_type == "Practices":
             question = get_object_or_404(
                 PracticeQuestion, question_id=question_id, title_id=title_id
             )
@@ -1934,7 +1974,7 @@ def delete_question(request):
         question_type = data.get("type")  # "Practice" or "Test"
 
         # Fetch and delete the question based on type
-        if question_type == "Practice":
+        if question_type == "Practices":
             question = get_object_or_404(
                 PracticeQuestion, question_id=question_id, title_id=title_id
             )
