@@ -1,156 +1,337 @@
-{% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>My Profile</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
 
+        .container {
+            max-width: 800px;
+        }
+
+        .profile-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 50px;
+        }
+
+        .profile-card h2 {
+            font-size: 1.5rem;
+            color: #4e73df;
+            font-weight: bold;
+        }
+
+        .text-primary {
+            color: #4e73df !important;
+        }
+
+        #profileImage {
+            width: 160px;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-top: 15px;
+            margin-bottom: 20px;
+            border: 3px solid #ddd;
+            cursor: pointer;
+        }
+
+        #imageColumn {
+            display: flex;
+            justify-content: start;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        #profileForm input {
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        .btn {
+            font-size: 0.9rem;
+        }
+
+        #actionButtons button {
+            width: 120px;
+        }
+
+        #toggleMode {
+            background-color: #4e73df;
+            border: none;
+        }
+
+        #toggleMode:hover {
+            background-color: #1f4c90;
+        }
+
+        .mb-3 label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .profile-card .row {
+            margin-bottom: 20px;
+        }
+
+        .upload-btn {
+            background-color: #28a745;
+            color: #fff;
+            padding: 10px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .upload-btn:hover {
+            background-color: #218838;
+        }
+
+        .form-control {
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+        }
+
+        /* Enhanced responsiveness */
+        @media (max-width: 768px) {
+            .profile-card {
+                padding: 20px;
+            }
+
+            #profileImage {
+                width: 130px;
+                height: 130px;
+            }
+        }
+
+        /* Show Mode Name Styling */
+        .show-mode-name {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4e73df;
+            margin-bottom: 20px;
+        }
+
+        /* Hide file input */
+        #profilePhoto {
+            display: none;
+        }
+    </style>
 </head>
 
 <body>
-    <div>
-        <div class="container mt-5">
+    <!-- Main Content -->
+    <div id="main-content">
+        <div class="container my-4">
             <div class="text-center mb-4">
-                <h1 class="text-primary">Profile</h1>
-                <!-- <p class="text-secondary">Manage your profile information and keep it up-to-date.</p> -->
+                <h1 class="text-primary">My Profile</h1>
             </div>
 
-            <div class="profile-card mx-auto">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1>Profile</h1>
-                    <button id="toggleMode" class="btn btn-primary">Edit</button>
-                </div>
+            <div class="profile-card mx-auto shadow p-4 rounded">
+                <!-- Action buttons for Edit Mode -->
 
-                <form id="profileForm">
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Name</label>
-                        <input type="text" id="name" name="name" class="form-control" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" id="email" name="email" class="form-control" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="dob" class="form-label">Date of Birth</label>
-                        <input type="date" id="dob" name="dob" class="form-control" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="city" class="form-label">City</label>
-                        <input type="text" id="city" name="city" class="form-control" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="state" class="form-label">State</label>
-                        <input type="text" id="state" name="state" class="form-control" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="country" class="form-label">Country</label>
-                        <input type="text" id="country" name="country" class="form-control" readonly>
-                    </div>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="h4">Profile</h2>
                     <div id="actionButtons" class="d-none mt-4">
                         <button type="button" id="saveButton" class="btn btn-success me-2">Save</button>
                         <button type="button" id="cancelButton" class="btn btn-secondary">Cancel</button>
                     </div>
+                    <button id="toggleMode" class="btn btn-primary">Edit</button>
+                </div>
+
+                <form id="profileForm" enctype="multipart/form-data">
+                    <div class="row mb-3">
+                        <!-- Profile Photo Column -->
+                        <div class="col-md-4 text-center" id="imageColumn">
+                            <div class="show-mode-name" id="showModeName"></div>
+                            <img id="profileImage" class="img-fluid" src="" alt="Profile Image"
+                                style="max-width: 160px;">
+                            <input type="file" id="profilePhoto" name="profilePhoto" class="form-control">
+                            <button type="button" id="saveImg" class="btn btn-success mt-2 d-none">Save Image</button>
+                        </div>
+
+                        <!-- Form Fields -->
+                        <div class="col-md-8">
+
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Name</label>
+                                <input type="text" id="name" name="name" class="form-control" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="phonenumber" class="form-label">Phone Number</label>
+                                <input type="text" id="phonenumber" name="phonenumber" class="form-control" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" id="email" name="email" class="form-control" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="dob" class="form-label">Date of Birth</label>
+                                <input type="date" id="dob" name="dob" class="form-control" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="city" class="form-label">City</label>
+                                <input type="text" id="city" name="city" class="form-control" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="state" class="form-label">State</label>
+                                <input type="text" id="state" name="state" class="form-control" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="country" class="form-label">Country</label>
+                                <input type="text" id="country" name="country" class="form-control" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+
                 </form>
             </div>
-
-
-            <script>
-                const admin_id = '{{user_id}}'; // Replace with dynamic user ID
-                const user_id = '{{user2_id}}'; // Replace with dynamic user ID
-
-                const apiBaseUrl = "/aapi3";
-
-                const apiUrl = `${apiBaseUrl}/api/users/${user_id}`;
-                const updateApiUrl = `${apiBaseUrl}/api/users/${user_id}/update`;
-
-                const toggleModeButton = document.getElementById('toggleMode');
-                const formElements = document.querySelectorAll('#profileForm input');
-                const actionButtons = document.getElementById('actionButtons');
-
-                let originalData = {};
-
-                // Fetch user data and populate the form
-                async function fetchUserData() {
-                    try {
-                        const response = await axios.get(apiUrl);
-                        const userData = response.data;
-                        originalData = { ...userData }; // Store original data for cancel action
-                        populateForm(userData);
-                    } catch (error) {
-                        console.error('Error fetching user data:', error);
-                    }
-                }
-
-                // Populate form fields with user data
-                function populateForm(data) {
-                    document.getElementById('name').value = data.name;
-                    document.getElementById('email').value = data.email;
-                    document.getElementById('dob').value = data.dob || '';
-                    document.getElementById('city').value = data.city || '';
-                    document.getElementById('state').value = data.state || '';
-                    document.getElementById('country').value = data.country || '';
-                }
-
-                // Toggle view/edit mode
-                toggleModeButton.addEventListener('click', () => {
-                    const isEditMode = toggleModeButton.textContent === 'Edit';
-                    formElements.forEach(input => input.readOnly = !isEditMode);
-                    actionButtons.classList.toggle('d-none', !isEditMode);
-                    toggleModeButton.textContent = isEditMode ? 'View' : 'Edit';
-                    if (!isEditMode) {
-                        populateForm(originalData); // Revert changes if exiting edit mode
-                    }
-                });
-
-                // Save updated user data
-                document.getElementById('saveButton').addEventListener('click', async () => {
-                    const updatedData = {
-                        name: document.getElementById('name').value,
-                        email: document.getElementById('email').value,
-                        dob: document.getElementById('dob').value,
-                        city: document.getElementById('city').value,
-                        state: document.getElementById('state').value,
-                        country: document.getElementById('country').value,
-                    };
-
-                    try {
-                        await axios.post(updateApiUrl, updatedData);
-                        alert('Profile updated successfully!');
-                        originalData = { ...updatedData };
-                        toggleModeButton.click(); // Switch back to view mode
-                    } catch (error) {
-                        console.error('Error updating user data:', error);
-                        alert('Failed to update profile.');
-                    }
-                });
-
-                // Cancel edits and revert to original data
-                document.getElementById('cancelButton').addEventListener('click', () => {
-                    populateForm(originalData);
-                    toggleModeButton.click(); // Switch back to view mode
-                });
-
-                // Initial data load
-                fetchUserData();
-            </script>
         </div>
     </div>
 
+    <script>
+        const admin_id = '{{user_id}}'; // Replace with dynamic user ID
+        const user_id = '{{user2_id}}'; // Replace with dynamic user ID
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+        const apiBaseUrl = "/aapi3";
+        const apiUrl = `${apiBaseUrl}/api/users/${user_id}`;
+        const updateApiUrl = `${apiBaseUrl}/api/users/${user_id}/update`;
 
+        const toggleModeButton = document.getElementById('toggleMode');
+        const formElements = document.querySelectorAll('#profileForm input');
+        const actionButtons = document.getElementById('actionButtons');
+        const profileImage = document.getElementById('profileImage');
+        const profilePhotoInput = document.getElementById('profilePhoto');
+        const imageColumn = document.getElementById('imageColumn');
+        const saveImgButton = document.getElementById('saveImg');
+        const showModeName = document.getElementById('showModeName');
 
+        let originalData = {};
 
+        // Fetch user data and populate the form
+        async function fetchUserData() {
+            try {
+                const response = await axios.get(apiUrl);
+                const userData = response.data;
+                originalData = { ...userData }; // Store original data for cancel action
+
+                populateForm(userData);
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        }
+
+        // Populate form fields with user data
+        function populateForm(data) {
+            document.getElementById('name').value = data.name;
+            document.getElementById('email').value = data.email;
+            document.getElementById('dob').value = data.dob || '';
+            document.getElementById('city').value = data.city || '';
+            document.getElementById('state').value = data.state || '';
+            document.getElementById('country').value = data.country || '';
+            document.getElementById('phonenumber').value = data.phone_number || '';
+
+            console.log(data)
+            if (data.photo_url) {
+
+                profileImage.src = '/media/' + data.photo_url;
+                profileImage.style.display = 'block';
+            }
+
+        }
+
+        // Toggle view/edit mode
+        toggleModeButton.addEventListener('click', () => {
+            const isEditMode = toggleModeButton.textContent === 'Edit';
+            formElements.forEach(input => input.readOnly = !isEditMode);
+            actionButtons.classList.toggle('d-none', !isEditMode);
+            toggleModeButton.textContent = isEditMode ? 'View' : 'Edit';
+            showModeName.classList.toggle('d-none', isEditMode); // Hide name in Edit Mode
+        });
+
+        // Save updated user data including profile photo
+        document.getElementById('saveButton').addEventListener('click', async () => {
+            const formData = new FormData();
+            formData.append('name', document.getElementById('name').value);
+            formData.append('email', document.getElementById('email').value);
+            formData.append('dob', document.getElementById('dob').value);
+            formData.append('city', document.getElementById('city').value);
+            formData.append('state', document.getElementById('state').value);
+            formData.append('country', document.getElementById('country').value);
+            formData.append('phone_number', document.getElementById('phonenumber').value);
+
+            const profilePhoto = profilePhotoInput.files[0];
+            if (profilePhoto) {
+                formData.append('profilePhoto', profilePhoto);
+            }
+
+            try {
+                await axios.post(updateApiUrl, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+                alert('Profile updated successfully!');
+                toggleModeButton.click(); // Switch to view mode after saving
+                fetchUserData();
+            } catch (error) {
+                console.error('Error updating profile:', error);
+            }
+        });
+
+        // Save image only
+        saveImgButton.addEventListener('click', async () => {
+            const formData = new FormData();
+            const profilePhoto = profilePhotoInput.files[0];
+            if (profilePhoto) {
+                formData.append('profilePhoto', profilePhoto);
+            }
+
+            try {
+                await axios.post(updateApiUrl, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+                alert('Profile image updated successfully!');
+                saveImgButton.classList.add('d-none'); // Show save image button
+            } catch (error) {
+                console.error('Error updating profile image:', error);
+            }
+        });
+
+        // Cancel editing and reset form to original state
+        document.getElementById('cancelButton').addEventListener('click', () => {
+            populateForm(originalData);
+            toggleModeButton.click();
+        });
+
+        // Handle profile photo upload
+        profileImage.addEventListener('click', () => profilePhotoInput.click());
+
+        // Display selected image before uploading
+        profilePhotoInput.addEventListener('change', () => {
+            const reader = new FileReader();
+            reader.onload = function () {
+                profileImage.src = reader.result;
+                profileImage.style.display = 'block';
+                saveImgButton.classList.remove('d-none'); // Show save image button
+            };
+            reader.readAsDataURL(profilePhotoInput.files[0]);
+        });
+
+        fetchUserData(); // Initial fetch
+    </script>
 </body>
-
-
 
 </html>

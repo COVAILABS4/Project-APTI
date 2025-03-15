@@ -11,8 +11,7 @@ urlpatterns = [
     path("api/users/<str:user_id>/update", views.update_user, name="update_user"),
     path("dashboard-stats", views.dashboard_stats, name="dashboard-stats"),
     # TP-1
-     path("all-users", views.get_all_users, name="get_users"),
-    
+    path("all-users", views.get_all_users, name="get_users"),
     path("get-subadmins", views.get_subadmins, name="get_subadmins"),
     path("edit-subadmin/<str:id>", views.edit_subadmin, name="edit_subadmin"),
     path("delete-subadmin/<str:id>", views.delete_subadmin, name="delete_subadmin"),

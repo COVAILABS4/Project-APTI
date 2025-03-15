@@ -1,383 +1,227 @@
-{% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Layout</title>
+    <title>My Profile</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
         body {
-            display: flex;
-            height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-
-        #sidebar {
-            width: 300px;
-            /* Increased sidebar width */
             background-color: #f8f9fa;
-            border-right: 1px solid #ddd;
-            padding: 1rem 0;
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            transition: transform 0.3s ease;
+            font-family: 'Arial', sans-serif;
         }
 
-        #sidebar.hidden {
-            transform: translateX(-100%);
-        }
-
-        #main-content {
-            flex-grow: 1;
-            margin-left: 300px;
-            /* Adjusted for wider sidebar */
-            padding: 1rem;
-            transition: margin-left 0.3s ease;
-        }
-
-        #main-content.expanded {
-            margin-left: 0;
-        }
-
-        .navbar {
-            background-color: #fff;
-            border-bottom: 1px solid #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-        }
-
-        .navbar-brand {
-            display: flex;
-            align-items: center;
-            padding-left: 10px;
-        }
-
-        .navbar-toggler {
-            border: none;
-        }
-
-        .profile-menu {
-            position: absolute;
-            right: 1rem;
-            top: 100%;
-            background: white;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            display: none;
-            padding: 1rem;
-            width: 250px;
-        }
-
-        .profile-menu.active {
-            display: block;
-        }
-
-        .profile-menu .dropdown-item {
-            padding: 0.5rem 1rem;
-            color: #333;
-            text-align: center;
-        }
-
-        .profile-menu .dropdown-item img {
-            margin-bottom: 0.5rem;
-        }
-
-        .profile-menu .btn {
-            width: 100%;
-            margin-top: 0.5rem;
-        }
-
-        .sidebar-item {
-            display: flex;
-            align-items: center;
-            padding: 1rem 1.5rem;
-            /* Increased padding for spacing */
-            color: #333;
-            font-weight: 500;
-        }
-
-        .sidebar-item i {
-            margin-right: 1rem;
-        }
-
-        .sidebar-item:hover {
-            background-color: #e9ecef;
-            cursor: pointer;
-            text-decoration: underline;
-            /* Highlight with underline on hover */
-        }
-
-        .sidebar-logo {
-            text-align: center;
-            padding: 1rem 0;
-        }
-
-        .sidebar-logo img {
-            max-width: 80%;
-        }
-
-        .separator {
-            border-top: 1px solid #ddd;
-            margin: 1rem 0;
-        }
-
-        /* Profile Tooltip Style */
-        #profile-tooltip {
-            display: none;
-            position: absolute;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 15px;
-            width: 250px;
-            z-index: 1000;
-            top: 40px;
-            right: 0;
-        }
-
-        #profile-tooltip .d-flex {
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        #profile-tooltip img {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            border-radius: 50%;
-        }
-
-        #profile-tooltip button {
-            width: 100%;
-        }
-
-        #profile-tooltip .btn-close {
-            border: none;
-        }
-
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: #f8f9fa;
+        .container {
+            max-width: 800px;
         }
 
         .profile-card {
-            border-radius: 15px;
-            background: #ffffff;
-            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 50px;
         }
 
-        .profile-card h1 {
-            font-weight: 600;
-            color: #343a40;
+        .profile-card h2 {
+            font-size: 1.5rem;
+            color: #4e73df;
+            font-weight: bold;
         }
 
-        .form-label {
-            font-weight: 500;
-            color: #6c757d;
+        .text-primary {
+            color: #4e73df !important;
         }
 
-        input[readonly] {
-            background-color: #f8f9fa !important;
+        #profileImage {
+            width: 160px;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-top: 15px;
+            margin-bottom: 20px;
+            border: 3px solid #ddd;
+            cursor: pointer;
+        }
+
+        #imageColumn {
+            display: flex;
+            justify-content: start;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        #profileForm input {
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        .btn {
+            font-size: 0.9rem;
+        }
+
+        #actionButtons button {
+            width: 120px;
         }
 
         #toggleMode {
-            background: #0d6efd;
+            background-color: #4e73df;
             border: none;
         }
 
         #toggleMode:hover {
-            background: #0056b3;
+            background-color: #1f4c90;
         }
 
-        #saveButton {
-            background: #198754;
+        .mb-3 label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .profile-card .row {
+            margin-bottom: 20px;
+        }
+
+        .upload-btn {
+            background-color: #28a745;
+            color: #fff;
+            padding: 10px;
+            font-size: 1rem;
             border: none;
+            border-radius: 5px;
+            margin-top: 10px;
         }
 
-        #saveButton:hover {
-            background: #146c43;
+        .upload-btn:hover {
+            background-color: #218838;
         }
 
-        #cancelButton {
-            background: #adb5bd;
-            border: none;
+        .form-control {
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
         }
 
-        #cancelButton:hover {
-            background: #868e96;
+        /* Enhanced responsiveness */
+        @media (max-width: 768px) {
+            .profile-card {
+                padding: 20px;
+            }
+
+            #profileImage {
+                width: 130px;
+                height: 130px;
+            }
         }
 
-        .breadcrumb .highlight {
-            text-decoration: none;
-            color: #28a745;
-            cursor: pointer;
+        /* Show Mode Name Styling */
+        .show-mode-name {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4e73df;
+            margin-bottom: 20px;
         }
 
-        .breadcrumb .highlight:hover {
-            text-decoration: underline;
-
+        /* Hide file input */
+        #profilePhoto {
+            display: none;
         }
     </style>
-
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
 </head>
 
 <body>
-
-    <!-- Sidebar -->
-    <div id="sidebar">
-        <div class="sidebar-logo">
-            <img src="{% static 'icon.png' %}" alt="Logo"> <!-- Placeholder for logo -->
-        </div>
-        <div onclick="window.location.href = '/user/3/{{user_id}}/'" class="sidebar-item" title="Go to Home"><i
-                class="material-icons">home</i> Home</div>
-        <div class="separator"></div>
-        <div onclick="window.location.href = '/user/3/{{user_id}}/test_history'" class="sidebar-item"
-            title="View Test History"><i class="material-icons">history</i> Test History</div>
-        <div class="separator"></div>
-        <div onclick="window.location.href = '/user/3/{{user_id}}/contact_us'" class="sidebar-item" title="Contact Us">
-            <i class="material-icons">contact_mail</i> Contact Us
-        </div>
-    </div>
-
     <!-- Main Content -->
     <div id="main-content">
-        <nav class="navbar navbar-light">
-            <div class="container-fluid">
-                <div class="d-flex ">
-                    <button class="navbar-toggler" type="button" id="toggleSidebar" title="Toggle Sidebar">
-                        <i class="material-icons">menu</i>
-                    </button>
-                    <a onclick="window.location.href = '/user/3/{{user_id}}/'" href="#" class="navbar-brand"
-                        title="Go to Dashboard">
-                        <i class="material-icons">dashboard</i> KRISHTEC
-                    </a>
-                </div>
-                <div class="dropdown">
-                    <button class="btn" id="profileBtn" title="View Profile">
-                        <i class="material-icons">account_circle</i>
-                    </button>
-                    <!-- Profile Tooltip -->
-                    <div id="profile-tooltip">
-                        <div class="d-flex">
-                            <div class="d-flex align-items-center">
-                                <img id="profile-image" src="{% static 'profile.png' %}" alt="Profile Image"
-                                    class="rounded-circle me-2">
-
-                                <div>
-                                    <p id="profile-name" class="mb-0 fw-bold">John Doe</p>
-                                    <p id="profile-email" class="mb-0 text-muted small">john.doe@example.com</p>
-                                </div>
-                            </div>
-                            <button id="profile-close" class="btn-close" aria-label="Close"></button>
-                        </div>
-                        <a onclick="window.location.href = '/user/3/{{user_id}}/setting'" href="#"
-                            id="profile-manage-account" class="btn btn-primary btn-sm w-100 mb-2">Manage Your
-                            Account</a>
-                        <button onclick="window.location.href = '/login'" id="profile-logout"
-                            class="btn btn-danger btn-sm w-100">Logout</button>
-                    </div>
-                </div>
+        <div class="container my-4">
+            <div class="text-center mb-4">
+                <h1 class="text-primary">My Profile</h1>
             </div>
-        </nav>
-        <div>
-            <div class="container my-4">
 
-                <!-- Breadcrumb -->
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item highlight" id="bc-home">Home</li>
-                        <li class="breadcrumb-item active">Setting</li>
-                    </ol>
-                </nav>
-                <div class="text-center mb-4">
-                    <h1 class="text-primary">My Profile</h1>
-                    <!-- <p class="text-secondary">Manage your profile information and keep it up-to-date.</p> -->
+            <div class="profile-card mx-auto shadow p-4 rounded">
+                <!-- Action buttons for Edit Mode -->
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="h4">Profile</h2>
+                    <div id="actionButtons" class="d-none mt-4">
+                        <button type="button" id="saveButton" class="btn btn-success me-2">Save</button>
+                        <button type="button" id="cancelButton" class="btn btn-secondary">Cancel</button>
+                    </div>
+                    <button id="toggleMode" class="btn btn-primary">Edit</button>
                 </div>
 
-                <div class="profile-card mx-auto">
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h1>Profile</h1>
-                        <button id="toggleMode" class="btn btn-primary">Edit</button>
+                <form id="profileForm" enctype="multipart/form-data">
+                    <div class="row mb-3">
+                        <!-- Profile Photo Column -->
+                        <div class="col-md-4 text-center" id="imageColumn">
+                            <div class="show-mode-name" id="showModeName"></div>
+                            <img id="profileImage" class="img-fluid" src="" alt="Profile Image"
+                                style="max-width: 160px;">
+                            <input type="file" id="profilePhoto" name="profilePhoto" class="form-control">
+                            <button type="button" id="saveImg" class="btn btn-success mt-2 d-none">Save Image</button>
+                        </div>
+
+                        <!-- Form Fields -->
+                        <div class="col-md-8">
+
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Name</label>
+                                <input type="text" id="name" name="name" class="form-control" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="phonenumber" class="form-label">Phone Number</label>
+                                <input type="text" id="phonenumber" name="phonenumber" class="form-control" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" id="email" name="email" class="form-control" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="dob" class="form-label">Date of Birth</label>
+                                <input type="date" id="dob" name="dob" class="form-control" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="city" class="form-label">City</label>
+                                <input type="text" id="city" name="city" class="form-control" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="state" class="form-label">State</label>
+                                <input type="text" id="state" name="state" class="form-control" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="country" class="form-label">Country</label>
+                                <input type="text" id="country" name="country" class="form-control" readonly>
+                            </div>
+                        </div>
                     </div>
 
-                    <form id="profileForm">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Name</label>
-                            <input type="text" id="name" name="name" class="form-control" readonly>
-                        </div>
-                        <div class="mb-3">
-                            <label for="phonenumber" class="form-label">Phone Number</label>
-                            <input type="text" id="phonenumber" name="phonenumber" class="form-control" readonly>
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" id="email" name="email" class="form-control" readonly>
-                        </div>
-                        <div class="mb-3">
-                            <label for="dob" class="form-label">Date of Birth</label>
-                            <input type="date" id="dob" name="dob" class="form-control" readonly>
-                        </div>
-                        <div class="mb-3">
-                            <label for="city" class="form-label">City</label>
-                            <input type="text" id="city" name="city" class="form-control" readonly>
-                        </div>
-                        <div class="mb-3">
-                            <label for="state" class="form-label">State</label>
-                            <input type="text" id="state" name="state" class="form-control" readonly>
-                        </div>
-                        <div class="mb-3">
-                            <label for="country" class="form-label">Country</label>
-                            <input type="text" id="country" name="country" class="form-control" readonly>
-                        </div>
-                        <div id="actionButtons" class="d-none mt-4">
-                            <button type="button" id="saveButton" class="btn btn-success me-2">Save</button>
-                            <button type="button" id="cancelButton" class="btn btn-secondary">Cancel</button>
-                        </div>
-                    </form>
-                </div>
+
+                </form>
             </div>
         </div>
     </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-
-        var bc_home = document.getElementById('bc-home');
-
-
-        bc_home.addEventListener('click', () => {
-            window.history.go(-1);
-        })
-    </script>
 
     <script>
         const user_id = '{{user_id}}'; // Replace with dynamic user ID
 
         const apiBaseUrl = "/aapi3";
-
         const apiUrl = `${apiBaseUrl}/api/users/${user_id}`;
         const updateApiUrl = `${apiBaseUrl}/api/users/${user_id}/update`;
 
         const toggleModeButton = document.getElementById('toggleMode');
         const formElements = document.querySelectorAll('#profileForm input');
         const actionButtons = document.getElementById('actionButtons');
+        const profileImage = document.getElementById('profileImage');
+        const profilePhotoInput = document.getElementById('profilePhoto');
+        const imageColumn = document.getElementById('imageColumn');
+        const saveImgButton = document.getElementById('saveImg');
+        const showModeName = document.getElementById('showModeName');
 
         let originalData = {};
 
@@ -387,6 +231,7 @@
                 const response = await axios.get(apiUrl);
                 const userData = response.data;
                 originalData = { ...userData }; // Store original data for cancel action
+
                 populateForm(userData);
             } catch (error) {
                 console.error('Error fetching user data:', error);
@@ -402,6 +247,14 @@
             document.getElementById('state').value = data.state || '';
             document.getElementById('country').value = data.country || '';
             document.getElementById('phonenumber').value = data.phone_number || '';
+
+            console.log(data)
+            if (data.photo_url) {
+
+                profileImage.src = '/media/' + data.photo_url;
+                profileImage.style.display = 'block';
+            }
+
         }
 
         // Toggle view/edit mode
@@ -410,105 +263,73 @@
             formElements.forEach(input => input.readOnly = !isEditMode);
             actionButtons.classList.toggle('d-none', !isEditMode);
             toggleModeButton.textContent = isEditMode ? 'View' : 'Edit';
-            if (!isEditMode) {
-                populateForm(originalData); // Revert changes if exiting edit mode
-            }
+            showModeName.classList.toggle('d-none', isEditMode); // Hide name in Edit Mode
         });
 
-        // Save updated user data
+        // Save updated user data including profile photo
         document.getElementById('saveButton').addEventListener('click', async () => {
-            const updatedData = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                dob: document.getElementById('dob').value,
-                city: document.getElementById('city').value,
-                state: document.getElementById('state').value,
-                country: document.getElementById('country').value,
-                phone_number: document.getElementById('phonenumber').value
-            };
+            const formData = new FormData();
+            formData.append('name', document.getElementById('name').value);
+            formData.append('email', document.getElementById('email').value);
+            formData.append('dob', document.getElementById('dob').value);
+            formData.append('city', document.getElementById('city').value);
+            formData.append('state', document.getElementById('state').value);
+            formData.append('country', document.getElementById('country').value);
+            formData.append('phone_number', document.getElementById('phonenumber').value);
+
+            const profilePhoto = profilePhotoInput.files[0];
+            if (profilePhoto) {
+                formData.append('profilePhoto', profilePhoto);
+            }
 
             try {
-                await axios.post(updateApiUrl, updatedData);
+                await axios.post(updateApiUrl, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
                 alert('Profile updated successfully!');
-                originalData = { ...updatedData };
-                toggleModeButton.click(); // Switch back to view mode
+                toggleModeButton.click(); // Switch to view mode after saving
+                fetchUserData();
             } catch (error) {
-                console.error('Error updating user data:', error);
-                alert('Failed to update profile.');
+                console.error('Error updating profile:', error);
             }
         });
 
-        // Cancel edits and revert to original data
+        // Save image only
+        saveImgButton.addEventListener('click', async () => {
+            const formData = new FormData();
+            const profilePhoto = profilePhotoInput.files[0];
+            if (profilePhoto) {
+                formData.append('profilePhoto', profilePhoto);
+            }
+
+            try {
+                await axios.post(updateApiUrl, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+                alert('Profile image updated successfully!');
+                saveImgButton.classList.add('d-none'); // Show save image button
+            } catch (error) {
+                console.error('Error updating profile image:', error);
+            }
+        });
+
+        // Cancel editing and reset form to original state
         document.getElementById('cancelButton').addEventListener('click', () => {
             populateForm(originalData);
-            toggleModeButton.click(); // Switch back to view mode
+            toggleModeButton.click();
         });
 
-        // Initial data load
-        fetchUserData();
-    </script>
-    <script>
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.getElementById('main-content');
-        const toggleSidebar = document.getElementById('toggleSidebar');
-        const profileBtn = document.getElementById('profileBtn');
-        const profileTooltip = document.getElementById('profile-tooltip');
-        const profileCloseBtn = document.getElementById('profile-close');
-        const profileLogoutBtn = document.getElementById('profile-logout');
+        // Handle profile photo upload
+        profileImage.addEventListener('click', () => profilePhotoInput.click());
 
-        // Fetching user data based on user_id
-        //  const user_id = '{{ user_id }}';  // Django Template Variable
-        const ip = "/aapi3";
-
-        // Fetch user data from API
-        fetch(`${ip}/api/users/${user_id}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.email) {
-                    document.getElementById('profile-email').textContent = data.email;
-                    document.getElementById('profile-name').textContent = data.name;
-
-                    // Optionally set profile image if available
-                    if (data.profileImage) {
-                        document.getElementById('profile-image').src = data.profileImage;
-                    }
-                }
-            })
-            .catch(err => {
-                console.error('Error fetching user data:', err);
-            });
-
-        // Toggle Sidebar visibility
-        toggleSidebar.addEventListener('click', () => {
-            sidebar.classList.toggle('hidden');
-            mainContent.classList.toggle('expanded');
+        // Display selected image before uploading
+        profilePhotoInput.addEventListener('change', () => {
+            const reader = new FileReader();
+            reader.onload = function () {
+                profileImage.src = reader.result;
+                profileImage.style.display = 'block';
+                saveImgButton.classList.remove('d-none'); // Show save image button
+            };
+            reader.readAsDataURL(profilePhotoInput.files[0]);
         });
 
-        // Toggle Profile Tooltip visibility
-        profileBtn.addEventListener('click', () => {
-            profileTooltip.style.display = profileTooltip.style.display === 'none' ? 'block' : 'none';
-        });
-
-        profileTooltip.style.display = 'none';
-        // Close Profile Tooltip
-        profileCloseBtn.addEventListener('click', () => {
-            profileTooltip.style.display = 'none';
-        });
-
-        // Logout confirmation
-        profileLogoutBtn.addEventListener('click', () => {
-            if (confirm("Are you sure you want to logout?")) {
-                // Redirect to logout URL (modify as per your logout endpoint)
-                window.location.href = '/';
-            }
-        });
-
-        // Close profile tooltip if clicked outside
-        document.addEventListener('click', (e) => {
-            if (!profileBtn.contains(e.target) && !profileTooltip.contains(e.target)) {
-                profileTooltip.style.display = 'none';
-            }
-        });
+        fetchUserData(); // Initial fetch
     </script>
 </body>
 

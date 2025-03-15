@@ -52,28 +52,33 @@ def get_user_name(id):
 def admin_register(request):
     if request.method == "POST":
         try:
-            # Parse the incoming request body
-            body = json.loads(request.body)
+            data = request.POST.dict()
+            name = data.get("name")
+            phone_number = data.get("phone_number")
+            email = data.get("email")
+            password = data.get("password")
+            dob = data.get("dob", "")
+            city = data.get("city", "")
+            state = data.get("state", "")
+            country = data.get("country", "")
+            role = data.get("role", "user")
+            image = request.FILES.get("image")
 
-            name = body.get("name")
-            phone_number = body.get("phone_number")
-            email = body.get("email")
-            password = body.get("password")
-            dob = body.get("dob", "")
-            city = body.get("city", "")
-            state = body.get("state", "")
-            country = body.get("country", "")
-            role = body.get("role", "user")  # Default to 'user' if no role is provided
-
-            # Check if the user with this email already exists
             if User.objects.filter(email=email).exists():
                 return JsonResponse(
                     {"error": "User with this email already exists"}, status=409
                 )
 
-            # Create a new user
+            user_id = get_unique_id()
+            photo_url = "media/images/krishtec.jpg"
+
+            if image:
+                image_name = f"media/images/{user_id}.jpg"
+                default_storage.save(image_name, ContentFile(image.read()))
+                photo_url = image_name
+
             user = User.objects.create(
-                user_id=get_unique_id(),
+                user_id=user_id,
                 name=name,
                 phone_number=phone_number,
                 email=email,
@@ -83,15 +88,12 @@ def admin_register(request):
                 state=state,
                 country=country,
                 role=role,
+                photo_url=photo_url,
             )
-
-            # Save the user to the database
             user.save()
 
             return JsonResponse(
-                {
-                    "message": f"Registration successful, redirecting to {role} page.",
-                },
+                {"message": f"Registration successful, redirecting to {role} page."},
                 status=201,
             )
 
@@ -189,6 +191,7 @@ def register(request):
                     city=city,
                     state=state,
                     country=country,
+                    photo_url="images/krishtec.jpg",
                 )
                 user.save()
 
@@ -210,27 +213,6 @@ def register(request):
             )
     else:
         return JsonResponse({"error": "Invalid request method"}, status=405)
-
-
-# GET user by user_id
-def get_user(request, user_id):
-    try:
-        user = get_object_or_404(User, user_id=user_id)
-        # Serialize user data
-        user_data = {
-            "user_id": user.user_id,
-            "name": user.name,
-            "phone_number": user.phone_number,
-            "email": user.email,
-            "dob": user.dob,
-            "city": user.city,
-            "state": user.state,
-            "country": user.country,
-            "role": user.role,
-        }
-        return JsonResponse(user_data, status=200)
-    except Exception as e:
-        return JsonResponse({"error": f"Internal server error: {str(e)}"}, status=500)
 
 
 # Get all user
@@ -256,30 +238,81 @@ def get_all_users(request):
         return JsonResponse({"error": f"Internal server error: {str(e)}"}, status=500)
 
 
+from django.conf import settings
+
+
 def update_user(request, user_id):
     if request.method == "POST":
         try:
             user = get_object_or_404(User, user_id=user_id)
 
-            # Parse request body
-            updated_data = json.loads(request.body)
+            # Handle image upload if present
+            if "profilePhoto" in request.FILES:
+                profile_image = request.FILES["profilePhoto"]
 
-            # Update user fields
-            for key, value in updated_data.items():
-                if hasattr(user, key):
-                    setattr(user, key, value)
+                # Delete the existing image if it exists
+                if user.photo_url:
+                    old_image_path = os.path.join(
+                        settings.MEDIA_ROOT, user.photo_url.name
+                    )
+
+                    print("Old Image Path: ", old_image_path)
+                    if os.path.exists(old_image_path):
+                        print("True")
+                        if "krishtec.jpg" not in old_image_path:
+                            os.remove(old_image_path)
+
+                # Save the new image with the same filename
+                fs = FileSystemStorage(location="media/images")
+                filename = f"{user_id}.jpg"
+                file_path = fs.save(filename, profile_image)
+
+                print("Saved file path: ", file_path)
+
+                # Update the user's photo_url to point to the saved image
+                user.photo_url = f"images/{filename}"
+
+            # Update other fields
+            user.name = request.POST.get("name", user.name)
+            user.email = request.POST.get("email", user.email)
+            user.dob = request.POST.get("dob", user.dob)
+            user.city = request.POST.get("city", user.city)
+            user.state = request.POST.get("state", user.state)
+            user.country = request.POST.get("country", user.country)
+            user.phone_number = request.POST.get("phone_number", user.phone_number)
 
             user.save()
 
             return JsonResponse({"message": "User updated successfully."}, status=200)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON format"}, status=400)
         except Exception as e:
+            logging.error(f"Internal Server Error: {str(e)}")
+            logging.error(f"Traceback: {traceback.format_exc()}")  # Add this line
             return JsonResponse(
                 {"error": f"Internal server error: {str(e)}"}, status=500
             )
 
     return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+def get_user(request, user_id):
+    print("sausgduasydguyagdyuagyud")
+    try:
+        user = get_object_or_404(User, user_id=user_id)
+        print("-------------------------", user)
+        user_data = {
+            "user_id": user.user_id,
+            "name": user.name,
+            "phone_number": user.phone_number,
+            "email": user.email,
+            "dob": user.dob,
+            "city": user.city,
+            "state": user.state,
+            "country": user.country,
+            "photo_url": user.photo_url.name,
+        }
+        return JsonResponse(user_data, status=200)
+    except Exception as e:
+        return JsonResponse({"error": f"Internal server error: {str(e)}"}, status=500)
 
 
 def dashboard_stats(request):

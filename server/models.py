@@ -6,12 +6,18 @@ class User(models.Model):
     name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=255)
     role = models.CharField(max_length=255)
-    email = models.CharField(max_length=255)
+    email = models.CharField(max_length=255, unique=True)
     password = models.CharField(max_length=255)
     dob = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
     state = models.CharField(max_length=255)
     country = models.CharField(max_length=255)
+    photo_url = models.ImageField(upload_to="images/", default="images/krishtec.jpg")
+
+    def save(self, *args, **kwargs):
+        if not self.photo_url:
+            self.photo_url.name = f"images/{self.user_id}.jpg"
+        super().save(*args, **kwargs)
 
 
 class Topic(models.Model):

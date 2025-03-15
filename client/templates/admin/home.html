@@ -264,11 +264,19 @@
             </div>
             <a onclick="window.location.href = '/admins/1/{{ user_id }}'" class="navbar-brand ms-3"
                 href="#">Dashboard</a>
-            <div class="d-flex align-items-center position-relative">
-                <i id="profile-icon" class="bi bi-person-circle fs-4 me-3" data-bs-toggle="tooltip"
-                    data-bs-placement="right" title="Profile" style="cursor: pointer;"></i>
+
+
+            <!-- /ssadk -->
+
+            <div class="d-flex  align-items-center position-relative ">
+                <!-- Profile Image (Initially Default) -->
+                <img id="profile-avatar" src="{% static 'profile.png' %}" alt="Profile Image"
+                    class="rounded-circle border border-grey border-2 me-3 bg-white"
+                    style="width: 40px; height: 40px; object-fit: cover; cursor: pointer;">
+
+                <!-- Profile Tooltip -->
                 <div id="profile-tooltip" class="position-absolute bg-white border rounded shadow p-3"
-                    style="display: none; top: 40px; right: 0; width: 250px; z-index: 1000;">
+                    style="display: none; top: 50px; right: 0; width: 250px; z-index: 1000;">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div class="d-flex align-items-center">
                             <img id="profile-image" src="{% static 'profile.png' %}" alt="Profile Image"
@@ -285,7 +293,7 @@
                     <button id="profile-logout" class="btn btn-danger btn-sm w-100">Logout</button>
                 </div>
             </div>
-
+            <!-- asdasas -->
 
         </div>
     </nav>
@@ -509,11 +517,13 @@
     <script>
         const user_id = '{{ user_id }}'; // Django Template Variable
         const profileIcon = document.getElementById('profile-icon');
-        const profileTooltip = document.getElementById('profile-tooltip');
         const profileName = document.getElementById('profile-name');
         const profileEmail = document.getElementById('profile-email');
         const manageAccountLink = document.getElementById('profile-manage-account');
         const logoutButton = document.getElementById('profile-logout');
+
+        const profileAvatar = document.getElementById('profile-avatar');
+        const profileTooltip = document.getElementById('profile-tooltip');
         const profileClose = document.getElementById('profile-close');
 
         const ip = "/aapi3";
@@ -522,13 +532,21 @@
         fetch(`${ip}/api/users/${user_id}`)
             .then(response => response.json())
             .then(data => {
+                const profileName = document.getElementById('profile-name');
+                const profileEmail = document.getElementById('profile-email');
+                const profileImage = document.getElementById('profile-image');
+
                 if (data.email) {
                     profileEmail.textContent = data.email;
                     profileName.textContent = data.name;
 
-                    // Optionally set profile image if available
-                    if (data.profileImage) {
-                        document.getElementById('profile-image').src = data.profileImage;
+                    // Update profile image if a valid photo URL is provided
+                    if (data.photo_url) {
+                        const newImageUrl = '/media/' + data.photo_url;
+
+                        // Update both the profile avatar and tooltip image
+                        profileAvatar.src = newImageUrl;
+                        profileImage.src = newImageUrl;
                     }
                 }
             })
@@ -537,7 +555,7 @@
             });
 
         // Toggle tooltip on click
-        profileIcon.addEventListener('click', () => {
+        profileAvatar.addEventListener('click', () => {
             profileTooltip.style.display = (profileTooltip.style.display === 'block') ? 'none' : 'block';
         });
 
@@ -545,7 +563,6 @@
         profileClose.addEventListener('click', () => {
             profileTooltip.style.display = 'none';
         });
-
         logoutButton.addEventListener('click', () => {
 
             if (confirm('Are you sure to logout ?'))
