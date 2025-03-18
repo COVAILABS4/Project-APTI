@@ -339,8 +339,6 @@ def update_user(request, user_id):
 
             return JsonResponse({"message": "User updated successfully."}, status=200)
         except Exception as e:
-            logging.error(f"Internal Server Error: {str(e)}")
-            logging.error(f"Traceback: {traceback.format_exc()}")  # Add this line
             return JsonResponse(
                 {"error": f"Internal server error: {str(e)}"}, status=500
             )
@@ -709,52 +707,60 @@ def add_subtopic(request, topic_id):
 def add_title(request, topic_id, subtopic_id):
     if request.method == "POST":
         try:
-            body = get_body_data(request)
-            user_id = body.get("user_id")
-            content_type = body.get(
-                "type"
-            )  # "Practices", "Test", or "Learning_Materials"
+            body = json.loads(request.body)
+            content_type = body.get("type")  # "Practices" or "Test"
             title = body.get("title")
-            content = body.get("content")  # Used for Learning Materials
+            duration = body.get("duration", 0)  # Default 0 seconds
+            attempts = body.get("attempts", 1)  # Default 1 attempt
 
-            # Process the content based on its type
+            if not title:
+                return JsonResponse({"error": "Title is required"}, status=400)
+
+            title_id = get_unique_id()  # Generate unique ID
+
             if content_type == "Practices":
-                # Generate a unique title ID
-                title_id = get_unique_id()
                 practice = Practice.objects.create(
                     title_id=title_id,
                     topic_id_id=topic_id,
                     subtopic_id_id=subtopic_id,
                     title=title,
+                    duration=duration,
+                    attempts=attempts,
                 )
                 response_data = {
                     "title_id": practice.title_id,
                     "title": practice.title,
                     "subtopic_id": practice.subtopic_id.subtopic_id,
                     "topic_id": practice.topic_id.topic_id,
+                    "duration": practice.duration,
+                    "attempts": practice.attempts,
                 }
 
             elif content_type == "Test":
-                # Generate a unique title ID
-                title_id = get_unique_id()
                 test = Test.objects.create(
                     title_id=title_id,
                     topic_id_id=topic_id,
                     subtopic_id_id=subtopic_id,
                     title=title,
+                    duration=duration,
+                    attempts=attempts,
                 )
                 response_data = {
                     "title_id": test.title_id,
                     "title": test.title,
                     "subtopic_id": test.subtopic_id.subtopic_id,
                     "topic_id": test.topic_id.topic_id,
+                    "duration": test.duration,
+                    "attempts": test.attempts,
                 }
+
+            else:
+                return JsonResponse({"error": "Invalid type specified"}, status=400)
 
             return JsonResponse(response_data, status=200)
 
         except Exception as e:
-
-            print("--------------", e)
+            print("Error:", e)
             return JsonResponse({"error": str(e)}, status=500)
 
     return JsonResponse({"error": "Invalid request method"}, status=405)
@@ -936,7 +942,13 @@ def get_titles(request):
                 titles = Test.objects.filter(subtopic_id=subtopic_id, topic_id=topic_id)
 
             titles_list = [
-                {"title": title.title, "title_id": title.title_id} for title in titles
+                {
+                    "title": title.title,
+                    "title_id": title.title_id,
+                    "attempts": title.attempts,
+                    "duration": title.duration,
+                }
+                for title in titles
             ]
 
             return JsonResponse(titles_list, safe=False, status=200)
@@ -1171,11 +1183,12 @@ def get_title(request):
                 "title": title.title,
                 "topic_id": title.topic_id.topic_id,
                 "subtopic_id": title.subtopic_id.subtopic_id,
+                "duration": title.duration,  # Added duration field
+                "attempts": title.attempts,  # Added attempts field
             }
         )
 
     except Exception as e:
-
         print(e)
         return JsonResponse({"error": str(e)}, status=500)
 
@@ -1608,12 +1621,26 @@ def get_attempts(request, user_id, title_id):
         if not User.objects.filter(user_id=user_id).exists():
             return JsonResponse({"error": "User not found"}, status=404)
 
+        # Check if the test exists
+        test = Test.objects.filter(title_id=title_id).first()
+        if not test:
+            return JsonResponse({"error": "Test not found"}, status=404)
+
         # Count the number of attempts for the given user_id and title_id
-        attempts = TestHistory.objects.filter(
+        user_attempts = TestHistory.objects.filter(
             user_id_id=user_id, title_id_id=title_id
         ).count()
 
-        return JsonResponse({"attempts": attempts}, status=200)
+        # Prepare the response data
+        response_data = {
+            "title_id": title_id,
+            "user_attempts": user_attempts,
+            "title_attempts": test.attempts,
+            "title_duration": test.duration,
+        }
+
+        return JsonResponse(response_data, status=200)
+
     except Exception as e:
         return JsonResponse(
             {"error": "Failed to retrieve attempts count", "details": str(e)},
@@ -1904,17 +1931,17 @@ def finish_test(request):
 def organize_title(request, id):
     if request.method == "PUT":
         try:
-            # Parse the request body
             body = json.loads(request.body)
             topic_id = body.get("topic_id")
             subtopic_id = body.get("subtopic_id")
             title_type = body.get("type")  # "Practices" or "Test"
             new_title = body.get("newTitle")
+            duration = body.get("duration", None)
+            attempts = body.get("attempts", None)
 
             if not topic_id or not subtopic_id or not title_type or not new_title:
                 return JsonResponse({"error": "Missing required fields"}, status=400)
 
-            # Check the type and update the respective model
             if title_type == "Practices":
                 title = Practice.objects.filter(
                     title_id=id, topic_id=topic_id, subtopic_id=subtopic_id
@@ -1929,23 +1956,31 @@ def organize_title(request, id):
             if not title:
                 return JsonResponse({"error": "Title not found"}, status=404)
 
-            # Update the title
             title.title = new_title
+            if duration is not None:
+                title.duration = duration
+            if attempts is not None:
+                title.attempts = attempts
             title.save()
 
             return JsonResponse(
                 {
                     "message": "Title updated successfully",
-                    "title": {"title_id": title.title_id, "title": title.title},
+                    "title": {
+                        "title_id": title.title_id,
+                        "title": title.title,
+                        "duration": title.duration,
+                        "attempts": title.attempts,
+                    },
                 }
             )
         except Exception as e:
             return JsonResponse(
                 {"error": "Failed to update title", "details": str(e)}, status=500
             )
-    if request.method == "DELETE":
+
+    elif request.method == "DELETE":
         try:
-            # Get query parameters
             topic_id = request.GET.get("topic_id")
             subtopic_id = request.GET.get("subtopic_id")
             title_type = request.GET.get("type")  # "Practices" or "Test"
@@ -1955,7 +1990,6 @@ def organize_title(request, id):
                     {"error": "Missing required query parameters"}, status=400
                 )
 
-            # Check the type and delete the respective model
             if title_type == "Practices":
                 title = Practice.objects.filter(
                     title_id=id, topic_id=topic_id, subtopic_id=subtopic_id
@@ -1970,7 +2004,6 @@ def organize_title(request, id):
             if not title:
                 return JsonResponse({"error": "Title not found"}, status=404)
 
-            # Delete the title
             title.delete()
 
             return JsonResponse({"message": "Title deleted successfully"})
@@ -1978,6 +2011,7 @@ def organize_title(request, id):
             return JsonResponse(
                 {"error": "Failed to delete title", "details": str(e)}, status=500
             )
+
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
 

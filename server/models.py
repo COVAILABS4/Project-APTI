@@ -71,6 +71,8 @@ class Practice(models.Model):
     topic_id = models.ForeignKey(Topic, on_delete=models.CASCADE)
     subtopic_id = models.ForeignKey(SubTopic, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
+    duration = models.IntegerField(default=900)  # Duration in seconds
+    attempts = models.IntegerField(default=1)  # Number of attempts
 
 
 class Test(models.Model):
@@ -78,6 +80,8 @@ class Test(models.Model):
     topic_id = models.ForeignKey(Topic, on_delete=models.CASCADE)
     subtopic_id = models.ForeignKey(SubTopic, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
+    duration = models.IntegerField(default=900)  # Duration in seconds
+    attempts = models.IntegerField(default=1)  # Number of attempts
 
 
 class PracticeQuestion(models.Model):

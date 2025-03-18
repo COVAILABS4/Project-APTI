@@ -11,162 +11,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        body {
-            display: flex;
-            height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-
-        #sidebar {
-            width: 300px;
-            /* Increased sidebar width */
-            background-color: #f8f9fa;
-            border-right: 1px solid #ddd;
-            padding: 1rem 0;
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            transition: transform 0.3s ease;
-        }
-
-        #sidebar.hidden {
-            transform: translateX(-100%);
-        }
-
-        #main-content {
-            flex-grow: 1;
-            margin-left: 300px;
-            /* Adjusted for wider sidebar */
-            padding: 1rem;
-            transition: margin-left 0.3s ease;
-        }
-
-        #main-content.expanded {
-            margin-left: 0;
-        }
-
-        .navbar {
-            background-color: #fff;
-            border-bottom: 1px solid #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-        }
-
-        .navbar-brand {
-            display: flex;
-            align-items: center;
-            padding-left: 10px;
-        }
-
-        .navbar-toggler {
-            border: none;
-        }
-
-        .profile-menu {
-            position: absolute;
-            right: 1rem;
-            top: 100%;
-            background: white;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            display: none;
-            padding: 1rem;
-            width: 250px;
-        }
-
-        .profile-menu.active {
-            display: block;
-        }
-
-        .profile-menu .dropdown-item {
-            padding: 0.5rem 1rem;
-            color: #333;
-            text-align: center;
-        }
-
-        .profile-menu .dropdown-item img {
-            margin-bottom: 0.5rem;
-        }
-
-        .profile-menu .btn {
-            width: 100%;
-            margin-top: 0.5rem;
-        }
-
-        .sidebar-item {
-            display: flex;
-            align-items: center;
-            padding: 1rem 1.5rem;
-            /* Increased padding for spacing */
-            color: #333;
-            font-weight: 500;
-        }
-
-        .sidebar-item i {
-            margin-right: 1rem;
-        }
-
-        .sidebar-item:hover {
-            background-color: #e9ecef;
-            cursor: pointer;
-            text-decoration: underline;
-            /* Highlight with underline on hover */
-        }
-
-        .sidebar-logo {
-            text-align: center;
-            padding: 1rem 0;
-        }
-
-        .sidebar-logo img {
-            max-width: 80%;
-        }
-
-        .separator {
-            border-top: 1px solid #ddd;
-            margin: 1rem 0;
-        }
-
-        /* Profile Tooltip Style */
-        #profile-tooltip {
-            display: none;
-            position: absolute;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 15px;
-            width: 250px;
-            z-index: 1000;
-            top: 40px;
-            right: 0;
-        }
-
-        #profile-tooltip .d-flex {
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        #profile-tooltip img {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            border-radius: 50%;
-        }
-
-        #profile-tooltip button {
-            width: 100%;
-        }
-
-        #profile-tooltip .btn-close {
-            border: none;
-        }
-
         .title-item {
             display: flex;
             align-items: center;
@@ -203,92 +49,17 @@
 
         .breadcrumb .highlight:hover {
             text-decoration: underline;
-
         }
     </style>
 </head>
 
 <body>
 
-    <!-- Sidebar -->
-    <div id="sidebar">
-        <div class="sidebar-logo">
-            <img src="{% static 'icon.png' %}" alt="Logo"> <!-- Placeholder for logo -->
-        </div>
-        <div onclick="window.location.href = '/user/3/{{user_id}}/'" class="sidebar-item" title="Go to Home"><i
-                class="material-icons">home</i> Home</div>
-        <div class="separator"></div>
-        <div onclick="window.location.href = '/user/3/{{user_id}}/test_history'" class="sidebar-item"
-            title="View Test History"><i class="material-icons">history</i> Test History</div>
-        <div class="separator"></div>
-        <div onclick="window.location.href = '/user/3/{{user_id}}/contact_us'" class="sidebar-item" title="Contact Us">
-            <i class="material-icons">contact_mail</i> Contact Us
-        </div>
-    </div>
-
     <!-- Main Content -->
     <div id="main-content">
-        <nav class="navbar navbar-light">
-            <div class="container-fluid">
-                <div class="d-flex ">
-                    <button class="navbar-toggler" type="button" id="toggleSidebar" title="Toggle Sidebar">
-                        <i class="material-icons">menu</i>
-                    </button>
-                    <a onclick="window.location.href = '/user/3/{{user_id}}/'" href="#" class="navbar-brand"
-                        title="Go to Dashboard">
-                        <i class="material-icons">dashboard</i> KRISHTEC
-                    </a>
-                </div>
-                <div class="dropdown">
-                    <button class="btn" id="profileBtn" title="View Profile">
-                        <i class="material-icons">account_circle</i>
-                    </button>
-                    <!-- Profile Tooltip -->
-                    <div id="profile-tooltip">
-                        <div class="d-flex">
-                            <div class="d-flex align-items-center">
-                                <img id="profile-image" src="{% static 'profile.png' %}" alt="Profile Image"
-                                    class="rounded-circle me-2">
 
-                                <div>
-                                    <p id="profile-name" class="mb-0 fw-bold">John Doe</p>
-                                    <p id="profile-email" class="mb-0 text-muted small">john.doe@example.com</p>
-                                </div>
-                            </div>
-                            <button id="profile-close" class="btn-close" aria-label="Close"></button>
-                        </div>
-                        <a onclick="window.location.href = '/user/3/{{user_id}}/setting'" href="#"
-                            id="profile-manage-account" class="btn btn-primary btn-sm w-100 mb-2">Manage Your
-                            Account</a>
-                        <button onclick="window.location.href = '/login'" id="profile-logout"
-                            class="btn btn-danger btn-sm w-100">Logout</button>
-                    </div>
-                </div>
-            </div>
-        </nav>
         <div>
             <div>
-                <div class="container mt-4">
-                    <!-- Breadcrumb -->
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item highlight" id="bc-home">Home</li>
-                            <li class="breadcrumb-item highlight" id="bc-topic">All Tests</li>
-                            <li class="breadcrumb-item highlight" id="bc-subtopic">All Tests</li>
-                            <li class="breadcrumb-item active">Test</li>
-                        </ol>
-                    </nav>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h1 class="h4">Test Questions</h1>
-                        <input id="filter-input" type="text" class="form-control w-25" placeholder="Filter titles..."
-                            oninput="filterTitles()">
-                    </div>
-
-
-                    <div class="titles-container row mt-4" id="titlesContainer">
-                        <!-- Titles will be dynamically injected here -->
-                    </div>
-                </div>
 
                 <!-- Modal -->
                 <div class="modal fade" id="testModal" tabindex="-1" aria-labelledby="testModalLabel"
@@ -309,11 +80,15 @@
                                     <span id="numQuestions" class="fw-bold"></span>
                                 </p>
                                 <p class="mb-2">
-                                    <strong class="text-success">Time:</strong>
-                                    <span class="fw-bold">15 minutes</span>
+                                    <strong class="text-success">Duration:</strong>
+                                    <span id="testDuration" class="fw-bold"></span> minutes
                                 </p>
                                 <p class="mb-2">
                                     <strong class="text-success">Number of Attempts:</strong>
+                                    <span id="numTestAttempts" class="fw-bold"></span>
+                                </p>
+                                <p class="mb-2">
+                                    <strong class="text-success">Your Attempts:</strong>
                                     <span id="numAttempts" class="fw-bold"></span>
                                 </p>
                                 <div id="attemptsWarning" class="alert alert-danger mt-3 text-center"
@@ -334,87 +109,21 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Titles Container -->
+                <div id="titlesContainer" class="row titles-container">
+                    <!-- Dynamically populated titles will appear here -->
+                </div>
+
             </div>
         </div>
     </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-
-        const apiBaseUrl = "/aapi3"; // Replace with your actual API base URL
-
-        const uid = '{{ user_id }}';
-        const top_id = '{{topic_id}}'
-        const subtop_id = '{{subtopic_id}}'
-
-        // var header = "NETWORL";
-
-        //     console.log(uid, top_id, subtop_id)
-        var bc_home = document.getElementById('bc-home');
-        var bc_create = document.getElementById('bc-create');
-        var bc_topic = document.getElementById('bc-topic');
-        var bc_subtopic = document.getElementById('bc-subtopic');
-
-
-        bc_home.addEventListener('click', () => {
-            window.location.href = '/user/3/' + uid
-        })
-
-
-        bc_topic.addEventListener('click', () => {
-
-            //  alert("SW")
-            window.location.href = `/user/3/${uid}/${top_id}`
-        })
-        bc_subtopic.addEventListener('click', () => {
-
-            //  alert("SW")
-            window.history.go(-1);
-            // window.location.href = `/admins/1/${uid}/new/content/${top_id}/subtopics`
-        })
-
-
-        // Function to Load Topic Name
-        async function loadTopicName() {
-            try {
-                const response = await fetch(`${apiBaseUrl}/topic/${top_id}`);
-                const topic = await response.json();
-                if (topic && topic.name) {
-                    bc_topic.textContent = topic.name;
-                } else {
-                    console.error("Topic not found");
-                }
-            } catch (error) {
-                console.error("Error fetching topic:", error);
-            }
-        }
-        async function loadSubtopicNames() {
-            try {
-
-                // Fetch Subtopic Name
-                const subtopicResponse = await fetch(`${apiBaseUrl}/topics/${top_id}/subtopics/${subtop_id}`);
-                const subtopicData = await subtopicResponse.json();
-                bc_subtopic.textContent = subtopicData.name;
-
-
-
-            } catch (error) {
-                console.error('Error loading topic or subtopic names:', error);
-            }
-        }
-
-        loadTopicName();
-        loadSubtopicNames()
-        // loadSubtopicNames();
-
-    </script>
-
-
-    <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+        const apiBaseUrl = '/aapi3'
 
         const user_id = '{{user_id}}';
         const topic_id = "{{topic_id}}"; // Replace dynamically if using a template engine
@@ -427,6 +136,7 @@
             try {
                 const response = await fetch(`${apiBaseUrl}/title?topic_id=${topic_id}&subtopic_id=${subtopic_id}&utils_type=${utils_type}`);
                 const data = await response.json();
+
 
                 if (response.ok) {
                     titles = data;
@@ -448,12 +158,12 @@
                 return;
             }
 
-            filteredTitles.forEach(({ title, title_id }) => {
+            filteredTitles.forEach(({ title, title_id, attempts, duration }) => {
                 const colDiv = document.createElement("div");
                 colDiv.classList.add("col-md-4", "mb-4");
 
                 colDiv.innerHTML = `
-                    <div onclick='takeTest("${title}" , "${title_id}")' class="title-item">
+                    <div onclick='takeTest("${title}" , "${title_id}" , "${attempts}"  , "${duration}")' class="title-item">
                         <i class="bi bi-folder-fill folder-icon"></i>
                         <span>${title}</span>
                     </div>
@@ -469,7 +179,8 @@
             renderTitles(filteredTitles);
         }
 
-        async function takeTest(title, titleId) {
+        async function takeTest(title, titleId, testAttempts, testDurations) {
+            testAttempts = Number(testAttempts)
             selectedTitleId = titleId;
             try {
                 const response1 = await fetch(`${apiBaseUrl}/attempts/${user_id}/${titleId}`);
@@ -477,14 +188,18 @@
                 const data1 = await response1.json();
                 const data2 = await response2.json();
 
-                console.log(data1, data2)
 
                 if (response1.ok && response2.ok) {
                     document.getElementById("testModalLabel").innerText = title;
-                    document.getElementById("numAttempts").innerText = data1.attempts;
+                    document.getElementById("numAttempts").innerText = data1.user_attempts;
+                    document.getElementById("numTestAttempts").innerText = data1.title_attempts;
                     document.getElementById("numQuestions").innerText = data2.question_count;
 
-                    if (data1.attempts > 0) {
+                    const durationInMinutes = Math.floor(testDurations / 60);
+                    document.getElementById("testDuration").innerText = durationInMinutes;
+
+
+                    if (data1.user_attempts >= data1.title_attempts) {
                         document.getElementById("attemptsWarning").style.display = "block";
                         document.getElementById("startTestButton").disabled = true;
                     } else {
@@ -507,78 +222,13 @@
                 const url = `/user/3/${user_id}/${topic_id}/${subtopic_id}/test/${selectedTitleId}`;
 
                 window.open(url, '_blank');
-
-
-                window.location.reload()
+                window.location.reload();
             }
         }
 
-
         document.addEventListener("DOMContentLoaded", fetchTitles);
     </script>
-    <script>
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.getElementById('main-content');
-        const toggleSidebar = document.getElementById('toggleSidebar');
-        const profileBtn = document.getElementById('profileBtn');
-        const profileTooltip = document.getElementById('profile-tooltip');
-        const profileCloseBtn = document.getElementById('profile-close');
-        const profileLogoutBtn = document.getElementById('profile-logout');
 
-        // Fetching user data based on user_id
-        //   const user_id = '{{ user_id }}';  // Django Template Variable
-        const ip = "/aapi3";
-
-        // Fetch user data from API
-        fetch(`${ip}/api/users/${user_id}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.email) {
-                    document.getElementById('profile-email').textContent = data.email;
-                    document.getElementById('profile-name').textContent = data.name;
-
-                    // Optionally set profile image if available
-                    if (data.profileImage) {
-                        document.getElementById('profile-image').src = data.profileImage;
-                    }
-                }
-            })
-            .catch(err => {
-                console.error('Error fetching user data:', err);
-            });
-
-        // Toggle Sidebar visibility
-        toggleSidebar.addEventListener('click', () => {
-            sidebar.classList.toggle('hidden');
-            mainContent.classList.toggle('expanded');
-        });
-
-        // Toggle Profile Tooltip visibility
-        profileBtn.addEventListener('click', () => {
-            profileTooltip.style.display = profileTooltip.style.display === 'none' ? 'block' : 'none';
-        });
-
-        profileTooltip.style.display = 'none';
-        // Close Profile Tooltip
-        profileCloseBtn.addEventListener('click', () => {
-            profileTooltip.style.display = 'none';
-        });
-
-        // Logout confirmation
-        profileLogoutBtn.addEventListener('click', () => {
-            if (confirm("Are you sure you want to logout?")) {
-                // Redirect to logout URL (modify as per your logout endpoint)
-                window.location.href = '/';
-            }
-        });
-
-        // Close profile tooltip if clicked outside
-        document.addEventListener('click', (e) => {
-            if (!profileBtn.contains(e.target) && !profileTooltip.contains(e.target)) {
-                profileTooltip.style.display = 'none';
-            }
-        });
-    </script>
 </body>
 
 </html>

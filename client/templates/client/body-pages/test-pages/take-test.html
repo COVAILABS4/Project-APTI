@@ -456,7 +456,7 @@
                 <div class="timer-calculator">
                     <div class="timer">
                         <h4 class="mb-0">Remaining Time</h4>
-                        <p id="time-display">15:00</p>
+                        <p id="time-display">00:00</p>
                         <div class="timer-controls">
                             <button id="pause-resume" class="btn btn-outline-primary w-50">Pause</button>
                             <button id="restart" class="btn btn-outline-danger w-50">Restart</button>
@@ -506,7 +506,7 @@
 
         var isSubmitted = false;
         let timerInterval = null;
-        let remainingTime = 15 * 60;
+
         let isPaused = false;
         const startTime = new Date();
         let data = { questions: [] }; // Initialize an empty questions array
@@ -516,7 +516,9 @@
         const subtopicId = "{{subtopic_id}}";
         const title_id = "{{title_id}}"
         const utils = "Test";
-        const attemptLimit = 1;
+
+
+        var remainingTime = 0;
 
 
         let currentPage = 1;
@@ -654,8 +656,8 @@
 
                     window.open(`/user/3/${userId}/${topicId}/${subtopicId}/test/${title_id}/${data.testID}`, '_blank');
                     isSubmitted = true;
-                    // Close the current tab
-                    window.close();
+
+
                 })
                 .catch(error => {
                     console.error('Error saving result:', error.message);
@@ -875,8 +877,9 @@
 
 
 
+
                 // Check if attempts exceed the limit
-                if (data.attempts >= attemptLimit) {
+                if (data.user_attempts >= data.title_attempts) {
                     // Show the Bootstrap modal if attempts exceed the limit
                     const modal = new bootstrap.Modal(document.getElementById('attemptsExceededModal'));
                     modal.show();
@@ -887,6 +890,7 @@
                     }, 3000)
 
                 } else {
+                    remainingTime = Number(data.title_duration)
                     fetchQuestions()
                     startTimer()
                 }
@@ -989,6 +993,13 @@
 
         document.getElementById('mcq-form').addEventListener('submit', (event) => {
             event.preventDefault();
+            if (isSubmitted) {
+                alert("Already submitted !!!");
+
+                window.close()
+
+
+            }
             showConfirmationModal(
                 'Submit Test',
                 'Are you sure you want to submit your test?',
