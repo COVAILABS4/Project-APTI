@@ -43,8 +43,8 @@
                         <td>${user.name}</td>
                         <td>${user.email}</td>
                         <td>
-                            <button class="btn btn-custom btn-profile" onclick="navProfile('${user.user_id}')">Profile</button>
-                            <button class="btn btn-custom btn-history" onclick="navHistory('${user.user_id}')">Test History</button>
+                            <button class="btn btn-custom btn-profile" onclick="navProfile('${user.user_id}')">View</button>
+                         
                         </td>
                     </tr>
                 `;
@@ -56,13 +56,7 @@
             //    alert("User ID: " + userId);
             window.location.href = `/admins/1/${user_id}/users-list/${userId}/profile`
         }
-        function navHistory(userId) {
 
-            //<str:role>/1/<str:user_id>/users-list/<str:user2_id>/test_history
-
-            window.location.href = `/admins/1/${user_id}/users-list/${userId}/test_history`
-
-        }
     </script>
     <style>
         body {

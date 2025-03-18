@@ -49,62 +49,119 @@ def get_user_name(id):
 # USER's
 
 
+# def admin_register(request):
+#     if request.method == "POST":
+#         try:
+#             data = request.POST.dict()
+#             name = data.get("name")
+#             phone_number = data.get("phone_number")
+#             email = data.get("email")
+#             password = data.get("password")
+#             dob = data.get("dob", "")
+#             city = data.get("city", "")
+#             state = data.get("state", "")
+#             country = data.get("country", "")
+#             role = data.get("role", "user")
+#             image = request.FILES.get("image")
+
+#             if User.objects.filter(email=email).exists():
+#                 return JsonResponse(
+#                     {"error": "User with this email already exists"}, status=409
+#                 )
+
+#             user_id = get_unique_id()
+#             photo_url = "media/images/krishtec.jpg"
+
+#             if image:
+#                 image_name = f"media/images/{user_id}.jpg"
+#                 default_storage.save(image_name, ContentFile(image.read()))
+#                 photo_url = image_name
+
+#             user = User.objects.create(
+#                 user_id=user_id,
+#                 name=name,
+#                 phone_number=phone_number,
+#                 email=email,
+#                 password=password,
+#                 dob=dob,
+#                 city=city,
+#                 state=state,
+#                 country=country,
+#                 role=role,
+#                 photo_url=photo_url,
+#             )
+#             user.save()
+
+#             return JsonResponse(
+#                 {"message": f"Registration successful, redirecting to {role} page."},
+#                 status=201,
+#             )
+
+#         except json.JSONDecodeError:
+#             return JsonResponse({"error": "Invalid JSON"}, status=400)
+#         except Exception as e:
+#             return JsonResponse(
+#                 {"error": f"Internal server error: {str(e)}"}, status=500
+#             )
+
+#     return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
 def admin_register(request):
     if request.method == "POST":
         try:
-            data = request.POST.dict()
+            data = json.loads(request.body)
             name = data.get("name")
             phone_number = data.get("phone_number")
             email = data.get("email")
             password = data.get("password")
-            dob = data.get("dob", "")
-            city = data.get("city", "")
-            state = data.get("state", "")
-            country = data.get("country", "")
-            role = data.get("role", "user")
-            image = request.FILES.get("image")
+            dob = data.get("dob", "DD/MM/YYYY")
+            city = data.get("city", "CITY")
+            role = data.get("role", "subadmin")
+            state = data.get("state", "STATE")
+            country = data.get("country", "CN")
+            user_type = data.get("type", "user")  # Get type, default is user
 
-            if User.objects.filter(email=email).exists():
-                return JsonResponse(
-                    {"error": "User with this email already exists"}, status=409
+            with transaction.atomic():
+                if User.objects.filter(email=email).exists():
+                    return JsonResponse(
+                        {"error": "User with this email already exists"}, status=409
+                    )
+
+                user = User(
+                    user_id=get_unique_id(),
+                    name=name,
+                    phone_number=phone_number,
+                    role=role,
+                    email=email,
+                    password=password,
+                    dob=dob,
+                    city=city,
+                    state=state,
+                    country=country,
+                    photo_url="images/krishtec.jpg",
+                    type=user_type,  # Assigning the new field
                 )
-
-            user_id = get_unique_id()
-            photo_url = "media/images/krishtec.jpg"
-
-            if image:
-                image_name = f"media/images/{user_id}.jpg"
-                default_storage.save(image_name, ContentFile(image.read()))
-                photo_url = image_name
-
-            user = User.objects.create(
-                user_id=user_id,
-                name=name,
-                phone_number=phone_number,
-                email=email,
-                password=password,
-                dob=dob,
-                city=city,
-                state=state,
-                country=country,
-                role=role,
-                photo_url=photo_url,
-            )
-            user.save()
+                user.save()
 
             return JsonResponse(
-                {"message": f"Registration successful, redirecting to {role} page."},
+                {
+                    "message": "Registration successful, redirecting to user page.",
+                    "role": "user",
+                },
                 status=201,
             )
 
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON"}, status=400)
+        except IntegrityError as err:
+            return JsonResponse(
+                {"error": "Database error. Please try again."}, status=500
+            )
         except Exception as e:
             return JsonResponse(
                 {"error": f"Internal server error: {str(e)}"}, status=500
             )
-
-    return JsonResponse({"error": "Invalid request method"}, status=405)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)
 
 
 def login(request):
@@ -154,7 +211,6 @@ def login(request):
 def register(request):
     if request.method == "POST":
         try:
-            # Parse the JSON request body
             data = json.loads(request.body)
             name = data.get("name")
             phone_number = data.get("phone_number")
@@ -164,34 +220,32 @@ def register(request):
             city = data.get("city")
             state = data.get("state")
             country = data.get("country")
+            user_type = data.get("type", "user")  # Get type, default is user
 
-            # Validate required fields
             if not all(
                 [name, phone_number, email, password, dob, city, state, country]
             ):
                 return JsonResponse({"error": "All fields are required"}, status=400)
 
-            # Database transaction to ensure consistency
             with transaction.atomic():
-                # Check if the email already exists
                 if User.objects.filter(email=email).exists():
                     return JsonResponse(
                         {"error": "User with this email already exists"}, status=409
                     )
 
-                # Create a new user
                 user = User(
-                    user_id=get_unique_id(),  # Generate a unique ID
+                    user_id=get_unique_id(),
                     name=name,
                     phone_number=phone_number,
                     role="user",
                     email=email,
-                    password=password,  # In real-world apps, hash this password!
+                    password=password,
                     dob=dob,
                     city=city,
                     state=state,
                     country=country,
                     photo_url="images/krishtec.jpg",
+                    type=user_type,  # Assigning the new field
                 )
                 user.save()
 
@@ -368,6 +422,8 @@ def get_subadmins(request):
             # Prepare a list of subadmins with relevant details
             subadmins_list = list(subadmins.values())
 
+            print(subadmins)
+
             return JsonResponse(subadmins_list, safe=False, status=200)
         except Exception as e:
             print(f"Error in /get-subadmins: {str(e)}")
@@ -387,6 +443,7 @@ def edit_subadmin(request, id):
             password = body.get("password", None)
             dob = body.get("dob", None)
             city = body.get("city", None)
+            type = body.get("type", None)
             state = body.get("state", None)
             country = body.get("country", None)
 
@@ -400,6 +457,7 @@ def edit_subadmin(request, id):
             subadmin.name = name or subadmin.name
             subadmin.phone_number = phone_number or subadmin.phone_number
             subadmin.email = email or subadmin.email
+            subadmin.type = type or subadmin.type
             subadmin.password = password or subadmin.password
             subadmin.dob = dob or subadmin.dob
             subadmin.city = city or subadmin.city
@@ -445,28 +503,71 @@ def delete_subadmin(request, id):
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
 
+def add_topic(request):
+    if request.method == "POST":
+        try:
+            body = get_body_data(request)
+            user_id = body.get("user_id")
+            topic_name = body.get("topic_name")
+            domain_type = body.get("domain_type", "tech")
+            tech_type = body.get("tech_type", "sw")
+
+            if not user_id or not topic_name:
+                return JsonResponse(
+                    {"error": "User ID and Topic Name are required"}, status=400
+                )
+
+            user = User.objects.filter(user_id=user_id).first()
+            if not user:
+                return JsonResponse({"error": "User not found"}, status=404)
+
+            topic_id = get_unique_id()
+            formatted_time = datetime.now().strftime("%d/%m/%Y , %H:%M:%S")
+
+            new_topic = Topic.objects.create(
+                topic_id=topic_id,
+                name=topic_name,
+                created_by=user,
+                created_at=formatted_time,
+                domain_type=domain_type,
+                tech_type=tech_type,
+            )
+
+            response_data = {
+                "topic_id": new_topic.topic_id,
+                "name": new_topic.name,
+                "created_by": new_topic.created_by.name,
+                "created_at": new_topic.created_at,
+                "domain_type": new_topic.domain_type,
+                "tech_type": new_topic.tech_type,
+                "sub_topics": [],
+            }
+
+            return JsonResponse(response_data, status=201)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
+    return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
 def get_topics(request):
     if request.method == "GET":
         try:
-            # Fetch topics from the database
             topics = Topic.objects.all()
-
-            print(topics)
-
-            # Create a list of topics with required details
             topic_list = [
                 {
                     "topic_id": topic.topic_id,
                     "name": topic.name,
-                    "created_by": User.objects.get(
-                        user_id=topic.created_by_id
-                    ).name,  # Fetching the creator's name
+                    "created_by": topic.created_by.name,
                     "created_at": topic.created_at,
+                    "domain_type": topic.domain_type,
+                    "tech_type": topic.tech_type,
                 }
                 for topic in topics
             ]
-
             return JsonResponse(topic_list, safe=False, status=200)
+
         except Exception as err:
             return JsonResponse({"error": str(err)}, status=500)
 
@@ -476,42 +577,34 @@ def get_topics(request):
 def organize_topic(request, id):
     if request.method == "GET":
         try:
-            # Fetch topic by its ID
             topic = get_object_or_404(Topic, topic_id=id)
 
-            # Format the response with required details
             topic_data = {
                 "topic_id": topic.topic_id,
                 "name": topic.name,
-                "created_by": User.objects.get(
-                    user_id=topic.created_by_id
-                ).name,  # Fetch the creator's name
+                "created_by": topic.created_by.name,
                 "created_at": topic.created_at,
+                "domain_type": topic.domain_type,
+                "tech_type": topic.tech_type,
             }
 
             return JsonResponse(topic_data, status=200)
 
         except Exception as err:
             return JsonResponse({"error": str(err)}, status=500)
+
     if request.method == "PUT":
         try:
-            # Fetch the topic by its ID
             topic = get_object_or_404(Topic, topic_id=id)
-
-            print(request)
-
-            # Get the new topic name from the request body
             body = json.loads(request.body)
 
-            print(body)
-            new_name = body["name"]
-            print(new_name)
+            new_name = body.get("name", topic.name)
+            domain_type = body.get("domain_type", topic.domain_type)
+            tech_type = body.get("tech_type", topic.tech_type)
 
-            if not new_name:
-                return JsonResponse({"error": "New name is required"}, status=400)
-
-            # Update the topic name
             topic.name = new_name
+            topic.domain_type = domain_type
+            topic.tech_type = tech_type
             topic.save()
 
             return JsonResponse(
@@ -522,6 +615,8 @@ def organize_topic(request, id):
                         "name": topic.name,
                         "created_by": topic.created_by_id,
                         "created_at": topic.created_at,
+                        "domain_type": topic.domain_type,
+                        "tech_type": topic.tech_type,
                     },
                 },
                 status=200,
@@ -529,14 +624,11 @@ def organize_topic(request, id):
 
         except Exception as err:
             return JsonResponse({"error": str(err)}, status=500)
+
     if request.method == "DELETE":
         try:
-            # Fetch the topic by its ID
             topic = get_object_or_404(Topic, topic_id=id)
-
-            # Delete the topic
             topic.delete()
-
             return JsonResponse({"message": "Topic deleted successfully"}, status=200)
 
         except Exception as err:
@@ -548,61 +640,6 @@ def organize_topic(request, id):
 def get_body_data(request):
 
     return json.loads(request.body)
-
-
-def add_topic(request):
-    if request.method == "POST":
-        try:
-            body = get_body_data(request)
-            # Retrieve the user_id and topic_name from the request body
-            user_id = body.get("user_id")
-            topic_name = body.get("topic_name")
-
-            if not user_id or not topic_name:
-                return JsonResponse(
-                    {"error": "User ID and Topic Name are required"}, status=400
-                )
-
-            # Fetch the user who is creating the topic
-            user = User.objects.filter(user_id=user_id).first()
-            if not user:
-                return JsonResponse({"error": "User not found"}, status=404)
-
-            # Generate a unique topic ID
-            topic_id = get_unique_id()
-
-            # Get current date and time
-            current_time = datetime.now()
-
-            # Format the date and time as "DD/MM/YYYY , HH/MM/SS"
-            formatted_time = str(current_time.strftime("%d/%m/%Y , %H:%M:%S"))
-
-            # Print the formatted time
-            print(formatted_time)
-
-            # Create the new Topic entry
-            new_topic = Topic.objects.create(
-                topic_id=topic_id,
-                name=topic_name,
-                created_by=user,
-                created_at=formatted_time,
-            )
-
-            # Prepare the response data
-            response_data = {
-                "topic_id": new_topic.topic_id,
-                "name": new_topic.name,
-                "created_by": new_topic.created_by.name,
-                "created_at": new_topic.created_at,
-                "sub_topics": [],  # Initially empty subtopics
-            }
-
-            return JsonResponse(response_data, status=201)
-
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
-
-    return JsonResponse({"error": "Invalid request method"}, status=405)
 
 
 def add_subtopic(request, topic_id):
@@ -1420,7 +1457,6 @@ def manage_content(request):
 
 
 def get_user_topics(request):
-
     if request.method == "GET":
         try:
             # Extract the user_id parameter from the query string
@@ -1435,17 +1471,22 @@ def get_user_topics(request):
             user_topics = UserTopic.objects.filter(user_id=user_id)
 
             # Serialize the user topics data
-            topics_data = [
-                {
-                    "topic_id": topic.topic_id.topic_id,  # Assuming topic_id is a ForeignKey field
-                    "name": topic.name,
-                    "created_by": topic.created_by,
-                    "created_at": topic.created_at,
-                }
-                for topic in user_topics
-            ]
+            topics_data = []
+            for user_topic in user_topics:
+                # Fetch the associated Topic object to get domain_type and tech_type
+                topic = user_topic.topic_id  # This is the related Topic object
 
-            print(topics_data)
+                topics_data.append(
+                    {
+                        "topic_id": topic.topic_id,  # Topic ID from Topic model
+                        "name": user_topic.name,
+                        "created_by": user_topic.created_by,
+                        "created_at": user_topic.created_at,
+                        "domain_type": topic.domain_type,  # domain_type from Topic model
+                        "tech_type": topic.tech_type,  # tech_type from Topic model
+                    }
+                )
+
             return JsonResponse(topics_data, safe=False)
         except Exception as e:
             return JsonResponse(
@@ -1479,6 +1520,7 @@ def get_users_by_role(request):
                     "city": user.city,
                     "state": user.state,
                     "country": user.country,
+                    "type": user.type,
                 }
                 for user in users
             ]

@@ -149,12 +149,19 @@
 
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2 class="h4">Profile</h2>
-                    <div id="actionButtons" class="d-none mt-4">
+                    <div id="actionButtons" class="d-none">
                         <button type="button" id="saveButton" class="btn btn-success me-2">Save</button>
                         <button type="button" id="cancelButton" class="btn btn-secondary">Cancel</button>
                     </div>
-                    <button id="toggleMode" class="btn btn-primary">Edit</button>
+                    <div>
+                        <button id="toggleMode" class="btn btn-primary">Edit</button>
+                        <button class="btn btn-success me-2" onclick="navHistory()">Test
+                            History</button>
+                    </div>
+
                 </div>
+
+
 
                 <form id="profileForm" enctype="multipart/form-data">
                     <div class="row mb-3">
@@ -223,6 +230,15 @@
         const imageColumn = document.getElementById('imageColumn');
         const saveImgButton = document.getElementById('saveImg');
         const showModeName = document.getElementById('showModeName');
+
+
+        function navHistory() {
+
+            //<str:role>/1/<str:user_id>/users-list/<str:user2_id>/test_history
+
+            window.location.href = `/admins/1/${admin_id}/users-list/${user_id}/test_history`
+
+        }
 
         let originalData = {};
 

@@ -13,6 +13,9 @@ class User(models.Model):
     state = models.CharField(max_length=255)
     country = models.CharField(max_length=255)
     photo_url = models.ImageField(upload_to="images/", default="images/krishtec.jpg")
+    type = models.CharField(
+        max_length=255, default="user"
+    )  # New field for tech/non-tech/user
 
     def save(self, *args, **kwargs):
         if not self.photo_url:
@@ -25,6 +28,14 @@ class Topic(models.Model):
     name = models.CharField(max_length=255)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.CharField(max_length=255)
+    domain_type = models.CharField(
+        max_length=10,
+        default="tech",
+    )
+    tech_type = models.CharField(
+        max_length=10,
+        default="sw",
+    )
 
 
 class UserTopic(models.Model):
