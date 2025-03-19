@@ -366,6 +366,20 @@
             </div>
         </nav>
         <div>
+            <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="imageModalLabel">Image View</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <img id="modalImage" src="" alt="Question Image"
+                                style="width: 100%; max-height: 400px; object-fit: contain;">
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="bg-white">
                 <div class="container mt-5">
                     <!-- Breadcrumb -->
@@ -608,37 +622,69 @@
             for (let i = startIndex; i < endIndex; i++) {
                 const question = questions[i];
                 const questionHtml = `
-                    <div class="question-container">
-                        <h5>${i + 1}. ${question.question}</h5>
-                        ${question.options.map((option, index) => `
-                            <div class="form-check">
-                                <label class="form-check-label" for="question-${i}-option-${index}">
-                                    ${index + 1}) ${option}
-                                </label>
-                            </div>
-                        `).join('')}
-                        <div id="answer-${i}" style="display: none;" class="answer-section mt-3">
-                            <strong class="text-success">Correct Answer:</strong> ${question.correct_option}) ${question.options[question.correct_option - 1]}<br>
-                            <strong class="text-success">Explanation:</strong> ${question.explanation}
-                        </div>
-                        <div class="workspace border rounded p-3 bg-white mt-2" style="display: none;" id="workspace-${i}">
-                            <label class="text-success" for="workspace-text-${i}"><strong>Workspace:</strong></label>
-                            <textarea class="form-control mt-2" id="workspace-text-${i}" rows="3" placeholder="..."></textarea>
-                        </div>
-                        <div class="action-buttons">
-                            <button type="button" class="btn btn-success btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Explanation" onclick="toggleAnswer(${i}, ${question.correct_option})">
-                                <i class="bi bi-info-circle text-white"></i> <!-- Info Icon -->
-                            </button>
-                            <button type="button" class="btn btn-success btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Workspace" onclick="toggleWorkspace(${i})">
-                                <i class="bi bi-pencil text-white"></i> <!-- Pencil Icon -->
-                            </button>
-                        </div>
+            <div class="question-container">
+                <h5>${i + 1}. ${question.question}</h5>
+                ${question.question_img ? `
+                    <div style="margin:10px; margin-left:40px">
+                        <img src="/${question.question_img}" alt="Question Image" class="img-thumbnail img-clickable" style="width: 80px; height: 80px; cursor: pointer;">
                     </div>
-                    <div class="separator"></div>
-                `;
+                ` : ''}
+                ${question.options.map((option, index) => `
+                    <div class="form-check">
+                        <label class="form-check-label" for="question-${i}-option-${index}">
+                            ${index + 1}) ${option.text}
+                        </label>
+                        ${option.image ? `
+                            <div  style="margin:10px; margin-left:40px">
+                                <img src="/${option.image}" alt="Option ${index + 1} Image" class="img-thumbnail img-clickable" style="width: 80px; height: 80px; cursor: pointer;">
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join('')}
+                <div id="answer-${i}" style="display: none;" class="answer-section mt-3">
+                    <strong class="text-success">Correct Answer:</strong> ${question.correct_option}) ${question.options[question.correct_option - 1].text}<br>
+                    <strong class="text-success">Explanation:</strong> ${question.explanation}
+                    ${question.explanation_img ? `
+                        <div  style="margin:10px; margin-left:40px">
+                            <img src="/${question.explanation_img}" alt="Explanation Image" class="img-thumbnail img-clickable" style="width: 80px; height: 80px; cursor: pointer;">
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="workspace border rounded p-3 bg-white mt-2" style="display: none;" id="workspace-${i}">
+                    <label class="text-success" for="workspace-text-${i}"><strong>Workspace:</strong></label>
+                    <textarea class="form-control mt-2" id="workspace-text-${i}" rows="3" placeholder="..."></textarea>
+                </div>
+                <div class="action-buttons">
+                    <button type="button" class="btn btn-success btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Explanation" onclick="toggleAnswer(${i}, ${question.correct_option})">
+                        <i class="bi bi-info-circle text-white"></i> <!-- Info Icon -->
+                    </button>
+                    <button type="button" class="btn btn-success btn-icon" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Workspace" onclick="toggleWorkspace(${i})">
+                        <i class="bi bi-pencil text-white"></i> <!-- Pencil Icon -->
+                    </button>
+                </div>
+            </div>
+            <div class="separator"></div>
+        `;
                 container.insertAdjacentHTML("beforeend", questionHtml);
             }
+
+            // Add click event listeners to all images for the modal
+            document.querySelectorAll('.img-clickable').forEach(img => {
+                img.addEventListener('click', () => {
+                    const modalImage = document.getElementById('modalImage');
+                    modalImage.src = img.src;
+                    const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+                    imageModal.show();
+                });
+            });
         }
+
+
+        function setModalImage(imageSrc) {
+            const modalImage = document.getElementById('modalImage');
+            modalImage.src = `/${imageSrc}`;
+        }
+
 
         function toggleAnswer(index, correctOption) {
             const answerDiv = document.getElementById(`answer-${index}`);

@@ -88,34 +88,50 @@ class PracticeQuestion(models.Model):
     question_id = models.CharField(max_length=255, primary_key=True)
     title_id = models.ForeignKey(Practice, on_delete=models.CASCADE)
     question = models.CharField(max_length=255)
+    question_img = models.CharField(max_length=255, null=True, blank=True, default=None)
     correct_option = models.IntegerField()
     explanation = models.TextField()
+    explanation_img = models.CharField(
+        max_length=255, null=True, blank=True, default=None
+    )
 
 
 class TestQuestion(models.Model):
     question_id = models.CharField(max_length=255, primary_key=True)
     title_id = models.ForeignKey(Test, on_delete=models.CASCADE)
     question = models.CharField(max_length=255)
+    question_img = models.CharField(max_length=255, null=True, blank=True, default=None)
     correct_option = models.IntegerField()
     explanation = models.TextField()
+    explanation_img = models.CharField(
+        max_length=255, null=True, blank=True, default=None
+    )
 
 
 class PracticeOption(models.Model):
     option_id = models.CharField(max_length=255, primary_key=True)
     question_id = models.ForeignKey(PracticeQuestion, on_delete=models.CASCADE)
     option1 = models.CharField(max_length=255)
+    option1_img = models.CharField(max_length=255, null=True, blank=True, default=None)
     option2 = models.CharField(max_length=255)
+    option2_img = models.CharField(max_length=255, null=True, blank=True, default=None)
     option3 = models.CharField(max_length=255)
+    option3_img = models.CharField(max_length=255, null=True, blank=True, default=None)
     option4 = models.CharField(max_length=255)
+    option4_img = models.CharField(max_length=255, null=True, blank=True, default=None)
 
 
 class TestOption(models.Model):
     option_id = models.CharField(max_length=255, primary_key=True)
     question_id = models.ForeignKey(TestQuestion, on_delete=models.CASCADE)
     option1 = models.CharField(max_length=255)
+    option1_img = models.CharField(max_length=255, null=True, blank=True, default=None)
     option2 = models.CharField(max_length=255)
+    option2_img = models.CharField(max_length=255, null=True, blank=True, default=None)
     option3 = models.CharField(max_length=255)
+    option3_img = models.CharField(max_length=255, null=True, blank=True, default=None)
     option4 = models.CharField(max_length=255)
+    option4_img = models.CharField(max_length=255, null=True, blank=True, default=None)
 
 
 class TestHistory(models.Model):

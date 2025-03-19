@@ -304,52 +304,21 @@
         }
     </style>
 
-    <style>
-        .modal-backdrop {
-            opacity: 0.5;
-            /* Slightly transparent backdrop */
-        }
-
-        /* Center the loader on the screen */
-        .modal-dialog {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            border: none;
-            /* Remove the border around the modal */
-        }
-
-        /* Customize loader color to bright green and make it bigger */
-        .spinner-border {
-            color: #00FF00;
-            /* Bright Green color */
-            width: 5rem;
-            height: 5rem;
-            border-width: 0.25rem;
-        }
-
-        /* Remove any background color around the spinner */
-        .modal-content {
-            background: transparent;
-            /* Remove the background */
-            border: none;
-            /* Remove the border */
-        }
-    </style>
 </head>
 
 <body>
 
-    <!-- Loader Modal (Hidden initially) -->
-    <div class="modal fade" id="loaderModal" tabindex="-1" aria-labelledby="loaderModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-body text-center">
-                    <!-- Custom Bright Green and Larger Loader -->
-                    <div class="spinner-border" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel">Image View</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img id="modalImage" src="" alt="Question Image"
+                        style="width: 100%; max-height: 400px; object-fit: contain;">
                 </div>
             </div>
         </div>
@@ -742,30 +711,51 @@
                 const savedAnswer = selectedAnswers[questionIndex] || null; // Check if already selected
 
                 const questionHtml = `
-        <div class="card mb-4 p-3 border-white shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title text-primary">${questionIndex + 1}: ${q.question}</h5>
-                ${q.options.map((option, i) => `
-                    <div class="form-check mb-3">
-                        <input type="radio" name="question-${questionIndex}" value="${i + 1}" id="q${questionIndex}o${i}" class="form-check-input"
-                        ${savedAnswer == i + 1 ? 'checked' : ''} onchange="saveAnswer(${questionIndex}, ${i + 1})">
-                        <label for="q${questionIndex}o${i}" class="form-check-label">${option}</label>
+            <div class="card mb-4 p-3 border-white shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">${questionIndex + 1}: ${q.question}</h5>
+                    ${q.question_img ? `
+                        <div style="margin: 10px; margin-left: 40px">
+                            <img src="/${q.question_img}" alt="Question Image" class="img-thumbnail img-clickable" style="width: 80px; height: 80px; cursor: pointer;">
+                        </div>
+                    ` : ''}
+                    ${q.options.map((option, i) => `
+                        <div class="form-check mb-3">
+                            <input type="radio" name="question-${questionIndex}" value="${i + 1}" id="q${questionIndex}o${i}" class="form-check-input"
+                            ${savedAnswer == i + 1 ? 'checked' : ''} onchange="saveAnswer(${questionIndex}, ${i + 1})">
+                            <label for="q${questionIndex}o${i}" class="form-check-label">${option.text}</label>
+                            ${option.image ? `
+                                <div style="margin: 10px; margin-left: 40px">
+                                    <img src="/${option.image}" alt="Option ${i + 1} Image" class="img-thumbnail img-clickable" style="width: 80px; height: 80px; cursor: pointer;">
+                                </div>
+                            ` : ''}
+                        </div>
+                    `).join('')}
+                    <div class="workspace border rounded p-3 bg-white mt-3" style="display: none;" id="workspace-${startIndex + index}">
+                        <label class="text-success" for="workspace-text-${startIndex + index}"><strong>Workspace:</strong></label>
+                        <textarea class="form-control mt-2" id="workspace-text-${startIndex + index}" rows="3" placeholder="Type your work here..."></textarea>
                     </div>
-                `).join('')}
-                <div class="workspace border rounded p-3 bg-white mt-3" style="display: none;" id="workspace-${startIndex + index}">
-                    <label class="text-success" for="workspace-text-${startIndex + index}"><strong>Workspace:</strong></label>
-                    <textarea class="form-control mt-2" id="workspace-text-${startIndex + index}" rows="3" placeholder="Type your work here..."></textarea>
+                    <button type="button" class="btn btn-outline-success btn-sm mt-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Workspace" onclick="toggleWorkspace(${startIndex + index})">
+                        <i class="bi bi-pencil text-success"></i> Show Workspace
+                    </button>
+                    <hr />
                 </div>
-                 <button type="button" class="btn btn-outline-success btn-sm mt-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Workspace" onclick="toggleWorkspace(${startIndex + index})">
-                    <i class="bi bi-pencil text-success"></i> Show Workspace
-                </button>
-                <hr />
-            </div>
-        </div>`;
+            </div>`;
 
                 mcqContainer.innerHTML += questionHtml;
             });
+
+            // Add click event listeners to all images for the modal
+            document.querySelectorAll('.img-clickable').forEach(img => {
+                img.addEventListener('click', () => {
+                    const modalImage = document.getElementById('modalImage');
+                    modalImage.src = img.src;
+                    const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+                    imageModal.show();
+                });
+            });
         }
+
         // Save selected answers before switching pages
 
 
