@@ -5,5 +5,11 @@
 
 /*env
 
-
+# GCP Sheet one
 cred2.json
+
+# GCP Gmail one
+cred.json
+
+# GCP Token 
+token.json

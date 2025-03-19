@@ -28,6 +28,9 @@ import pandas as pd
 
 import random
 
+from .email_utils import send_email
+
+
 from io import BytesIO
 
 
@@ -1895,6 +1898,7 @@ def finish_test(request):
         # Retrieve User Details (Name, Phone Number)
         user_name = user.name
         user_phone = user.phone_number
+        user_email = user.email
 
         # Retrieve Title from Test
         test_title = test.title
@@ -1915,6 +1919,8 @@ def finish_test(request):
         # Append Data to Google Sheet
         new_row = [row_count] + new_entry  # S.No is row count
         sheet.append_row(new_row)
+
+        send_email(user_email, user_name, test_title, total_questions, score)
 
         return JsonResponse(
             {

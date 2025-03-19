@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Score Report</title>
+</head>
+
+<body style="background-color: #f3f4f6; padding: 20px; font-family: Arial, sans-serif; text-align: center;">
+
+    <div style="max-width: 500px; margin: auto; background-color: white; padding: 20px; border-radius: 10px; 
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); animation: fadeIn 0.8s ease-in-out; text-align: center;">
+
+        <!-- GIF added at the top -->
+        <img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExNXUxaXRhcDJkc3ViM2xsdGw0dHFuN2R5MzBqeG80cTJyeHd1NXM2MSZlcD12MV9pbnRlcm5naWZfYnlfaWQmY3Q9Zw/X9izlczKyCpmCSZu0l/giphy.gif"
+            alt="Celebration GIF" style="width: 100%; max-height: 600px; object-fit: cover; border-radius: 10px;">
+
+        <h2
+            style="color: #1e40af; font-size: 24px; font-weight: bold; margin-bottom: 10px; animation: bounce 1.5s infinite;">
+            🎉 Quiz Score Report 🎉
+        </h2>
+
+        <hr style="border: none; height: 2px; background: #d1d5db; margin: 15px 0;">
+
+        <p style="font-size: 18px; color: #333;"><strong>Name:</strong> {{name}}</p>
+        <p style="font-size: 18px; color: #333;"><strong>Quiz Title:</strong> {{title}}</p>
+        <p style="font-size: 18px; color: #333;"><strong>Total Questions:</strong> {{total_questions}}</p>
+        <p style="font-size: 18px; color: #333;"><strong>Score:</strong>
+            <span style="color: green; font-weight: bold;">{{score}} / {{total_questions}}</span>
+        </p>
+
+        <p style="font-size: 18px; color: green; font-weight: bold; margin-top: 10px;">Keep up the great work! 🚀</p>
+
+        <hr style="border: none; height: 2px; background: #d1d5db; margin: 15px 0;">
+
+
+
+        <p style="font-size: 14px; color: #6b7280; margin-top: 15px;">This is an automated email. Please do not reply.
+        </p>
+    </div>
+
+</body>
+
+</html>
