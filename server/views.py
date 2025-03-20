@@ -713,7 +713,7 @@ def add_title(request, topic_id, subtopic_id):
             body = json.loads(request.body)
             content_type = body.get("type")  # "Practices" or "Test"
             title = body.get("title")
-            duration = body.get("duration", 0)  # Default 0 seconds
+            duration = body.get("duration", 900 )  # Default 0 seconds
             attempts = body.get("attempts", 1)  # Default 1 attempt
 
             if not title:

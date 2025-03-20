@@ -81,7 +81,7 @@ WSGI_APPLICATION = "apti_project.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "testDB",
+        "NAME": "newTestDB",
         "USER": "root",
         "PASSWORD": "root",
         "HOST": "localhost",
