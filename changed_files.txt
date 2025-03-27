@@ -1,0 +1,42 @@
+Updated Files:
+.gitignore
+apti_project/settings.py
+apti_project/urls.py
+client/templates/admin/add-content/edit-content/edit_content.html
+client/templates/admin/add-content/edit-content/edit_questions.html
+client/templates/admin/add-content/edit-content/edit_title.html
+client/templates/admin/add-content/new-content/new_content.html
+client/templates/admin/add-content/new-content/new_questions.html
+client/templates/admin/add-content/new-content/new_title.html
+client/templates/admin/admin-actions/edit_subadmin.html
+client/templates/admin/admin-actions/new_subadmin.html
+client/templates/admin/course-allocation/allocate_subadmin.html
+client/templates/admin/home.html
+client/templates/admin/nav-bar/setting.html
+client/templates/admin/users/profile.html
+client/templates/admin/users/test_history.html
+client/templates/admin/users/user_list.html
+client/templates/client/body-pages/practice-pages/practice.html
+client/templates/client/body-pages/practice-pages/take-test.html
+client/templates/client/body-pages/test-pages/res.html
+client/templates/client/body-pages/test-pages/take-test.html
+client/templates/client/body-pages/test-pages/test.html
+client/templates/client/nav-bar/setting.html
+client/templates/client/register.html
+client/templates/subadmin/add-content/edit-content/edit_subtopic.html
+client/templates/subadmin/nav-bar/setting.html
+requirements.txt
+server/models.py
+server/urls.py
+server/views.py
+
+Newly Created Files:
+email_template.html
+media/images/krishtec.jpg
+media/ques_images/krishtec.jpg
+server/email_utils.py
+
+Deleted Files:
+data.json
+db.sqlite3
+

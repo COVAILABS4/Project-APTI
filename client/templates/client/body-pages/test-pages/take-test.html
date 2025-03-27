@@ -584,6 +584,8 @@
         }
 
         async function displayResults(results) {
+
+
             const container = document.getElementById('result');
             container.innerHTML = `
         <div class="alert alert-info">
@@ -620,11 +622,11 @@
                     return response.json();
                 })
                 .then(data => {
-                    //console.log('Result ID:', data.testID); // Log the result ID
+                    console.log('Result ID:', data.testID); // Log the result ID
 
-
-                    window.open(`/user/3/${userId}/${topicId}/${subtopicId}/test/${title_id}/${data.testID}`, '_blank');
                     isSubmitted = true;
+
+                    window.location.href = `/user/3/${userId}/${topicId}/${subtopicId}/test/${title_id}/${data.testID}`;
 
 
                 })
@@ -842,6 +844,54 @@
 
         }
 
+
+        async function fetchAndDisplayAttemptsWhileSubmit() {
+
+
+            try {
+                // Call the API endpoint to get the attempts
+                const response = await fetch(`${apiUrl}/attempts/${userId}/${title_id}`);
+
+                // Check if the response is successful
+                if (!response.ok) {
+
+
+                    throw new Error(`Failed to fetch attempts: ${response.statusText}`);
+                }
+
+                // Parse the response data
+                const data = await response.json();
+
+                console.log(data)
+
+
+                console.log(`Number of attempts: ${data.user_attempts}`);
+
+
+
+
+
+                // Check if attempts exceed the limit
+                if (data.user_attempts >= data.title_attempts) {
+                    // Show the Bootstrap modal if attempts exceed the limit
+                    const modal = new bootstrap.Modal(document.getElementById('attemptsExceededModal'));
+                    modal.show();
+
+
+                    setTimeout(() => {
+                        window.close()
+                    }, 3000)
+
+                }
+            } catch (error) {
+
+
+                // Handle and log any errors
+                console.error('Error fetching attempts:', error.message);
+            }
+        }
+
+
         async function fetchAndDisplayAttempts() {
 
 
@@ -862,7 +912,7 @@
                 console.log(data)
 
 
-                console.log(`Number of attempts: ${data.attempts}`);
+                console.log(`Number of attempts: ${data.user_attempts}`);
 
 
 
@@ -1083,9 +1133,13 @@
                 return message;          // Standard for older browsers
             }
         });
-        window.onload = function () {
-            setTimeout(stopLoader, 2000)
-        };
+
+
+
+        setTimeout(() => {
+            fetchAndDisplayAttemptsWhileSubmit();
+        }, 2000)
+
     </script>
 
 </body>

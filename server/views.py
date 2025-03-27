@@ -29,6 +29,7 @@ import pandas as pd
 import random
 
 from .email_utils import send_email
+from .email_smtp_utils import send_email_smtp
 
 
 from io import BytesIO
@@ -713,7 +714,7 @@ def add_title(request, topic_id, subtopic_id):
             body = json.loads(request.body)
             content_type = body.get("type")  # "Practices" or "Test"
             title = body.get("title")
-            duration = body.get("duration", 900 )  # Default 0 seconds
+            duration = body.get("duration", 900)  # Default 0 seconds
             attempts = body.get("attempts", 1)  # Default 1 attempt
 
             if not title:
@@ -2074,7 +2075,10 @@ def finish_test(request):
         new_row = [row_count] + new_entry  # S.No is row count
         sheet.append_row(new_row)
 
-        send_email(user_email, user_name, test_title, total_questions, score)
+        try:
+            send_email_smtp(user_email, user_name, test_title, total_questions, score)
+        except Exception as err:
+            print("Error senting email : " + str(err))
 
         return JsonResponse(
             {
@@ -2085,6 +2089,7 @@ def finish_test(request):
         )
 
     except Exception as e:
+        print(f"An error occurred: {str(e)}")
         return JsonResponse({"error": f"An error occurred: {str(e)}"}, status=500)
 
 

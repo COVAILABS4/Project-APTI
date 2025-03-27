@@ -18,16 +18,21 @@ def authenticate_gmail():
     """Authenticate with Gmail API and return a service instance."""
     creds = None
 
+    # Check if the token file exists
     if os.path.exists(TOKEN_FILE):
         creds = Credentials.from_authorized_user_file(TOKEN_FILE, SCOPES)
 
+    # If no valid credentials are found, or token is expired
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
+            # Refresh the token if expired
             creds.refresh(Request())
         else:
+            # If no valid creds or refresh token, start the OAuth flow
             flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS_FILE, SCOPES)
             creds = flow.run_local_server(port=3000)
 
+        # Save the credentials to a file for future use
         with open(TOKEN_FILE, "w") as token:
             token.write(creds.to_json())
 
@@ -72,10 +77,8 @@ def send_email(to_email, name, title, total_questions, score):
 
     try:
         service.users().messages().send(userId="me", body=message_data).execute()
+        print("✅ Email sent successfully!")
         return "✅ Email sent successfully!"
     except Exception as e:
+        print(f"❌ Error sending email: {str(e)}")
         return f"❌ Error sending email: {str(e)}"
-
-
-# Example Usage
-# send_email("recipient@example.com", "John Doe", "Python Basics", 10, 8)
