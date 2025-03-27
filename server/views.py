@@ -28,8 +28,8 @@ import pandas as pd
 
 import random
 
-from .email_utils import send_email
-from .email_smtp_utils import send_email_smtp
+
+from .email_smtp_utils import queue_email
 
 
 from io import BytesIO
@@ -2076,7 +2076,7 @@ def finish_test(request):
         sheet.append_row(new_row)
 
         try:
-            send_email_smtp(user_email, user_name, test_title, total_questions, score)
+            queue_email(user_email, user_name, test_title, total_questions, score)
         except Exception as err:
             print("Error senting email : " + str(err))
 

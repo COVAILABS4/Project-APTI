@@ -1,42 +1,124 @@
-Updated Files:
-.gitignore
-apti_project/settings.py
-apti_project/urls.py
-client/templates/admin/add-content/edit-content/edit_content.html
-client/templates/admin/add-content/edit-content/edit_questions.html
-client/templates/admin/add-content/edit-content/edit_title.html
-client/templates/admin/add-content/new-content/new_content.html
-client/templates/admin/add-content/new-content/new_questions.html
-client/templates/admin/add-content/new-content/new_title.html
-client/templates/admin/admin-actions/edit_subadmin.html
-client/templates/admin/admin-actions/new_subadmin.html
-client/templates/admin/course-allocation/allocate_subadmin.html
-client/templates/admin/home.html
-client/templates/admin/nav-bar/setting.html
-client/templates/admin/users/profile.html
-client/templates/admin/users/test_history.html
-client/templates/admin/users/user_list.html
-client/templates/client/body-pages/practice-pages/practice.html
-client/templates/client/body-pages/practice-pages/take-test.html
-client/templates/client/body-pages/test-pages/res.html
-client/templates/client/body-pages/test-pages/take-test.html
-client/templates/client/body-pages/test-pages/test.html
-client/templates/client/nav-bar/setting.html
-client/templates/client/register.html
-client/templates/subadmin/add-content/edit-content/edit_subtopic.html
-client/templates/subadmin/nav-bar/setting.html
-requirements.txt
-server/models.py
-server/urls.py
-server/views.py
+Updated Files (with modified lines and line numbers):
+
+File Name: .gitignore
+Line 15: token.json (Previous)
+Line 15: token.json (Updated)
+Line 16: token1.json (Updated)
+Line 17:  (Updated)
+Line 18:  (Updated)
+Line 19: # Utils Files (Updated)
+
+File Name: client/templates/client/body-pages/test-pages/take-test.html
+Line 587:  (Updated)
+Line 588:  (Updated)
+Line 623: //console.log('Result ID:', data.testID); // Log the result ID (Previous)
+Line 625: console.log('Result ID:', data.testID); // Log the result ID (Updated)
+Line 625:  (Previous)
+Line 626: window.open(`/user/3/${userId}/${topicId}/${subtopicId}/test/${title_id}/${data.testID}`, '_blank'); (Previous)
+Line 629: window.location.href = `/user/3/${userId}/${topicId}/${subtopicId}/test/${title_id}/${data.testID}`; (Updated)
+Line 630:  (Updated)
+Line 847:  (Updated)
+Line 848: async function fetchAndDisplayAttemptsWhileSubmit() { (Updated)
+Line 849:  (Updated)
+Line 850:  (Updated)
+Line 851: try { (Updated)
+Line 852: // Call the API endpoint to get the attempts (Updated)
+Line 853: const response = await fetch(`${apiUrl}/attempts/${userId}/${title_id}`); (Updated)
+Line 854:  (Updated)
+Line 855: // Check if the response is successful (Updated)
+Line 856: if (!response.ok) { (Updated)
+Line 857:  (Updated)
+Line 858:  (Updated)
+Line 859: throw new Error(`Failed to fetch attempts: ${response.statusText}`); (Updated)
+Line 860: } (Updated)
+Line 861:  (Updated)
+Line 862: // Parse the response data (Updated)
+Line 863: const data = await response.json(); (Updated)
+Line 864:  (Updated)
+Line 865: console.log(data) (Updated)
+Line 866:  (Updated)
+Line 867:  (Updated)
+Line 868: console.log(`Number of attempts: ${data.user_attempts}`); (Updated)
+Line 869:  (Updated)
+Line 870:  (Updated)
+Line 871:  (Updated)
+Line 872:  (Updated)
+Line 873:  (Updated)
+Line 874: // Check if attempts exceed the limit (Updated)
+Line 875: if (data.user_attempts >= data.title_attempts) { (Updated)
+Line 876: // Show the Bootstrap modal if attempts exceed the limit (Updated)
+Line 877: const modal = new bootstrap.Modal(document.getElementById('attemptsExceededModal')); (Updated)
+Line 878: modal.show(); (Updated)
+Line 879:  (Updated)
+Line 880:  (Updated)
+Line 881: setTimeout(() => { (Updated)
+Line 882: window.close() (Updated)
+Line 883: }, 3000) (Updated)
+Line 884:  (Updated)
+Line 885: } (Updated)
+Line 886: } catch (error) { (Updated)
+Line 887:  (Updated)
+Line 888:  (Updated)
+Line 889: // Handle and log any errors (Updated)
+Line 890: console.error('Error fetching attempts:', error.message); (Updated)
+Line 891: } (Updated)
+Line 892: } (Updated)
+Line 893:  (Updated)
+Line 894:  (Updated)
+Line 865: console.log(`Number of attempts: ${data.attempts}`); (Previous)
+Line 915: console.log(`Number of attempts: ${data.user_attempts}`); (Updated)
+Line 1086: window.onload = function () { (Previous)
+Line 1087: setTimeout(stopLoader, 2000) (Previous)
+Line 1088: }; (Previous)
+Line 1136:  (Updated)
+Line 1137:  (Updated)
+Line 1138:  (Updated)
+Line 1139: setTimeout(() => { (Updated)
+Line 1140: fetchAndDisplayAttemptsWhileSubmit(); (Updated)
+Line 1141: }, 2000) (Updated)
+Line 1142:  (Updated)
+
+File Name: requirements.txt
+Line 15: google-api-python-client (Previous)
+Line 15: google-api-python-client (Updated)
+Line 16:  (Updated)
+Line 17:  (Updated)
+Line 18: # -------- (Updated)
+Line 19:  (Updated)
+Line 20: smtplib (Updated)
+Line 21: email (Updated)
+
+File Name: server/email_utils.py
+Line 21: # Check if the token file exists (Updated)
+Line 25: # If no valid credentials are found, or token is expired (Updated)
+Line 28: # Refresh the token if expired (Updated)
+Line 31: # If no valid creds or refresh token, start the OAuth flow (Updated)
+Line 35: # Save the credentials to a file for future use (Updated)
+Line 80: print("✅ Email sent successfully!") (Updated)
+Line 83: print(f"❌ Error sending email: {str(e)}") (Updated)
+Line 78:  (Previous)
+Line 79:  (Previous)
+Line 80: # Example Usage (Previous)
+Line 81: # send_email("recipient@example.com", "John Doe", "Python Basics", 10, 8) (Previous)
+
+File Name: server/views.py
+Line 32: from .email_smtp_utils import send_email_smtp (Updated)
+Line 716: duration = body.get("duration", 900 )  # Default 0 seconds (Previous)
+Line 717: duration = body.get("duration", 900)  # Default 0 seconds (Updated)
+Line 2077: send_email(user_email, user_name, test_title, total_questions, score) (Previous)
+Line 2078: try: (Updated)
+Line 2079: send_email_smtp(user_email, user_name, test_title, total_questions, score) (Updated)
+Line 2080: except Exception as err: (Updated)
+Line 2081: print("Error senting email : " + str(err)) (Updated)
+Line 2092: print(f"An error occurred: {str(e)}") (Updated)
 
 Newly Created Files:
-email_template.html
-media/images/krishtec.jpg
-media/ques_images/krishtec.jpg
-server/email_utils.py
+File Name: changed_files.txt
+File Name: diff.py
+File Name: diff_curr.py
+File Name: diff_file.py
+File Name: server/email_smtp_utils.py
+File Name: smail.py
+File Name: tokenn.py
 
 Deleted Files:
-data.json
-db.sqlite3
-

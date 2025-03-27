@@ -670,6 +670,12 @@
 
 
 
+        function disableSubmit() {
+            submitButton.disabled = true
+        }
+
+
+
 
 
 
@@ -1044,9 +1050,11 @@
                 'Submit Test',
                 'Are you sure you want to submit your test?',
                 () => {
+                    disableSubmit()
                     clearInterval(timerInterval);
                     const results = evaluateAnswers();
                     displayResults(results);
+
                 }
             );
         });
