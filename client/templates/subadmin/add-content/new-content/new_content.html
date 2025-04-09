@@ -427,7 +427,7 @@
 
                 async function loadTopics() {
                     try {
-                        const response = await fetch(`${apiBaseUrl}/topic`);
+                        const response = await fetch(`${apiBaseUrl}/user-topics?user_id=${userId}`);
                         const topics = await response.json();
                         populateTopicsTable(topics);
                     } catch (error) {

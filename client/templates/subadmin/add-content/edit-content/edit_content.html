@@ -430,7 +430,7 @@
                 // Function to Load Topics
                 async function loadTopics() {
                     try {
-                        const response = await fetch(`/aapi3/topic`);
+                        const response = await fetch(`/aapi3/user-topics?user_id=${user_id}`);
                         const topics = await response.json();
                         populateTopicsTable(topics);
                     } catch (error) {
