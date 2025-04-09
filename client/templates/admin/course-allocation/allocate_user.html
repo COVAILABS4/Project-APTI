@@ -7,6 +7,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <!-- width: calc(100% - 250px); -->
@@ -210,6 +216,245 @@
             font-weight: bold;
         }
     </style>
+    <!-- width: calc(100% - 250px); -->
+    <style>
+        .main-content {
+            background-color: #f5f9fc;
+            height: 92vh;
+            padding: 20px;
+        }
+
+        .card-stats {
+            transition: transform 0.3s ease-in-out;
+            border-radius: 10px;
+        }
+
+        .card-stats:hover {
+            transform: translateY(-5px);
+        }
+
+        .card .icon {
+            font-size: 3rem;
+        }
+
+        .icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card-body {
+            background-color: #ffffff;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .category {
+            font-size: 1.2rem;
+            color: #6c757d;
+        }
+
+        /* Color for cards */
+        .card-total-users {
+            background-color: #B3D0FF;
+        }
+
+        .card-total-subadmins {
+            background-color: #F6C7B6;
+        }
+
+        .card-total-courses {
+            background-color: #D0F2B2;
+        }
+
+        .card-total-tests {
+            background-color: #F1D8D8;
+        }
+
+        .card-active-users {
+            background-color: #C9F2F3;
+        }
+
+        body {
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* Navbar */
+        #nav-bar {
+            background-color: #0d6efd;
+            color: white;
+            z-index: 1000;
+            position: fixed;
+            top: 0;
+            left: 250px;
+
+            width: calc(100% - 250px);
+            transition: all 0.3s ease-in-out;
+        }
+
+        #side-bar.shrink~#nav-bar {
+            left: 80px;
+            /* Matches the width of the shrunk sidebar */
+            width: calc(100% - 80px);
+        }
+
+        /* Sidebar */
+        #side-bar {
+            background-color: #f8f9fa;
+            height: 100vh;
+            border-right: 1px solid #ddd;
+            transition: all 0.3s ease-in-out;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            z-index: 999;
+        }
+
+        #side-bar.shrink {
+            width: 80px;
+        }
+
+        #side-bar.shrink .sidebar-item-text {
+            display: none;
+        }
+
+        #side-bar .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        #side-bar .sidebar-item:hover {
+            background-color: #e9ecef;
+        }
+
+        #side-bar .sidebar-item i {
+            margin-right: 10px;
+        }
+
+        #side-bar.shrink .sidebar-item i {
+            margin-right: 0;
+        }
+
+        /* Main Body */
+        .dynamic-body {
+            margin-left: 250px;
+            margin-top: 56px;
+
+            height: calc(100vh - 56px);
+
+            transition: all 0.3s ease-in-out;
+        }
+
+        #side-bar.shrink~.dynamic-body {
+            margin-left: 80px;
+        }
+
+        /* Tooltip Animations */
+        .dropdown-menu {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        #nav-toggler {
+            display: inline-block;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .tooltip-inner {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        .tooltip-arrow {
+            border-top-color: #0d6efd !important;
+        }
+
+        /* Updated Logo Styles */
+        #side-bar .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        #side-bar .logo-container img {
+            max-height: 80px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        #side-bar.shrink .logo-container img {
+            max-height: 50px;
+            border-radius: 50%;
+            /* Makes the logo rounded */
+        }
+
+        #side-bar .logo-container h5 {
+            margin-top: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        #side-bar.shrink .logo-container h5 {
+            display: none;
+            /* Hide logo name on shrink */
+        }
+
+        .dropdown-icon {
+            margin-left: auto;
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #side-bar .logo-container img.rotate {
+            animation: rotate 0.5s linear;
+        }
+
+        .dropdown-icon {
+            transition: transform 0.3s ease-in-out;
+            /* Matches dropdown animation duration */
+        }
+
+        .dropdown-icon.rotate {
+            transform: rotate(180deg);
+        }
+
+        #profile-tooltip {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -221,11 +466,19 @@
             </div>
             <a onclick="window.location.href = '/admins/1/{{ user_id }}'" class="navbar-brand ms-3"
                 href="#">Dashboard</a>
-            <div class="d-flex align-items-center position-relative">
-                <i id="profile-icon" class="bi bi-person-circle fs-4 me-3" data-bs-toggle="tooltip"
-                    data-bs-placement="right" title="Profile" style="cursor: pointer;"></i>
+
+
+            <!-- /ssadk -->
+
+            <div class="d-flex  align-items-center position-relative ">
+                <!-- Profile Image (Initially Default) -->
+                <img id="profile-avatar" src="{% static 'profile.png' %}" alt="Profile Image"
+                    class="rounded-circle border border-grey border-2 me-3 bg-white"
+                    style="width: 40px; height: 40px; object-fit: cover; cursor: pointer;">
+
+                <!-- Profile Tooltip -->
                 <div id="profile-tooltip" class="position-absolute bg-white border rounded shadow p-3"
-                    style="display: none; top: 40px; right: 0; width: 250px; z-index: 1000;">
+                    style="display: none; top: 50px; right: 0; width: 250px; z-index: 1000;">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div class="d-flex align-items-center">
                             <img id="profile-image" src="{% static 'profile.png' %}" alt="Profile Image"
@@ -242,6 +495,7 @@
                     <button id="profile-logout" class="btn btn-danger btn-sm w-100">Logout</button>
                 </div>
             </div>
+            <!-- asdasas -->
 
         </div>
     </nav>
@@ -260,6 +514,12 @@
                 data-bs-toggle="tooltip" data-bs-placement="right" title="Home">
                 <i class="bi bi-house-door"></i>
                 <span class="sidebar-item-text">Home</span>
+            </div>
+
+            <div onclick="window.location.href = '/admins/1/{{ user_id }}/users-list'" class="sidebar-item"
+                data-bs-toggle="tooltip" data-bs-placement="right" title="Users">
+                <i class="bi bi-person-badge"></i>
+                <span class="sidebar-item-text">Users</span>
             </div>
             <div class="sidebar-item" data-bs-toggle="collapse" data-bs-target="#addContentMenu"
                 data-bs-placement="right" title="Add Content">
@@ -392,116 +652,107 @@
             </div>
 
         </div>
+
+        <script>
+            const apiBaseUrl = "/aapi3";
+
+            async function fetchSubadmins() {
+                const response = await fetch(`${apiBaseUrl}/users?role=user`);
+                const subadmins = await response.json();
+                const tableBody = document.getElementById("subadmin-table");
+                tableBody.innerHTML = "";
+
+                subadmins.forEach((subadmin, index) => {
+                    const row = `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${subadmin.name}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info" onclick="viewCourses('${subadmin.user_id}')">View</button>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" onclick="allocateCourses('${subadmin.user_id}', '${subadmin.name}')">Allocate</button>
+                                </td>
+                            </tr>`;
+                    tableBody.insertAdjacentHTML("beforeend", row);
+                });
+            }
+
+            async function viewCourses(userId) {
+                const response = await fetch(`${apiBaseUrl}/user-topics?user_id=${userId}`);
+                const courses = await response.json();
+                const courseList = document.getElementById("allocated-courses-list");
+                courseList.innerHTML = "";
+
+                courses.forEach(course => {
+                    courseList.insertAdjacentHTML("beforeend", `<li class="list-group-item">${course.name}</li>`);
+                });
+
+                const modal = new bootstrap.Modal(document.getElementById("viewCoursesModal"));
+                modal.show();
+            }
+
+            async function allocateCourses(userId, name) {
+                document.getElementById("subadmin-id").value = userId;
+
+                const allCoursesResponse = await fetch(`${apiBaseUrl}/topic`);
+                const allCourses = await allCoursesResponse.json();
+
+                const userCoursesResponse = await fetch(`${apiBaseUrl}/user-topics?user_id=${userId}`);
+                const userCourses = await userCoursesResponse.json();
+                const userCourseIds = userCourses.map(course => course.topic_id);
+
+                const courseList = document.getElementById("course-list");
+                courseList.innerHTML = "";
+
+                allCourses.forEach(course => {
+                    const isChecked = userCourseIds.includes(course.topic_id) ? "checked" : "";
+                    const checkbox = `
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="${course.topic_id}" id="course-${course.topic_id}" ${isChecked}>
+                                <label class="form-check-label" for="course-${course.topic_id}">${course.name}</label>
+                            </div>`;
+                    courseList.insertAdjacentHTML("beforeend", checkbox);
+                });
+
+                const modal = new bootstrap.Modal(document.getElementById("allocateCoursesModal"));
+                modal.show();
+            }
+
+            document.getElementById("allocate-courses-form").addEventListener("submit", async (event) => {
+                event.preventDefault();
+                const userId = document.getElementById("subadmin-id").value;
+                const selectedCourses = Array.from(document.querySelectorAll("#course-list input:checked"))
+                    .map(input => input.value);
+
+                await fetch(`${apiBaseUrl}/allocate`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id: userId, topics: selectedCourses }),
+                });
+
+                alert("Courses allocated successfully");
+                fetchSubadmins();
+            });
+
+            window.onload = fetchSubadmins;
+        </script>
+
     </div>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-
-
-        const uid = '{{ user_id }}';
-        var bc_home = document.getElementById('bc-home');
-
-
-        bc_home.addEventListener('click', () => {
-            window.location.href = '/admins/1/' + uid
-        })
-
-    </script>
-
-    <script>
-        const apiBaseUrl = "/aapi3";
-
-        async function fetchSubadmins() {
-            const response = await fetch(`${apiBaseUrl}/users?role=user`);
-            const subadmins = await response.json();
-            const tableBody = document.getElementById("subadmin-table");
-            tableBody.innerHTML = "";
-
-            subadmins.forEach((subadmin, index) => {
-                const row = `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${subadmin.name}</td>
-                        <td>
-                            <button class="btn btn-sm btn-info" onclick="viewCourses('${subadmin.user_id}')">View</button>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-primary" onclick="allocateCourses('${subadmin.user_id}', '${subadmin.name}')">Allocate</button>
-                        </td>
-                    </tr>`;
-                tableBody.insertAdjacentHTML("beforeend", row);
-            });
-        }
-
-        async function viewCourses(userId) {
-            const response = await fetch(`${apiBaseUrl}/user-topics?user_id=${userId}`);
-            const courses = await response.json();
-            const courseList = document.getElementById("allocated-courses-list");
-            courseList.innerHTML = "";
-
-            courses.forEach(course => {
-                courseList.insertAdjacentHTML("beforeend", `<li class="list-group-item">${course.name}</li>`);
-            });
-
-            const modal = new bootstrap.Modal(document.getElementById("viewCoursesModal"));
-            modal.show();
-        }
-
-        async function allocateCourses(userId, name) {
-            document.getElementById("subadmin-id").value = userId;
-
-            const allCoursesResponse = await fetch(`${apiBaseUrl}/topic`);
-            const allCourses = await allCoursesResponse.json();
-
-            const userCoursesResponse = await fetch(`${apiBaseUrl}/user-topics?user_id=${userId}`);
-            const userCourses = await userCoursesResponse.json();
-            const userCourseIds = userCourses.map(course => course.topic_id);
-
-            const courseList = document.getElementById("course-list");
-            courseList.innerHTML = "";
-
-            allCourses.forEach(course => {
-                const isChecked = userCourseIds.includes(course.topic_id) ? "checked" : "";
-                const checkbox = `
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="${course.topic_id}" id="course-${course.topic_id}" ${isChecked}>
-                        <label class="form-check-label" for="course-${course.topic_id}">${course.name}</label>
-                    </div>`;
-                courseList.insertAdjacentHTML("beforeend", checkbox);
-            });
-
-            const modal = new bootstrap.Modal(document.getElementById("allocateCoursesModal"));
-            modal.show();
-        }
-
-        document.getElementById("allocate-courses-form").addEventListener("submit", async (event) => {
-            event.preventDefault();
-            const userId = document.getElementById("subadmin-id").value;
-            const selectedCourses = Array.from(document.querySelectorAll("#course-list input:checked"))
-                .map(input => input.value);
-
-            await fetch(`${apiBaseUrl}/allocate`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ user_id: userId, topics: selectedCourses }),
-            });
-
-            alert("Courses allocated successfully");
-            fetchSubadmins();
-        });
-
-        window.onload = fetchSubadmins;
-    </script>
-    <script>
         const user_id = '{{ user_id }}'; // Django Template Variable
         const profileIcon = document.getElementById('profile-icon');
-        const profileTooltip = document.getElementById('profile-tooltip');
         const profileName = document.getElementById('profile-name');
         const profileEmail = document.getElementById('profile-email');
         const manageAccountLink = document.getElementById('profile-manage-account');
         const logoutButton = document.getElementById('profile-logout');
+
+        const profileAvatar = document.getElementById('profile-avatar');
+        const profileTooltip = document.getElementById('profile-tooltip');
         const profileClose = document.getElementById('profile-close');
 
         const ip = "/aapi3";
@@ -510,13 +761,21 @@
         fetch(`${ip}/api/users/${user_id}`)
             .then(response => response.json())
             .then(data => {
+                const profileName = document.getElementById('profile-name');
+                const profileEmail = document.getElementById('profile-email');
+                const profileImage = document.getElementById('profile-image');
+
                 if (data.email) {
                     profileEmail.textContent = data.email;
                     profileName.textContent = data.name;
 
-                    // Optionally set profile image if available
-                    if (data.profileImage) {
-                        document.getElementById('profile-image').src = data.profileImage;
+                    // Update profile image if a valid photo URL is provided
+                    if (data.photo_url) {
+                        const newImageUrl = '/media/' + data.photo_url;
+
+                        // Update both the profile avatar and tooltip image
+                        profileAvatar.src = newImageUrl;
+                        profileImage.src = newImageUrl;
                     }
                 }
             })
@@ -525,7 +784,7 @@
             });
 
         // Toggle tooltip on click
-        profileIcon.addEventListener('click', () => {
+        profileAvatar.addEventListener('click', () => {
             profileTooltip.style.display = (profileTooltip.style.display === 'block') ? 'none' : 'block';
         });
 
@@ -533,7 +792,6 @@
         profileClose.addEventListener('click', () => {
             profileTooltip.style.display = 'none';
         });
-
         logoutButton.addEventListener('click', () => {
 
             if (confirm('Are you sure to logout ?'))
@@ -550,6 +808,7 @@
 
         });
     </script>
+
 
     <script>
 

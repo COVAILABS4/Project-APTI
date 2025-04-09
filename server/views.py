@@ -328,7 +328,7 @@ def update_user(request, user_id):
                 print("Saved file path: ", file_path)
 
                 # Update the user's photo_url to point to the saved image
-                user.photo_url = f"images/{filename}"
+                user.photo_url = f"images/{file_path}"
 
             # Update other fields
             user.name = request.POST.get("name", user.name)
@@ -801,14 +801,15 @@ def add_question(request):
             type = form_data.get("type")
 
             if (
-                not topic_id
-                or not subtopic_id
-                or not title_id
-                or not question
-                or not options
+                not all([topic_id, subtopic_id, title_id, question, options])
                 or correct_option is None
             ):
                 return JsonResponse({"error": "Missing required fields"}, status=400)
+
+            question_id = str(uuid.uuid4())
+            fs = FileSystemStorage(
+                location=os.path.join(settings.MEDIA_ROOT, "ques_images")
+            )
 
             if type == "Practices":
                 try:
@@ -816,7 +817,6 @@ def add_question(request):
                 except Practice.DoesNotExist:
                     return JsonResponse({"error": "Practice not found"}, status=404)
 
-                question_id = str(uuid.uuid4())
                 practice_question = PracticeQuestion.objects.create(
                     question_id=question_id,
                     title_id=practice,
@@ -825,20 +825,17 @@ def add_question(request):
                     explanation=explanation,
                 )
 
+                # Save question image
                 if files.get("questionImage"):
                     question_image = files["questionImage"]
-                    question_image_name = f"question_id_{question_id}_ques.jpg"
-                    question_image_path = os.path.join(
-                        settings.MEDIA_ROOT, "ques_images", question_image_name
-                    )
-                    with open(question_image_path, "wb+") as destination:
-                        for chunk in question_image.chunks():
-                            destination.write(chunk)
+                    filename = f"{question_id}_ques.jpg"
+                    file_path = fs.save(filename, question_image)
                     practice_question.question_img = os.path.join(
-                        "media", "ques_images", question_image_name
+                        "media", "ques_images", file_path
                     )
                     practice_question.save()
 
+                # Save options
                 practice_option = PracticeOption.objects.create(
                     option_id=str(uuid.uuid4()),
                     question_id=practice_question,
@@ -851,31 +848,22 @@ def add_question(request):
                 for i in range(1, 5):
                     option_image = files.get(f"option{i}Image")
                     if option_image:
-                        option_image_name = f"question_id_{question_id}_opt{i}.jpg"
-                        option_image_path = os.path.join(
-                            settings.MEDIA_ROOT, "ques_images", option_image_name
-                        )
-                        with open(option_image_path, "wb+") as destination:
-                            for chunk in option_image.chunks():
-                                destination.write(chunk)
+                        filename = f"{question_id}_opt{i}.jpg"
+                        file_path = fs.save(filename, option_image)
                         setattr(
                             practice_option,
                             f"option{i}_img",
-                            os.path.join("media", "ques_images", option_image_name),
+                            os.path.join("media", "ques_images", file_path),
                         )
                 practice_option.save()
 
+                # Save explanation image
                 if files.get("explanationImage"):
                     explanation_image = files["explanationImage"]
-                    explanation_image_name = f"question_id_{question_id}_exp.jpg"
-                    explanation_image_path = os.path.join(
-                        settings.MEDIA_ROOT, "ques_images", explanation_image_name
-                    )
-                    with open(explanation_image_path, "wb+") as destination:
-                        for chunk in explanation_image.chunks():
-                            destination.write(chunk)
+                    filename = f"{question_id}_exp.jpg"
+                    file_path = fs.save(filename, explanation_image)
                     practice_question.explanation_img = os.path.join(
-                        "media", "ques_images", explanation_image_name
+                        "media", "ques_images", file_path
                     )
                     practice_question.save()
 
@@ -892,7 +880,6 @@ def add_question(request):
                 except Test.DoesNotExist:
                     return JsonResponse({"error": "Test not found"}, status=404)
 
-                question_id = str(uuid.uuid4())
                 test_question = TestQuestion.objects.create(
                     question_id=question_id,
                     title_id=test,
@@ -901,20 +888,17 @@ def add_question(request):
                     explanation=explanation,
                 )
 
+                # Save question image
                 if files.get("questionImage"):
                     question_image = files["questionImage"]
-                    question_image_name = f"question_id_{question_id}_ques.jpg"
-                    question_image_path = os.path.join(
-                        settings.MEDIA_ROOT, "ques_images", question_image_name
-                    )
-                    with open(question_image_path, "wb+") as destination:
-                        for chunk in question_image.chunks():
-                            destination.write(chunk)
+                    filename = f"{question_id}_ques.jpg"
+                    file_path = fs.save(filename, question_image)
                     test_question.question_img = os.path.join(
-                        "media", "ques_images", question_image_name
+                        "media", "ques_images", file_path
                     )
                     test_question.save()
 
+                # Save options
                 test_option = TestOption.objects.create(
                     option_id=str(uuid.uuid4()),
                     question_id=test_question,
@@ -927,31 +911,22 @@ def add_question(request):
                 for i in range(1, 5):
                     option_image = files.get(f"option{i}Image")
                     if option_image:
-                        option_image_name = f"question_id_{question_id}_opt{i}.jpg"
-                        option_image_path = os.path.join(
-                            settings.MEDIA_ROOT, "ques_images", option_image_name
-                        )
-                        with open(option_image_path, "wb+") as destination:
-                            for chunk in option_image.chunks():
-                                destination.write(chunk)
+                        filename = f"{question_id}_opt{i}.jpg"
+                        file_path = fs.save(filename, option_image)
                         setattr(
                             test_option,
                             f"option{i}_img",
-                            os.path.join("media", "ques_images", option_image_name),
+                            os.path.join("media", "ques_images", file_path),
                         )
                 test_option.save()
 
+                # Save explanation image
                 if files.get("explanationImage"):
                     explanation_image = files["explanationImage"]
-                    explanation_image_name = f"question_id_{question_id}_exp.jpg"
-                    explanation_image_path = os.path.join(
-                        settings.MEDIA_ROOT, "ques_images", explanation_image_name
-                    )
-                    with open(explanation_image_path, "wb+") as destination:
-                        for chunk in explanation_image.chunks():
-                            destination.write(chunk)
+                    filename = f"{question_id}_exp.jpg"
+                    file_path = fs.save(filename, explanation_image)
                     test_question.explanation_img = os.path.join(
-                        "media", "ques_images", explanation_image_name
+                        "media", "ques_images", file_path
                     )
                     test_question.save()
 
@@ -2202,91 +2177,90 @@ def update_question(request):
             else:
                 return JsonResponse({"error": "Invalid type specified"}, status=400)
 
-            # Update question fields
             question.question = question_text
             question.correct_option = correct_option
             question.explanation = explanation
 
-            # Handle question image
-            if "question_image" in files:
-                question_image = files["question_image"]
-                question_image_name = f"question_id_{question_id}_ques.jpg"
-                question_image_path = os.path.join(
-                    settings.MEDIA_ROOT, "ques_images", question_image_name
-                )
-                with open(question_image_path, "wb+") as destination:
-                    for chunk in question_image.chunks():
-                        destination.write(chunk)
-                question.question_img = os.path.join(
-                    "media", "ques_images", question_image_name
-                )
-            elif "remove_question_image" in form_data:
-                # Remove existing question image
-                if question.question_img:
-                    old_image_path = os.path.join("", question.question_img)
-                    if os.path.exists(old_image_path):
-                        os.remove(old_image_path)
-                    question.question_img = None
+            fs = FileSystemStorage(
+                location=os.path.join(settings.MEDIA_ROOT, "ques_images")
+            )
 
-            # Handle explanation image
+            # --- Question Image ---
+            if "question_image" in files:
+                # Delete old image if exists
+                if question.question_img:
+                    old_path = os.path.join(settings.BASE_DIR, question.question_img)
+                    if os.path.exists(old_path):
+                        os.remove(old_path)
+
+                question_image = files["question_image"]
+                filename = f"{question_id}_ques.jpg"
+                file_path = fs.save(filename, question_image)
+                question.question_img = os.path.join("media", "ques_images", file_path)
+
+            elif "remove_question_image" in form_data and question.question_img:
+                full_path = os.path.join(settings.BASE_DIR, question.question_img)
+                if os.path.exists(full_path):
+                    os.remove(full_path)
+                question.question_img = None
+
+            # --- Explanation Image ---
             if "explanation_image" in files:
-                explanation_image = files["explanation_image"]
-                explanation_image_name = f"question_id_{question_id}_exp.jpg"
-                explanation_image_path = os.path.join(
-                    settings.MEDIA_ROOT, "ques_images", explanation_image_name
-                )
-                with open(explanation_image_path, "wb+") as destination:
-                    for chunk in explanation_image.chunks():
-                        destination.write(chunk)
-                question.explanation_img = os.path.join(
-                    "media", "ques_images", explanation_image_name
-                )
-            elif "remove_explanation_image" in form_data:
-                # Remove existing explanation image
                 if question.explanation_img:
-                    old_image_path = os.path.join(
-                        "",
-                        question.explanation_img,
-                    )
-                    if os.path.exists(old_image_path):
-                        os.remove(old_image_path)
-                    question.explanation_img = None
+                    old_path = os.path.join(settings.BASE_DIR, question.explanation_img)
+                    if os.path.exists(old_path):
+                        os.remove(old_path)
+
+                explanation_image = files["explanation_image"]
+                filename = f"{question_id}_exp.jpg"
+                file_path = fs.save(filename, explanation_image)
+                question.explanation_img = os.path.join(
+                    "media", "ques_images", file_path
+                )
+
+            elif "remove_explanation_image" in form_data and question.explanation_img:
+                full_path = os.path.join(settings.BASE_DIR, question.explanation_img)
+                if os.path.exists(full_path):
+                    os.remove(full_path)
+                question.explanation_img = None
 
             question.save()
 
-            # Update options
+            # --- Options Update ---
             options_obj = get_object_or_404(option_model, question_id=question)
             options_obj.option1 = options[0]
             options_obj.option2 = options[1]
             options_obj.option3 = options[2]
             options_obj.option4 = options[3]
 
-            # Handle option images
+            # --- Option Images ---
             for i in range(1, 5):
-                option_image = files.get(f"option{i}_image")
-                if option_image:
-                    option_image_name = f"question_id_{question_id}_opt{i}.jpg"
-                    option_image_path = os.path.join(
-                        settings.MEDIA_ROOT, "ques_images", option_image_name
-                    )
-                    with open(option_image_path, "wb+") as destination:
-                        for chunk in option_image.chunks():
-                            destination.write(chunk)
+                opt_img_key = f"option{i}_image"
+                remove_key = f"remove_option{i}_image"
+
+                if opt_img_key in files:
+                    # Delete existing image
+                    current_img = getattr(options_obj, f"option{i}_img")
+                    if current_img:
+                        full_path = os.path.join(settings.BASE_DIR, current_img)
+                        if os.path.exists(full_path):
+                            os.remove(full_path)
+
+                    new_image = files[opt_img_key]
+                    filename = f"{question_id}_opt{i}.jpg"
+                    file_path = fs.save(filename, new_image)
                     setattr(
                         options_obj,
-                        f"option{i}_img",
-                        os.path.join("media", "ques_images", option_image_name),
+                        file_path,
+                        os.path.join("media", "ques_images", file_path),
                     )
-                elif f"remove_option{i}_image" in form_data:
-                    # Remove existing option image
-                    option_image_field = getattr(options_obj, f"option{i}_img")
-                    if option_image_field:
-                        old_image_path = os.path.join(
-                            "",
-                            option_image_field,
-                        )
-                        if os.path.exists(old_image_path):
-                            os.remove(old_image_path)
+
+                elif remove_key in form_data:
+                    current_img = getattr(options_obj, f"option{i}_img")
+                    if current_img:
+                        full_path = os.path.join(settings.BASE_DIR, current_img)
+                        if os.path.exists(full_path):
+                            os.remove(full_path)
                         setattr(options_obj, f"option{i}_img", None)
 
             options_obj.save()
@@ -2317,76 +2291,77 @@ def update_question(request):
                 },
                 status=200,
             )
+
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
+
     return JsonResponse({"error": "Invalid HTTP method"}, status=405)
 
 
 def delete_question(request):
     if request.method == "DELETE":
-        data = json.loads(request.body)
-        question_id = data.get("question_id")
-        title_id = data.get("title_id")
-        question_type = data.get("type")  # "Practice" or "Test"
+        try:
+            data = json.loads(request.body)
+            question_id = data.get("question_id")
+            title_id = data.get("title_id")
+            question_type = data.get("type")  # "Practices" or "Test"
 
-        # Fetch and delete the question based on type
-        if question_type == "Practices":
-            question = get_object_or_404(
-                PracticeQuestion, question_id=question_id, title_id=title_id
-            )
-            option_model = PracticeOption
-        elif question_type == "Test":
-            question = get_object_or_404(
-                TestQuestion, question_id=question_id, title_id=title_id
-            )
-            option_model = TestOption
-        else:
-            return JsonResponse({"error": "Invalid type specified"}, status=400)
-
-        # Delete associated images from the file system
-        if question.question_img:
-            question_image_path = os.path.join("", question.question_img)
-            print(f"Question Image Path: {question_image_path}")  # Debugging
-            if os.path.exists(question_image_path):
-                os.remove(question_image_path)
-                print("Question image deleted.")  # Debugging
+            if question_type == "Practices":
+                question = get_object_or_404(
+                    PracticeQuestion, question_id=question_id, title_id=title_id
+                )
+                option_model = PracticeOption
+            elif question_type == "Test":
+                question = get_object_or_404(
+                    TestQuestion, question_id=question_id, title_id=title_id
+                )
+                option_model = TestOption
             else:
-                print(
-                    "Question image does not exist at the specified path."
-                )  # Debugging
+                return JsonResponse({"error": "Invalid type specified"}, status=400)
 
-        if question.explanation_img:
-            explanation_image_path = os.path.join("", question.explanation_img)
-            print(f"Explanation Image Path: {explanation_image_path}")  # Debugging
-            if os.path.exists(explanation_image_path):
-                os.remove(explanation_image_path)
-                print("Explanation image deleted.")  # Debugging
-            else:
-                print(
-                    "Explanation image does not exist at the specified path."
-                )  # Debugging
+            # Delete question image if exists
+            if question.question_img:
+                question_image_path = os.path.join(
+                    settings.BASE_DIR, question.question_img
+                )
+                if os.path.exists(question_image_path):
+                    os.remove(question_image_path)
+                    # print("Deleted question image.")
+                # else:
+                # print("Question image not found.")
 
-        # Delete associated options and their images
-        options = option_model.objects.filter(question_id=question)
-        for option in options:
-            for i in range(1, 5):
-                option_image_field = getattr(option, f"option{i}_img")
-                if option_image_field:
-                    option_image_path = os.path.join("", option_image_field)
-                    print(f"Option {i} Image Path: {option_image_path}")  # Debugging
-                    if os.path.exists(option_image_path):
-                        os.remove(option_image_path)
-                        print(f"Option {i} image deleted.")  # Debugging
-                    else:
-                        print(
-                            f"Option {i} image does not exist at the specified path."
-                        )  # Debugging
+            # Delete explanation image if exists
+            if question.explanation_img:
+                explanation_image_path = os.path.join(
+                    settings.BASE_DIR, question.explanation_img
+                )
+                if os.path.exists(explanation_image_path):
+                    os.remove(explanation_image_path)
+                    # print("Deleted explanation image.")
+                # else:
+                # print("Explanation image not found.")
 
-        # Delete the options
-        options.delete()
+            # Delete options and their images
+            options = option_model.objects.filter(question_id=question)
+            for option in options:
+                for i in range(1, 5):
+                    img_field = getattr(option, f"option{i}_img")
+                    if img_field:
+                        img_path = os.path.join(settings.BASE_DIR, img_field)
+                        if os.path.exists(img_path):
+                            os.remove(img_path)
+                            # print(f"Deleted option{i} image.")
+                        # else:
+                        # print(f"Option{i} image not found.")
 
-        # Delete the question
-        question.delete()
+            options.delete()
+            question.delete()
 
-        return JsonResponse({"message": "Question deleted successfully"}, status=200)
+            return JsonResponse(
+                {"message": "Question deleted successfully"}, status=200
+            )
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
     return JsonResponse({"error": "Invalid HTTP method"}, status=405)

@@ -284,10 +284,10 @@
         // Function to load topics from API
         async function loadTopics() {
             try {
-                const response = await fetch(`${apiBaseUrl}/topic`);
+                const response = await fetch(`${apiBaseUrl}/user-topics?user_id=${user_id}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
-                }
+                }   
                 topics = await response.json(); // Save topics globally
                 populateTopicsGrid(topics);
             } catch (error) {

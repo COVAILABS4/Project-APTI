@@ -1,0 +1,14 @@
+{
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.extraPaths": ["${workspaceFolder}", "${workspaceFolder}/**"],
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": true,
+  "python.languageServer": "Pylance",
+  "django.debug": true,
+  "python.autoComplete.extraPaths": [
+    "${workspaceFolder}",
+    "${workspaceFolder}/**"
+  ],
+  "editor.formatOnSave": true,
+  "files.autoSave": "onFocusChange"
+}

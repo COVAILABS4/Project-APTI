@@ -1,12 +1,19 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
@@ -134,220 +141,710 @@
             display: none;
         }
     </style>
+
+    <!-- width: calc(100% - 250px); -->
+    <style>
+        .main-content {
+            background-color: #f5f9fc;
+            height: 92vh;
+            padding: 20px;
+        }
+
+        .card-stats {
+            transition: transform 0.3s ease-in-out;
+            border-radius: 10px;
+        }
+
+        .card-stats:hover {
+            transform: translateY(-5px);
+        }
+
+        .card .icon {
+            font-size: 3rem;
+        }
+
+        .icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card-body {
+            background-color: #ffffff;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .category {
+            font-size: 1.2rem;
+            color: #6c757d;
+        }
+
+        /* Color for cards */
+        .card-total-users {
+            background-color: #B3D0FF;
+        }
+
+        .card-total-subadmins {
+            background-color: #F6C7B6;
+        }
+
+        .card-total-courses {
+            background-color: #D0F2B2;
+        }
+
+        .card-total-tests {
+            background-color: #F1D8D8;
+        }
+
+        .card-active-users {
+            background-color: #C9F2F3;
+        }
+
+        body {
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* Navbar */
+        #nav-bar {
+            background-color: #0d6efd;
+            color: white;
+            z-index: 1000;
+            position: fixed;
+            top: 0;
+            left: 250px;
+
+            width: calc(100% - 250px);
+            transition: all 0.3s ease-in-out;
+        }
+
+        #side-bar.shrink~#nav-bar {
+            left: 80px;
+            /* Matches the width of the shrunk sidebar */
+            width: calc(100% - 80px);
+        }
+
+        /* Sidebar */
+        #side-bar {
+            background-color: #f8f9fa;
+            height: 100vh;
+            border-right: 1px solid #ddd;
+            transition: all 0.3s ease-in-out;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            z-index: 999;
+        }
+
+        #side-bar.shrink {
+            width: 80px;
+        }
+
+        #side-bar.shrink .sidebar-item-text {
+            display: none;
+        }
+
+        #side-bar .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        #side-bar .sidebar-item:hover {
+            background-color: #e9ecef;
+        }
+
+        #side-bar .sidebar-item i {
+            margin-right: 10px;
+        }
+
+        #side-bar.shrink .sidebar-item i {
+            margin-right: 0;
+        }
+
+        /* Main Body */
+        .dynamic-body {
+            margin-left: 250px;
+            margin-top: 56px;
+
+            height: calc(100vh - 56px);
+
+            transition: all 0.3s ease-in-out;
+        }
+
+        #side-bar.shrink~.dynamic-body {
+            margin-left: 80px;
+        }
+
+        /* Tooltip Animations */
+        .dropdown-menu {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        #nav-toggler {
+            display: inline-block;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .tooltip-inner {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        .tooltip-arrow {
+            border-top-color: #0d6efd !important;
+        }
+
+        /* Updated Logo Styles */
+        #side-bar .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        #side-bar .logo-container img {
+            max-height: 80px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        #side-bar.shrink .logo-container img {
+            max-height: 50px;
+            border-radius: 50%;
+            /* Makes the logo rounded */
+        }
+
+        #side-bar .logo-container h5 {
+            margin-top: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        #side-bar.shrink .logo-container h5 {
+            display: none;
+            /* Hide logo name on shrink */
+        }
+
+        .dropdown-icon {
+            margin-left: auto;
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #side-bar .logo-container img.rotate {
+            animation: rotate 0.5s linear;
+        }
+
+        .dropdown-icon {
+            transition: transform 0.3s ease-in-out;
+            /* Matches dropdown animation duration */
+        }
+
+        .dropdown-icon.rotate {
+            transform: rotate(180deg);
+        }
+
+        #profile-tooltip {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <!-- Main Content -->
-    <div id="main-content">
-        <div class="container my-4">
-            <div class="text-center mb-4">
-                <h1 class="text-primary">My Profile</h1>
+    <!-- Navbar -->
+    <nav id="nav-bar" class="navbar">
+        <div class="container-fluid">
+            <div id="nav-toggler" class="navbar-toggler">
+                <i class="bi bi-list text-white fs-4"></i>
             </div>
+            <a onclick="window.location.href = '/admins/1/{{ user_id }}'" class="navbar-brand ms-3"
+                href="#">Dashboard</a>
 
-            <div class="profile-card mx-auto shadow p-4 rounded">
-                <!-- Action buttons for Edit Mode -->
 
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="h4">Profile</h2>
-                    <div id="actionButtons" class="d-none">
-                        <button type="button" id="saveButton" class="btn btn-success me-2">Save</button>
-                        <button type="button" id="cancelButton" class="btn btn-secondary">Cancel</button>
+            <!-- /ssadk -->
+
+            <div class="d-flex  align-items-center position-relative ">
+                <!-- Profile Image (Initially Default) -->
+                <img id="profile-avatar" src="{% static 'profile.png' %}" alt="Profile Image"
+                    class="rounded-circle border border-grey border-2 me-3 bg-white"
+                    style="width: 40px; height: 40px; object-fit: cover; cursor: pointer;">
+
+                <!-- Profile Tooltip -->
+                <div id="profile-tooltip" class="position-absolute bg-white border rounded shadow p-3"
+                    style="display: none; top: 50px; right: 0; width: 250px; z-index: 1000;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex align-items-center">
+                            <img id="profile-image" src="{% static 'profile.png' %}" alt="Profile Image"
+                                class="rounded-circle me-2" style="width: 50px; height: 50px; object-fit: cover;">
+                            <div>
+                                <p id="profile-name" style="color: black;" class="mb-0 fw-bold">John Doe</p>
+                                <p id="profile-email" class="mb-0 text-muted small">john.doe@example.com</p>
+                            </div>
+                        </div>
+                        <button id="profile-close" class="btn-close" aria-label="Close"></button>
                     </div>
-                    <div>
-                        <button id="toggleMode" class="btn btn-primary">Edit</button>
-                        <button class="btn btn-success me-2" onclick="navHistory()">Test
-                            History</button>
-                    </div>
-
+                    <a href="#" id="profile-manage-account" class="btn btn-primary btn-sm w-100 mb-2">Manage Your
+                        Account</a>
+                    <button id="profile-logout" class="btn btn-danger btn-sm w-100">Logout</button>
                 </div>
+            </div>
+            <!-- asdasas -->
 
+        </div>
+    </nav>
 
+    <!-- Sidebar and Body -->
+    <div class="d-flex">
+        <div id="side-bar">
+            <!-- Tooltip for logo -->
+            <div class="logo-container">
+                <img src="{% static 'icon.png' %}" alt="Logo" class="img-fluid">
+                <h5>KRISH TEC</h5>
+            </div>
 
-                <form id="profileForm" enctype="multipart/form-data">
-                    <div class="row mb-3">
-                        <!-- Profile Photo Column -->
-                        <div class="col-md-4 text-center" id="imageColumn">
-                            <div class="show-mode-name" id="showModeName"></div>
-                            <img id="profileImage" class="img-fluid" src="" alt="Profile Image"
-                                style="max-width: 160px;">
-                            <input type="file" id="profilePhoto" name="profilePhoto" class="form-control">
-                            <button type="button" id="saveImg" class="btn btn-success mt-2 d-none">Save Image</button>
-                        </div>
+            <!-- Sidebar items -->
+            <div onclick="window.location.href = '/admins/1/{{ user_id }}'" class="sidebar-item"
+                data-bs-toggle="tooltip" data-bs-placement="right" title="Home">
+                <i class="bi bi-house-door"></i>
+                <span class="sidebar-item-text">Home</span>
+            </div>
 
-                        <!-- Form Fields -->
-                        <div class="col-md-8">
-
-                            <div class="mb-3">
-                                <label for="name" class="form-label">Name</label>
-                                <input type="text" id="name" name="name" class="form-control" readonly>
-                            </div>
-                            <div class="mb-3">
-                                <label for="phonenumber" class="form-label">Phone Number</label>
-                                <input type="text" id="phonenumber" name="phonenumber" class="form-control" readonly>
-                            </div>
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" id="email" name="email" class="form-control" readonly>
-                            </div>
-                            <div class="mb-3">
-                                <label for="dob" class="form-label">Date of Birth</label>
-                                <input type="date" id="dob" name="dob" class="form-control" readonly>
-                            </div>
-                            <div class="mb-3">
-                                <label for="city" class="form-label">City</label>
-                                <input type="text" id="city" name="city" class="form-control" readonly>
-                            </div>
-                            <div class="mb-3">
-                                <label for="state" class="form-label">State</label>
-                                <input type="text" id="state" name="state" class="form-control" readonly>
-                            </div>
-                            <div class="mb-3">
-                                <label for="country" class="form-label">Country</label>
-                                <input type="text" id="country" name="country" class="form-control" readonly>
-                            </div>
-                        </div>
+            <div onclick="window.location.href = '/admins/1/{{ user_id }}/users-list'" class="sidebar-item"
+                data-bs-toggle="tooltip" data-bs-placement="right" title="Users">
+                <i class="bi bi-person-badge"></i>
+                <span class="sidebar-item-text">Users</span>
+            </div>
+            <div class="sidebar-item" data-bs-toggle="collapse" data-bs-target="#addContentMenu"
+                data-bs-placement="right" title="Add Content">
+                <i class="bi bi-file-earmark-plus"></i>
+                <span class="sidebar-item-text">Add Content</span>
+                <i class="bi bi-chevron-down dropdown-icon"></i>
+            </div>
+            <div id="addContentMenu" class="collapse">
+                <div onclick="window.location.href = '/admins/1/{{ user_id }}/new/content'" class="ms-4 sidebar-item"
+                    data-bs-toggle="tooltip" data-bs-placement="right" title="Create New Content">
+                    <i class="bi bi-pencil-square"></i>
+                    <span class="sidebar-item-text">Create New Content</span>
+                </div>
+                <div onclick="window.location.href = '/admins/1/{{ user_id }}/edit/content'" class="ms-4 sidebar-item"
+                    data-bs-toggle="tooltip" data-bs-placement="right" title="Edit Content">
+                    <i class="bi bi-folder2-open"></i>
+                    <span class="sidebar-item-text">Edit Content</span>
+                </div>
+            </div>
+            <div class="sidebar-item" data-bs-toggle="collapse" data-bs-target="#adminMenu" title="Admin">
+                <i class="bi bi-person-badge"></i>
+                <span class="sidebar-item-text">Admin</span>
+                <i class="bi bi-chevron-down dropdown-icon"></i>
+            </div>
+            <div id="adminMenu" class="collapse">
+                <div onclick="window.location.href = '/admins/1/{{ user_id }}/new/subadmin'" class="ms-4 sidebar-item"
+                    data-bs-toggle="tooltip" data-bs-placement="right" title="Create Subadmin">
+                    <i class="bi bi-person-plus"></i>
+                    <span class="sidebar-item-text">Create Subadmin</span>
+                </div>
+                <div onclick="window.location.href = '/admins/1/{{ user_id }}/edit/subadmin'" class="ms-4 sidebar-item"
+                    data-bs-toggle="tooltip" data-bs-placement="right" title="View Subadmins">
+                    <i class="bi bi-people"></i>
+                    <span class="sidebar-item-text">Edit Subadmins</span>
+                </div>
+            </div>
+            <div class="sidebar-item" data-bs-toggle="collapse" data-bs-target="#courseMenu" data-bs-placement="right"
+                title="Course Allocation">
+                <i class="bi bi-book"></i>
+                <span class="sidebar-item-text">Course Allocation</span>
+                <i class="bi bi-chevron-down dropdown-icon"></i>
+            </div>
+            <div id="courseMenu" class="collapse">
+                <div onclick="window.location.href = '/admins/1/{{ user_id }}/allocate/subadmin'"
+                    class="ms-4 sidebar-item" data-bs-toggle="tooltip" data-bs-placement="right" title="Sub Admin">
+                    <i class="bi bi-person-workspace"></i>
+                    <span class="sidebar-item-text">Sub Admin</span>
+                </div>
+                <div onclick="window.location.href = '/admins/1/{{ user_id }}/allocate/users'" class="ms-4 sidebar-item"
+                    data-bs-toggle="tooltip" data-bs-placement="right" title="Users">
+                    <i class="bi bi-people"></i>
+                    <span class="sidebar-item-text">Users</span>
+                </div>
+            </div>
+            <!-- <div onclick="window.location.href = '/'" class="sidebar-item text-danger" data-bs-toggle="tooltip"
+                data-bs-placement="right" title="Logout">
+                <i class="bi bi-box-arrow-right"></i>
+                <span class="sidebar-item-text">Logout</span>
+            </div> -->
+        </div>
+        <div class="flex-grow-1 dynamic-body">
+            <!-- Main Content -->
+            <div id="main-content">
+                <div class="container my-4">
+                    <div class="text-center mb-4">
+                        <h1 class="text-primary">My Profile</h1>
                     </div>
 
+                    <div class="profile-card mx-auto shadow p-4 rounded">
+                        <!-- Action buttons for Edit Mode -->
 
-                </form>
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h2 class="h4">Profile</h2>
+                            <div id="actionButtons" class="d-none">
+                                <button type="button" id="saveButton" class="btn btn-success me-2">Save</button>
+                                <button type="button" id="cancelButton" class="btn btn-secondary">Cancel</button>
+                            </div>
+                            <div>
+                                <button id="toggleMode" class="btn btn-primary">Edit</button>
+                                <button class="btn btn-success me-2" onclick="navHistory()">Test
+                                    History</button>
+                            </div>
+
+                        </div>
+
+
+
+                        <form id="profileForm" enctype="multipart/form-data">
+                            <div class="row mb-3">
+                                <!-- Profile Photo Column -->
+                                <div class="col-md-4 text-center" id="imageColumn">
+                                    <div class="show-mode-name" id="showModeName"></div>
+                                    <img id="profileImage" class="img-fluid" src="" alt="Profile Image"
+                                        style="max-width: 160px;">
+                                    <input type="file" id="profilePhoto" name="profilePhoto" class="form-control">
+                                    <button type="button" id="saveImg" class="btn btn-success mt-2 d-none">Save
+                                        Image</button>
+                                </div>
+
+                                <!-- Form Fields -->
+                                <div class="col-md-8">
+
+                                    <div class="mb-3">
+                                        <label for="name" class="form-label">Name</label>
+                                        <input type="text" id="name" name="name" class="form-control" readonly>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="phonenumber" class="form-label">Phone Number</label>
+                                        <input type="text" id="phonenumber" name="phonenumber" class="form-control"
+                                            readonly>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" id="email" name="email" class="form-control" readonly>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="dob" class="form-label">Date of Birth</label>
+                                        <input type="date" id="dob" name="dob" class="form-control" readonly>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="city" class="form-label">City</label>
+                                        <input type="text" id="city" name="city" class="form-control" readonly>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="state" class="form-label">State</label>
+                                        <input type="text" id="state" name="state" class="form-control" readonly>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="country" class="form-label">Country</label>
+                                        <input type="text" id="country" name="country" class="form-control" readonly>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </form>
+                    </div>
+                </div>
             </div>
+
+            <script>
+                var admin_id = '{{user_id}}'; // Replace with dynamic user ID
+                var user_id = '{{user2_id}}'; // Replace with dynamic user ID
+
+
+                console.log(admin_id + " " + user_id)
+
+                var apiBaseUrl = "/aapi3";
+                var apiUrl = `${apiBaseUrl}/api/users/${user_id}`;
+                var updateApiUrl = `${apiBaseUrl}/api/users/${user_id}/update`;
+
+                var toggleModeButton = document.getElementById('toggleMode');
+                var formElements = document.querySelectorAll('#profileForm input');
+                var actionButtons = document.getElementById('actionButtons');
+                var profileImage = document.getElementById('profileImage');
+                var profilePhotoInput = document.getElementById('profilePhoto');
+                var imageColumn = document.getElementById('imageColumn');
+                var saveImgButton = document.getElementById('saveImg');
+                var showModeName = document.getElementById('showModeName');
+
+
+                function navHistory() {
+
+                    //<str:role>/1/<str:user_id>/users-list/<str:user2_id>/test_history
+
+                    window.location.href = `/admins/1/${admin_id}/users-list/${user_id}/test_history`
+
+                }
+
+                let originalData = {};
+
+                // Fetch user data and populate the form
+                async function fetchUserData() {
+                    try {
+                        var response = await axios.get(apiUrl);
+                        var userData = response.data;
+                        originalData = { ...userData }; // Store original data for cancel action
+
+                        populateForm(userData);
+                    } catch (error) {
+                        console.error('Error fetching user data:', error);
+                    }
+                }
+
+                // Populate form fields with user data
+                function populateForm(data) {
+                    document.getElementById('name').value = data.name;
+                    document.getElementById('email').value = data.email;
+                    document.getElementById('dob').value = data.dob || '';
+                    document.getElementById('city').value = data.city || '';
+                    document.getElementById('state').value = data.state || '';
+                    document.getElementById('country').value = data.country || '';
+                    document.getElementById('phonenumber').value = data.phone_number || '';
+
+                    console.log(data)
+                    if (data.photo_url) {
+
+                        profileImage.src = '/media/' + data.photo_url;
+                        profileImage.style.display = 'block';
+                    }
+
+                }
+
+                // Toggle view/edit mode
+                toggleModeButton.addEventListener('click', () => {
+                    var isEditMode = toggleModeButton.textContent === 'Edit';
+                    formElements.forEach(input => input.readOnly = !isEditMode);
+                    actionButtons.classList.toggle('d-none', !isEditMode);
+                    toggleModeButton.textContent = isEditMode ? 'View' : 'Edit';
+                    showModeName.classList.toggle('d-none', isEditMode); // Hide name in Edit Mode
+                });
+
+                // Save updated user data including profile photo
+                document.getElementById('saveButton').addEventListener('click', async () => {
+                    var formData = new FormData();
+                    formData.append('name', document.getElementById('name').value);
+                    formData.append('email', document.getElementById('email').value);
+                    formData.append('dob', document.getElementById('dob').value);
+                    formData.append('city', document.getElementById('city').value);
+                    formData.append('state', document.getElementById('state').value);
+                    formData.append('country', document.getElementById('country').value);
+                    formData.append('phone_number', document.getElementById('phonenumber').value);
+
+                    var profilePhoto = profilePhotoInput.files[0];
+                    if (profilePhoto) {
+                        formData.append('profilePhoto', profilePhoto);
+                    }
+
+                    try {
+                        await axios.post(updateApiUrl, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+                        alert('Profile updated successfully!');
+                        toggleModeButton.click(); // Switch to view mode after saving
+                        fetchUserData();
+                    } catch (error) {
+                        console.error('Error updating profile:', error);
+                    }
+                });
+
+                // Save image only
+                saveImgButton.addEventListener('click', async () => {
+                    var formData = new FormData();
+                    var profilePhoto = profilePhotoInput.files[0];
+                    if (profilePhoto) {
+                        formData.append('profilePhoto', profilePhoto);
+                    }
+
+                    try {
+                        await axios.post(updateApiUrl, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+                        alert('Profile image updated successfully!');
+                        saveImgButton.classList.add('d-none'); // Show save image button
+                    } catch (error) {
+                        console.error('Error updating profile image:', error);
+                    }
+                });
+
+                // Cancel editing and reset form to original state
+                document.getElementById('cancelButton').addEventListener('click', () => {
+                    populateForm(originalData);
+                    toggleModeButton.click();
+                });
+
+                // Handle profile photo upload
+                profileImage.addEventListener('click', () => profilePhotoInput.click());
+
+                // Display selected image before uploading
+                profilePhotoInput.addEventListener('change', () => {
+                    var reader = new FileReader();
+                    reader.onload = function () {
+                        profileImage.src = reader.result;
+                        profileImage.style.display = 'block';
+                        saveImgButton.classList.remove('d-none'); // Show save image button
+                    };
+                    reader.readAsDataURL(profilePhotoInput.files[0]);
+                });
+
+                fetchUserData(); // Initial fetch
+            </script>
         </div>
     </div>
 
+
+
+
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
-        const admin_id = '{{user_id}}'; // Replace with dynamic user ID
-        const user_id = '{{user2_id}}'; // Replace with dynamic user ID
+        var admin_id = '{{ user_id }}'; // Django Template Variable
+        var profileIcon = document.getElementById('profile-icon');
+        var profileName = document.getElementById('profile-name');
+        var profileEmail = document.getElementById('profile-email');
+        var manageAccountLink = document.getElementById('profile-manage-account');
+        var logoutButton = document.getElementById('profile-logout');
 
-        const apiBaseUrl = "/aapi3";
-        const apiUrl = `${apiBaseUrl}/api/users/${user_id}`;
-        const updateApiUrl = `${apiBaseUrl}/api/users/${user_id}/update`;
+        var profileAvatar = document.getElementById('profile-avatar');
+        var profileTooltip = document.getElementById('profile-tooltip');
+        var profileClose = document.getElementById('profile-close');
 
-        const toggleModeButton = document.getElementById('toggleMode');
-        const formElements = document.querySelectorAll('#profileForm input');
-        const actionButtons = document.getElementById('actionButtons');
-        const profileImage = document.getElementById('profileImage');
-        const profilePhotoInput = document.getElementById('profilePhoto');
-        const imageColumn = document.getElementById('imageColumn');
-        const saveImgButton = document.getElementById('saveImg');
-        const showModeName = document.getElementById('showModeName');
+        var ip = "/aapi3";
 
+        // Fetch user data from API
+        fetch(`${ip}/api/users/${admin_id}`)
+            .then(response => response.json())
+            .then(data => {
+                var profileName = document.getElementById('profile-name');
+                var profileEmail = document.getElementById('profile-email');
+                var profileImage = document.getElementById('profile-image');
 
-        function navHistory() {
+                if (data.email) {
+                    profileEmail.textContent = data.email;
+                    profileName.textContent = data.name;
 
-            //<str:role>/1/<str:user_id>/users-list/<str:user2_id>/test_history
+                    // Update profile image if a valid photo URL is provided
+                    if (data.photo_url) {
+                        var newImageUrl = '/media/' + data.photo_url;
 
-            window.location.href = `/admins/1/${admin_id}/users-list/${user_id}/test_history`
+                        // Update both the profile avatar and tooltip image
+                        profileAvatar.src = newImageUrl;
+                        profileImage.src = newImageUrl;
+                    }
+                }
+            })
+            .catch(err => {
+                console.error('Error fetching user data:', err);
+            });
 
-        }
-
-        let originalData = {};
-
-        // Fetch user data and populate the form
-        async function fetchUserData() {
-            try {
-                const response = await axios.get(apiUrl);
-                const userData = response.data;
-                originalData = { ...userData }; // Store original data for cancel action
-
-                populateForm(userData);
-            } catch (error) {
-                console.error('Error fetching user data:', error);
-            }
-        }
-
-        // Populate form fields with user data
-        function populateForm(data) {
-            document.getElementById('name').value = data.name;
-            document.getElementById('email').value = data.email;
-            document.getElementById('dob').value = data.dob || '';
-            document.getElementById('city').value = data.city || '';
-            document.getElementById('state').value = data.state || '';
-            document.getElementById('country').value = data.country || '';
-            document.getElementById('phonenumber').value = data.phone_number || '';
-
-            console.log(data)
-            if (data.photo_url) {
-
-                profileImage.src = '/media/' + data.photo_url;
-                profileImage.style.display = 'block';
-            }
-
-        }
-
-        // Toggle view/edit mode
-        toggleModeButton.addEventListener('click', () => {
-            const isEditMode = toggleModeButton.textContent === 'Edit';
-            formElements.forEach(input => input.readOnly = !isEditMode);
-            actionButtons.classList.toggle('d-none', !isEditMode);
-            toggleModeButton.textContent = isEditMode ? 'View' : 'Edit';
-            showModeName.classList.toggle('d-none', isEditMode); // Hide name in Edit Mode
+        // Toggle tooltip on click
+        profileAvatar.addEventListener('click', () => {
+            profileTooltip.style.display = (profileTooltip.style.display === 'block') ? 'none' : 'block';
         });
 
-        // Save updated user data including profile photo
-        document.getElementById('saveButton').addEventListener('click', async () => {
-            const formData = new FormData();
-            formData.append('name', document.getElementById('name').value);
-            formData.append('email', document.getElementById('email').value);
-            formData.append('dob', document.getElementById('dob').value);
-            formData.append('city', document.getElementById('city').value);
-            formData.append('state', document.getElementById('state').value);
-            formData.append('country', document.getElementById('country').value);
-            formData.append('phone_number', document.getElementById('phonenumber').value);
+        // Close tooltip when clicking the close button
+        profileClose.addEventListener('click', () => {
+            profileTooltip.style.display = 'none';
+        });
+        logoutButton.addEventListener('click', () => {
 
-            const profilePhoto = profilePhotoInput.files[0];
-            if (profilePhoto) {
-                formData.append('profilePhoto', profilePhoto);
-            }
+            if (confirm('Are you sure to logout ?'))
 
-            try {
-                await axios.post(updateApiUrl, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
-                alert('Profile updated successfully!');
-                toggleModeButton.click(); // Switch to view mode after saving
-                fetchUserData();
-            } catch (error) {
-                console.error('Error updating profile:', error);
-            }
+                profileTooltip.style.display = 'none';
+
+            window.location.href = '/'
         });
 
-        // Save image only
-        saveImgButton.addEventListener('click', async () => {
-            const formData = new FormData();
-            const profilePhoto = profilePhotoInput.files[0];
-            if (profilePhoto) {
-                formData.append('profilePhoto', profilePhoto);
-            }
+        manageAccountLink.addEventListener('click', () => {
 
-            try {
-                await axios.post(updateApiUrl, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
-                alert('Profile image updated successfully!');
-                saveImgButton.classList.add('d-none'); // Show save image button
-            } catch (error) {
-                console.error('Error updating profile image:', error);
-            }
+            profileTooltip.style.display = 'none';
+            window.location.href = `/admins/1/${admin_id}/setting`
+
+        });
+    </script>
+
+
+    <script>
+
+
+
+        var isShrink = false;
+        var navbar = document.getElementById('nav-bar');
+        var navToggler = document.getElementById("nav-toggler");
+        var sideBar = document.getElementById("side-bar");
+        var dropdownIcons = document.querySelectorAll('.dropdown-icon');
+
+        var logoImg = document.querySelector("#side-bar .logo-container img");
+
+
+        navToggler.addEventListener("click", () => {
+            isShrink = !isShrink;
+            navbar.style.left = isShrink ? '80px' : '250px';
+            navbar.style.width = isShrink ? 'calc(100% - 80px)' : 'calc(100% - 250px)';
+            sideBar.classList.toggle("shrink");
+
+            // Add rotation class temporarily
+            logoImg.classList.add("rotate");
+            setTimeout(() => logoImg.classList.remove("rotate"), 500); // Remove class after animation
         });
 
-        // Cancel editing and reset form to original state
-        document.getElementById('cancelButton').addEventListener('click', () => {
-            populateForm(originalData);
-            toggleModeButton.click();
+
+        dropdownIcons.forEach(icon => {
+            var targetId = icon.parentElement.getAttribute('data-bs-target');
+            var target = document.querySelector(targetId);
+
+            // Add click listener to rotate immediately
+            icon.parentElement.addEventListener('click', () => {
+                icon.classList.toggle('rotate'); // Rotate immediately when clicked
+            });
+
+            // Optional: Clean up rotation if animation ends unexpectedly
+            target.addEventListener('hidden.bs.collapse', () => {
+                icon.classList.remove('rotate');
+            });
         });
-
-        // Handle profile photo upload
-        profileImage.addEventListener('click', () => profilePhotoInput.click());
-
-        // Display selected image before uploading
-        profilePhotoInput.addEventListener('change', () => {
-            const reader = new FileReader();
-            reader.onload = function () {
-                profileImage.src = reader.result;
-                profileImage.style.display = 'block';
-                saveImgButton.classList.remove('d-none'); // Show save image button
-            };
-            reader.readAsDataURL(profilePhotoInput.files[0]);
-        });
-
-        fetchUserData(); // Initial fetch
+        // Enable tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
     </script>
 </body>
+
+
 
 </html>
