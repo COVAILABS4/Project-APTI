@@ -1,0 +1,54 @@
+<div id="side-bar">
+    <!-- Tooltip for logo -->
+    <div class="logo-container">
+        <img src="{% static 'icon.png' %}" alt="Logo" class="img-fluid">
+        <h5>KRISH TEC</h5>
+    </div>
+
+    <!-- Sidebar items -->
+    <div onclick="window.location.href = '/subadmin/2/{{ user_id }}'" class="sidebar-item" data-bs-toggle="tooltip"
+        data-bs-placement="right" title="Home">
+        <i class="bi bi-house-door"></i>
+        <span class="sidebar-item-text">Home</span>
+    </div>
+
+
+    <div class="sidebar-item" data-bs-toggle="collapse" data-bs-target="#addContentMenu" data-bs-placement="right"
+        title="Add Content">
+        <i class="bi bi-file-earmark-plus"></i>
+        <span class="sidebar-item-text">Add Content</span>
+        <i class="bi bi-chevron-down dropdown-icon"></i>
+    </div>
+    <div id="addContentMenu" class="collapse">
+        <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/new/content'" class="ms-4 sidebar-item"
+            data-bs-toggle="tooltip" data-bs-placement="right" title="Create New Content">
+            <i class="bi bi-pencil-square"></i>
+            <span class="sidebar-item-text">Create New Content</span>
+        </div>
+        <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/edit/content'" class="ms-4 sidebar-item"
+            data-bs-toggle="tooltip" data-bs-placement="right" title="Edit Content">
+            <i class="bi bi-folder2-open"></i>
+            <span class="sidebar-item-text">Edit Content</span>
+        </div>
+    </div>
+
+    <div class="sidebar-item" data-bs-toggle="collapse" data-bs-target="#courseMenu" data-bs-placement="right"
+        title="Course Allocation">
+        <i class="bi bi-book"></i>
+        <span class="sidebar-item-text">Course Allocation</span>
+        <i class="bi bi-chevron-down dropdown-icon"></i>
+    </div>
+    <div id="courseMenu" class="collapse">
+
+        <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/allocate/users'" class="ms-4 sidebar-item"
+            data-bs-toggle="tooltip" data-bs-placement="right" title="Users">
+            <i class="bi bi-people"></i>
+            <span class="sidebar-item-text">Users</span>
+        </div>
+    </div>
+    <!-- <div onclick="window.location.href = '/'" class="sidebar-item text-danger" data-bs-toggle="tooltip"
+                data-bs-placement="right" title="Logout">
+                <i class="bi bi-box-arrow-right"></i>
+                <span class="sidebar-item-text">Logout</span>
+            </div> -->
+</div>

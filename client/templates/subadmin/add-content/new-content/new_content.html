@@ -6,11 +6,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>SubAdmin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
     <!-- width: calc(100% - 250px); -->
     <style>
+        .main-content {
+            background-color: #f5f9fc;
+            height: 92vh;
+            padding: 20px;
+        }
+
+        .card-stats {
+            transition: transform 0.3s ease-in-out;
+            border-radius: 10px;
+        }
+
+        .card-stats:hover {
+            transform: translateY(-5px);
+        }
+
+        .card .icon {
+            font-size: 3rem;
+        }
+
+        .icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card-body {
+            background-color: #ffffff;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .category {
+            font-size: 1.2rem;
+            color: #6c757d;
+        }
+
+        /* Color for cards */
+        .card-total-users {
+            background-color: #B3D0FF;
+        }
+
+        .card-total-subadmins {
+            background-color: #F6C7B6;
+        }
+
+        .card-total-courses {
+            background-color: #D0F2B2;
+        }
+
+        .card-total-tests {
+            background-color: #F1D8D8;
+        }
+
+        .card-active-users {
+            background-color: #C9F2F3;
+        }
+
         body {
             margin: 0;
             overflow-x: hidden;
@@ -190,69 +252,6 @@
                 opacity: 1;
             }
         }
-
-        /* Hover effect for rows */
-        .clickable-row {
-            cursor: pointer;
-        }
-
-        .clickable-row:hover {
-            background-color: #f1f5f9;
-        }
-
-        /* Custom Styles */
-        body {
-
-            background-color: #f4f7fc;
-        }
-
-        .container {
-            max-width: 1200px;
-        }
-
-
-        .modal-header {
-            background-color: #007bff;
-            color: white;
-        }
-
-        .modal-footer .btn-primary {
-            background-color: #0056b3;
-            border-color: #004085;
-        }
-
-        .modal-footer .btn-secondary {
-            background-color: #6c757d;
-            border-color: #5a6268;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #0069d9;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-            border-color: #004085;
-        }
-
-        .breadcrumb-item+.breadcrumb-item::before {
-            content: "/";
-            color: #6c757d;
-        }
-
-        .breadcrumb {
-            background-color: #f8f9fa;
-            padding: 10px 15px;
-            border: 1px solid gray;
-        }
-
-        .highlight {
-            color: rgb(69, 170, 247);
-            cursor: pointer;
-            text-decoration: underline;
-            font-weight: bold;
-        }
     </style>
 </head>
 
@@ -265,11 +264,19 @@
             </div>
             <a onclick="window.location.href = '/subadmin/2/{{ user_id }}'" class="navbar-brand ms-3"
                 href="#">Dashboard</a>
-            <div class="d-flex align-items-center position-relative">
-                <i id="profile-icon" class="bi bi-person-circle fs-4 me-3" data-bs-toggle="tooltip"
-                    data-bs-placement="right" title="Profile" style="cursor: pointer;"></i>
+
+
+            <!-- /ssadk -->
+
+            <div class="d-flex  align-items-center position-relative ">
+                <!-- Profile Image (Initially Default) -->
+                <img id="profile-avatar" src="{% static 'profile.png' %}" alt="Profile Image"
+                    class="rounded-circle border border-grey border-2 me-3 bg-white"
+                    style="width: 40px; height: 40px; object-fit: cover; cursor: pointer;">
+
+                <!-- Profile Tooltip -->
                 <div id="profile-tooltip" class="position-absolute bg-white border rounded shadow p-3"
-                    style="display: none; top: 40px; right: 0; width: 250px; z-index: 1000;">
+                    style="display: none; top: 50px; right: 0; width: 250px; z-index: 1000;">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div class="d-flex align-items-center">
                             <img id="profile-image" src="{% static 'profile.png' %}" alt="Profile Image"
@@ -286,6 +293,7 @@
                     <button id="profile-logout" class="btn btn-danger btn-sm w-100">Logout</button>
                 </div>
             </div>
+            <!-- asdasas -->
 
         </div>
     </nav>
@@ -305,6 +313,8 @@
                 <i class="bi bi-house-door"></i>
                 <span class="sidebar-item-text">Home</span>
             </div>
+
+
             <div class="sidebar-item" data-bs-toggle="collapse" data-bs-target="#addContentMenu"
                 data-bs-placement="right" title="Add Content">
                 <i class="bi bi-file-earmark-plus"></i>
@@ -323,24 +333,7 @@
                     <span class="sidebar-item-text">Edit Content</span>
                 </div>
             </div>
-            <!-- <div class="sidebar-item" data-bs-toggle="collapse" data-bs-target="#adminMenu" title="Admin">
-                    <i class="bi bi-person-badge"></i>
-                    <span class="sidebar-item-text">Admin</span>
-                    <i class="bi bi-chevron-down dropdown-icon"></i>
-                </div> -->
-            <div id="adminMenu" class="collapse">
-                <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/new/subadmin'" class="ms-4 sidebar-item"
-                    data-bs-toggle="tooltip" data-bs-placement="right" title="Create Subadmin">
-                    <i class="bi bi-person-plus"></i>
-                    <span class="sidebar-item-text">Create Subadmin</span>
-                </div>
-                <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/edit/subadmin'"
-                    class="ms-4 sidebar-item" data-bs-toggle="tooltip" data-bs-placement="right"
-                    title="View Subsubadmin">
-                    <i class="bi bi-people"></i>
-                    <span class="sidebar-item-text">Edit Subadmin</span>
-                </div>
-            </div>
+
             <div class="sidebar-item" data-bs-toggle="collapse" data-bs-target="#courseMenu" data-bs-placement="right"
                 title="Course Allocation">
                 <i class="bi bi-book"></i>
@@ -348,11 +341,7 @@
                 <i class="bi bi-chevron-down dropdown-icon"></i>
             </div>
             <div id="courseMenu" class="collapse">
-                <!-- <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/allocate/subadmin'"
-                    class="ms-4 sidebar-item" data-bs-toggle="tooltip" data-bs-placement="right" title="Sub Admin">
-                    <i class="bi bi-person-workspace"></i>
-                    <span class="sidebar-item-text">Sub Admin</span>
-                </div> -->
+
                 <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/allocate/users'"
                     class="ms-4 sidebar-item" data-bs-toggle="tooltip" data-bs-placement="right" title="Users">
                     <i class="bi bi-people"></i>
@@ -360,199 +349,212 @@
                 </div>
             </div>
             <!-- <div onclick="window.location.href = '/'" class="sidebar-item text-danger" data-bs-toggle="tooltip"
-                data-bs-placement="right" title="Logout">
-                <i class="bi bi-box-arrow-right"></i>
-                <span class="sidebar-item-text">Logout</span>
-            </div> -->
+                    data-bs-placement="right" title="Logout">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span class="sidebar-item-text">Logout</span>
+                </div> -->
         </div>
         <div class="flex-grow-1 dynamic-body">
-
-            <div>
-                <!-- Breadcrumb Navigation -->
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item highlight" id="bc-home">Home</li>
-                        <li class="breadcrumb-item">Create Content</li>
-                    </ol>
-                </nav>
-                <div class="container mt-5">
+            <div class="container mt-5">
+                <h1 class="text-black">Topic Management</h1>
 
 
-                    <div class="d-flex align-items-center">
-                        <!-- <i class="bi bi-puzzle me-2" style="font-size: 30px; color: rgb(26, 0, 128);"></i> -->
-                        <h1 style="color: black;">Topic Management</h1>
-                    </div>
 
+                <!-- Topics Table -->
+                <table class="table table-striped table-bordered align-middle text-center">
+                    <thead>
+                        <tr class="table-dark">
+                            <th>S.No</th>
+                            <th>Topic</th>
+                            <th>Domain Type</th>
+                            <th>Tech Type</th>
+                            <th>Created By</th>
+                            <th>Created At</th>
+                        </tr>
+                    </thead>
+                    <tbody id="topicsTableBody">
+                        <!-- Dynamic content will be added here -->
+                    </tbody>
+                </table>
+            </div>
 
-                    <!-- 
-                    <button class="btn btn-primary mb-3" id="addTopicBtn">Add Topic</button> -->
+            <!-- Add Topic Modal -->
+            <div class="modal" tabindex="-1" id="addTopicModal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Add Topic</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="addTopicForm">
+                                <div class="mb-3">
+                                    <label for="topicName" class="form-label">Topic Name</label>
+                                    <input type="text" class="form-control" id="topicName" required />
+                                </div>
 
-                    <!-- Topics Table -->
-                    <table class="table table-striped table-bordered align-middle text-center">
-                        <thead>
-                            <tr class="table-dark">
-                                <th>S.No</th>
-                                <th>Topic</th>
-                                <th>Created By</th>
-                                <th>Created At</th>
-                            </tr>
-                        </thead>
-                        <tbody id="topicsTableBody">
-                            <!-- Dynamic content will be added here -->
-                        </tbody>
-                    </table>
-                </div>
+                                <!-- Dynamic Domain Type Selection -->
+                                <div class="mb-3">
+                                    <label class="form-label">Domain Type</label>
+                                    <div id="domainTypeOptions"></div>
+                                </div>
 
-                <!-- Add Topic Modal -->
-                <div class="modal" tabindex="-1" id="addTopicModal">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Add Topic</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form id="addTopicForm">
-                                    <div class="mb-3">
-                                        <label for="topicName" class="form-label">Topic Name</label>
-                                        <input type="text" class="form-control" id="topicName" required>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                <button type="button" class="btn btn-primary" id="saveTopicBtn">Add</button>
-                            </div>
+                                <!-- Dynamic Tech Type Selection -->
+                                <div class="mb-3">
+                                    <label class="form-label">Tech Type</label>
+                                    <div id="techTypeOptions"></div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="saveTopicBtn">Add</button>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Scripts -->
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
+            <script>
+                const userId = "{{ user_id }}";
+                const apiBaseUrl = "/aapi3";
+
+                // Dynamic options for Domain Type and Tech Type
+                const domainTypes = ["tech", "non-tech"];
+                const techTypes = ["sw", "hw", "iot"];
+
+                async function loadTopics() {
+                    try {
+                        const response = await fetch(`${apiBaseUrl}/topic`);
+                        const topics = await response.json();
+                        populateTopicsTable(topics);
+                    } catch (error) {
+                        console.error("Error fetching topics:", error);
+                    }
+                }
+                loadTopics()
+                function populateTopicsTable(topics) {
+                    const tableBody = document.getElementById("topicsTableBody");
+                    tableBody.innerHTML = "";
+
+                    topics.forEach((topic, index) => {
+                        const row = document.createElement("tr");
+                        row.className = "clickable-row";
+                        row.setAttribute("data-bs-toggle", "tooltip");
+                        row.setAttribute("data-bs-placement", "top");
+                        row.setAttribute("title", "Click to view subtopics");
+
+                        row.innerHTML = `
+                                <td>${index + 1}</td>
+                                <td>${topic.name}</td>
+                                <td>${topic.domain_type.toUpperCase()}</td>
+                                <td>${topic.tech_type.toUpperCase()}</td>
+                                <td>${topic.created_by}</td>
+                                <td>${topic.created_at}</td>
+                            `;
+
+                        row.addEventListener("click", (event) => {
+                            if (!event.target.closest("button")) {
+                                window.location.href = `content/${topic.topic_id}/subtopics`;
+                            }
+                        });
+
+                        tableBody.appendChild(row);
+                    });
+
+                    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                    tooltipTriggerList.map(function (tooltipTriggerEl) {
+                        return new bootstrap.Tooltip(tooltipTriggerEl);
+                    });
+                }
+
+                function populateRadioButtons(containerId, optionsArray, groupName) {
+                    const container = document.getElementById(containerId);
+                    container.innerHTML = "";
+
+                    const row = document.createElement('div');
+                    row.classList.add('row'); // Bootstrap row class for flexbox layout
+
+                    optionsArray.forEach(option => {
+                        const col = document.createElement('div');
+                        col.classList.add('col-12', 'col-sm-6', 'col-md-4', 'col-lg-3'); // Adjust size for different screen widths
+
+                        const radioHtml = `
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="${groupName}" value="${option}">
+                            <label class="form-check-label">${option.toUpperCase()}</label>
+                        </div>
+                    `;
+
+                        col.innerHTML = radioHtml;
+                        row.appendChild(col);
+                    });
+
+                    container.appendChild(row);
+                }
+
+                function openAddTopicModal() {
+                    const modal = new bootstrap.Modal(document.getElementById("addTopicModal"));
+                    document.getElementById("addTopicForm").reset();
+                    modal.show();
+                }
+
+                async function saveTopic() {
+                    const topicName = document.getElementById("topicName").value.trim();
+                    const domainType = document.querySelector('input[name="domainType"]:checked')?.value;
+                    const techType = document.querySelector('input[name="techType"]:checked')?.value;
+
+                    if (!topicName || !domainType || !techType) {
+                        alert("All fields are required");
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch(`${apiBaseUrl}/add/topic`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                user_id: userId,
+                                topic_name: topicName,
+                                domain_type: domainType,
+                                tech_type: techType
+                            }),
+                        });
+
+                        if (response.ok) {
+                            alert("Topic added successfully");
+                            loadTopics();
+                            const modal = bootstrap.Modal.getInstance(document.getElementById("addTopicModal"));
+                            modal.hide();
+                        } else {
+                            const errorData = await response.json();
+                            console.error("Error adding topic:", errorData);
+                            alert("Failed to add topic");
+                        }
+                    } catch (error) {
+                        console.error("Error adding topic:", error);
+                        alert("Error connecting to the server");
+                    }
+                }
+            </script>
         </div>
     </div>
-
-    <script>
-
-
-        const uid = '{{ user_id }}';
-        var bc_home = document.getElementById('bc-home');
-
-
-        bc_home.addEventListener('click', () => {
-            window.location.href = '/subadmin/2/' + uid
-        })
-
-    </script>
-    <script>
-        // Global Variables
-        const userId = '{{ user_id }}'; // Simulating a logged-in user
-        const apiBaseUrl = "/aapi3";
-
-        // Load Topics on Page Load
-        document.addEventListener("DOMContentLoaded", () => {
-            loadTopics();
-
-        });
-
-        // Function to Load Topics
-        async function loadTopics() {
-            try {
-                const response = await fetch(`${apiBaseUrl}/user-topics?user_id=${user_id}`);
-                const topics = await response.json();
-                populateTopicsTable(topics);
-            } catch (error) {
-                console.error("Error fetching topics:", error);
-            }
-        }
-
-        // Function to Populate Topics Table
-        function populateTopicsTable(topics) {
-            const tableBody = document.getElementById("topicsTableBody");
-            tableBody.innerHTML = ""; // Clear previous content
-
-            topics.forEach((topic, index) => {
-                const row = document.createElement("tr");
-                row.className = "clickable-row";
-                row.setAttribute("data-bs-toggle", "tooltip");
-                row.setAttribute("data-bs-placement", "top");
-                row.setAttribute("title", "Click to view subtopics");
-
-                row.innerHTML = `
-                            <td>${index + 1}</td>
-                            <td>${topic.name}</td>
-                            <td>${topic.created_by}</td>
-                            <td>${topic.created_at}</td>
-                        `;
-
-                // Redirect to subtopics on row click
-                row.addEventListener("click", (event) => {
-                    if (!event.target.closest("button")) {
-                        window.location.href = `content/${topic.topic_id}/subtopics`;
-                    }
-                });
-
-                tableBody.appendChild(row);
-            });
-
-            // Enable Bootstrap tooltips
-            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            tooltipTriggerList.map(function (tooltipTriggerEl) {
-                return new bootstrap.Tooltip(tooltipTriggerEl);
-            });
-        }
-
-        // Function to Open Add Topic Modal
-        function openAddTopicModal() {
-            const modal = new bootstrap.Modal(document.getElementById("addTopicModal"));
-            document.getElementById("addTopicForm").reset(); // Clear form
-            modal.show();
-        }
-
-        // Function to Save Topic
-        async function saveTopic() {
-            const topicName = document.getElementById("topicName").value.trim();
-            if (!topicName) {
-                alert("Topic name is required");
-                return;
-            }
-
-            try {
-                const response = await fetch(`${apiBaseUrl}/add/topic`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user_id: userId, topic_name: topicName }),
-                });
-
-                if (response.ok) {
-                    const newTopic = await response.json();
-                    alert("Topic added successfully");
-                    loadTopics(); // Reload topics
-                    const modal = bootstrap.Modal.getInstance(document.getElementById("addTopicModal"));
-                    modal.hide();
-                } else {
-                    const errorData = await response.json();
-                    console.error("Error adding topic:", errorData);
-                    alert("Failed to add topic");
-                }
-            } catch (error) {
-                console.error("Error adding topic:", error);
-                alert("Error connecting to the server");
-            }
-        }
-    </script>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 
-
     <script>
         const user_id = '{{ user_id }}'; // Django Template Variable
         const profileIcon = document.getElementById('profile-icon');
-        const profileTooltip = document.getElementById('profile-tooltip');
         const profileName = document.getElementById('profile-name');
         const profileEmail = document.getElementById('profile-email');
         const manageAccountLink = document.getElementById('profile-manage-account');
         const logoutButton = document.getElementById('profile-logout');
+
+        const profileAvatar = document.getElementById('profile-avatar');
+        const profileTooltip = document.getElementById('profile-tooltip');
         const profileClose = document.getElementById('profile-close');
 
         const ip = "/aapi3";
@@ -561,13 +563,21 @@
         fetch(`${ip}/api/users/${user_id}`)
             .then(response => response.json())
             .then(data => {
+                const profileName = document.getElementById('profile-name');
+                const profileEmail = document.getElementById('profile-email');
+                const profileImage = document.getElementById('profile-image');
+
                 if (data.email) {
                     profileEmail.textContent = data.email;
                     profileName.textContent = data.name;
 
-                    // Optionally set profile image if available
-                    if (data.profileImage) {
-                        document.getElementById('profile-image').src = data.profileImage;
+                    // Update profile image if a valid photo URL is provided
+                    if (data.photo_url) {
+                        const newImageUrl = '/media/' + data.photo_url;
+
+                        // Update both the profile avatar and tooltip image
+                        profileAvatar.src = newImageUrl;
+                        profileImage.src = newImageUrl;
                     }
                 }
             })
@@ -576,7 +586,7 @@
             });
 
         // Toggle tooltip on click
-        profileIcon.addEventListener('click', () => {
+        profileAvatar.addEventListener('click', () => {
             profileTooltip.style.display = (profileTooltip.style.display === 'block') ? 'none' : 'block';
         });
 
@@ -584,7 +594,6 @@
         profileClose.addEventListener('click', () => {
             profileTooltip.style.display = 'none';
         });
-
         logoutButton.addEventListener('click', () => {
 
             if (confirm('Are you sure to logout ?'))
@@ -601,6 +610,7 @@
 
         });
     </script>
+
 
     <script>
 

@@ -1,0 +1,790 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- width: calc(100% - 250px); -->
+    <style>
+        body {
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* Navbar */
+        #nav-bar {
+            background-color: #0d6efd;
+            color: white;
+            z-index: 1000;
+            position: fixed;
+            top: 0;
+            left: 250px;
+
+            width: calc(100% - 250px);
+            transition: all 0.3s ease-in-out;
+        }
+
+        #side-bar.shrink~#nav-bar {
+            left: 80px;
+            /* Matches the width of the shrunk sidebar */
+            width: calc(100% - 80px);
+        }
+
+        /* Sidebar */
+        #side-bar {
+            background-color: #f8f9fa;
+            height: 100vh;
+            border-right: 1px solid #ddd;
+            transition: all 0.3s ease-in-out;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            z-index: 999;
+        }
+
+        #side-bar.shrink {
+            width: 80px;
+        }
+
+        #side-bar.shrink .sidebar-item-text {
+            display: none;
+        }
+
+        #side-bar .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        #side-bar .sidebar-item:hover {
+            background-color: #e9ecef;
+        }
+
+        #side-bar .sidebar-item i {
+            margin-right: 10px;
+        }
+
+        #side-bar.shrink .sidebar-item i {
+            margin-right: 0;
+        }
+
+        /* Main Body */
+        .dynamic-body {
+            margin-left: 250px;
+            margin-top: 56px;
+
+            height: calc(100vh - 56px);
+
+            transition: all 0.3s ease-in-out;
+        }
+
+        #side-bar.shrink~.dynamic-body {
+            margin-left: 80px;
+        }
+
+        /* Tooltip Animations */
+        .dropdown-menu {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        #nav-toggler {
+            display: inline-block;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .tooltip-inner {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        .tooltip-arrow {
+            border-top-color: #0d6efd !important;
+        }
+
+        /* Updated Logo Styles */
+        #side-bar .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        #side-bar .logo-container img {
+            max-height: 80px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        #side-bar.shrink .logo-container img {
+            max-height: 50px;
+            border-radius: 50%;
+            /* Makes the logo rounded */
+        }
+
+        #side-bar .logo-container h5 {
+            margin-top: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        #side-bar.shrink .logo-container h5 {
+            display: none;
+            /* Hide logo name on shrink */
+        }
+
+        .dropdown-icon {
+            margin-left: auto;
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #side-bar .logo-container img.rotate {
+            animation: rotate 0.5s linear;
+        }
+
+        .dropdown-icon {
+            transition: transform 0.3s ease-in-out;
+            /* Matches dropdown animation duration */
+        }
+
+        .dropdown-icon.rotate {
+            transform: rotate(180deg);
+        }
+
+        #profile-tooltip {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        body {
+            background-color: #f4f7fc;
+
+        }
+
+        .container {
+            max-width: 1200px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 1.2rem;
+        }
+
+        .modal-content {
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .modal-body {
+            background-color: #fff;
+        }
+
+        .form-label {
+            font-weight: 500;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            margin-bottom: 15px;
+        }
+
+        .list-group-item {
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1rem;
+            background-color: #fff;
+        }
+
+        .btn-primary,
+        .btn-success {
+            border-radius: 50px;
+            padding: 10px 20px;
+        }
+
+        .btn-primary:hover,
+        .btn-success:hover {
+            background-color: #357a38;
+            border-color: #357a38;
+        }
+
+        .btn-close {
+            opacity: 0.6;
+        }
+
+        .d-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .question-card {
+            padding: 20px;
+            background-color: #ffffff;
+
+            margin-bottom: 20px;
+        }
+
+        .question-card ul {
+            margin-left: 20px;
+        }
+
+        .question-card .correct-option {
+            color: green;
+            font-weight: bold;
+        }
+
+        .question-card .explanation {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .breadcrumb-item+.breadcrumb-item::before {
+            content: "/";
+            color: #6c757d;
+        }
+
+        .breadcrumb {
+            background-color: #f8f9fa;
+            padding: 10px 15px;
+            border: 1px solid gray;
+        }
+
+        .highlight {
+            color: rgb(69, 170, 247);
+            cursor: pointer;
+            text-decoration: underline;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav id="nav-bar" class="navbar">
+        <div class="container-fluid">
+            <div id="nav-toggler" class="navbar-toggler">
+                <i class="bi bi-list text-white fs-4"></i>
+            </div>
+            <a onclick="window.location.href = '/subadmin/2/{{ user_id }}'" class="navbar-brand ms-3"
+                href="#">Dashboard</a>
+            <div class="d-flex align-items-center position-relative">
+                <i id="profile-icon" class="bi bi-person-circle fs-4 me-3" data-bs-toggle="tooltip"
+                    data-bs-placement="right" title="Profile" style="cursor: pointer;"></i>
+                <div id="profile-tooltip" class="position-absolute bg-white border rounded shadow p-3"
+                    style="display: none; top: 40px; right: 0; width: 250px; z-index: 1000;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex align-items-center">
+                            <img id="profile-image" src="{% static 'profile.png' %}" alt="Profile Image"
+                                class="rounded-circle me-2" style="width: 50px; height: 50px; object-fit: cover;">
+                            <div>
+                                <p id="profile-name" style="color: black;" class="mb-0 fw-bold">John Doe</p>
+                                <p id="profile-email" class="mb-0 text-muted small">john.doe@example.com</p>
+                            </div>
+                        </div>
+                        <button id="profile-close" class="btn-close" aria-label="Close"></button>
+                    </div>
+                    <a href="#" id="profile-manage-account" class="btn btn-primary btn-sm w-100 mb-2">Manage Your
+                        Account</a>
+                    <button id="profile-logout" class="btn btn-danger btn-sm w-100">Logout</button>
+                </div>
+            </div>
+
+        </div>
+    </nav>
+
+    <!-- Sidebar and Body -->
+    <div class="d-flex">
+        <div id="side-bar">
+            <!-- Tooltip for logo -->
+            <div class="logo-container">
+                <img src="{% static 'icon.png' %}" alt="Logo" class="img-fluid">
+                <h5>KRISH TEC</h5>
+            </div>
+
+            <!-- Sidebar items -->
+            <div onclick="window.location.href = '/subadmin/2/{{ user_id }}'" class="sidebar-item"
+                data-bs-toggle="tooltip" data-bs-placement="right" title="Home">
+                <i class="bi bi-house-door"></i>
+                <span class="sidebar-item-text">Home</span>
+            </div>
+            <div class="sidebar-item" data-bs-toggle="collapse" data-bs-target="#addContentMenu"
+                data-bs-placement="right" title="Add Content">
+                <i class="bi bi-file-earmark-plus"></i>
+                <span class="sidebar-item-text">Add Content</span>
+                <i class="bi bi-chevron-down dropdown-icon"></i>
+            </div>
+            <div id="addContentMenu" class="collapse">
+                <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/new/content'" class="ms-4 sidebar-item"
+                    data-bs-toggle="tooltip" data-bs-placement="right" title="Create New Content">
+                    <i class="bi bi-pencil-square"></i>
+                    <span class="sidebar-item-text">Create New Content</span>
+                </div>
+                <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/edit/content'" class="ms-4 sidebar-item"
+                    data-bs-toggle="tooltip" data-bs-placement="right" title="Edit Content">
+                    <i class="bi bi-folder2-open"></i>
+                    <span class="sidebar-item-text">Edit Content</span>
+                </div>
+            </div>
+            <!-- <div class="sidebar-item" data-bs-toggle="collapse" data-bs-target="#adminMenu" title="Admin">
+                <i class="bi bi-person-badge"></i>
+                <span class="sidebar-item-text">Admin</span>
+                <i class="bi bi-chevron-down dropdown-icon"></i>
+            </div> -->
+            <div id="adminMenu" class="collapse">
+                <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/new/subadmin'" class="ms-4 sidebar-item"
+                    data-bs-toggle="tooltip" data-bs-placement="right" title="Create Subadmin">
+                    <i class="bi bi-person-plus"></i>
+                    <span class="sidebar-item-text">Create Subadmin</span>
+                </div>
+                <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/edit/subadmin'"
+                    class="ms-4 sidebar-item" data-bs-toggle="tooltip" data-bs-placement="right"
+                    title="View Subsubadmin">
+                    <i class="bi bi-people"></i>
+                    <span class="sidebar-item-text">Edit Subsubadmin</span>
+                </div>
+            </div>
+            <div class="sidebar-item" data-bs-toggle="collapse" data-bs-target="#courseMenu" data-bs-placement="right"
+                title="Course Allocation">
+                <i class="bi bi-book"></i>
+                <span class="sidebar-item-text">Course Allocation</span>
+                <i class="bi bi-chevron-down dropdown-icon"></i>
+            </div>
+            <div id="courseMenu" class="collapse">
+                <!-- <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/allocate/subadmin'"
+                    class="ms-4 sidebar-item" data-bs-toggle="tooltip" data-bs-placement="right" title="Sub Admin">
+                    <i class="bi bi-person-workspace"></i>
+                    <span class="sidebar-item-text">Sub Admin</span>
+                </div> -->
+                <div onclick="window.location.href = '/subadmin/2/{{ user_id }}/allocate/users'"
+                    class="ms-4 sidebar-item" data-bs-toggle="tooltip" data-bs-placement="right" title="Users">
+                    <i class="bi bi-people"></i>
+                    <span class="sidebar-item-text">Users</span>
+                </div>
+            </div>
+            <!-- <div onclick="window.location.href = '/'" class="sidebar-item text-danger" data-bs-toggle="tooltip"
+                data-bs-placement="right" title="Logout">
+                <i class="bi bi-box-arrow-right"></i>
+                <span class="sidebar-item-text">Logout</span>
+            </div> -->
+        </div>
+        <div class="flex-grow-1 dynamic-body">
+            <div>
+                <!-- Breadcrumb Navigation -->
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item  highlight" id="bc-home">Home</li>
+                        <li class="breadcrumb-item highlight " id="bc-create">Create Content</li>
+                        <li class="breadcrumb-item highlight" id="bc-topic">Loading...</li>
+                        <li class="breadcrumb-item highlight" id="bc-subtopic">Loading...</li>
+                        <li class="breadcrumb-item" id="bc-title">Loading...</li>
+                    </ol>
+                </nav>
+                <div class="container mt-5">
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>Question Management</h2>
+                        <div>
+                            <button class="btn btn-primary me-2" onclick="redirectToImport()">Import</button>
+                            <button class="btn btn-success" data-bs-toggle="modal"
+                                data-bs-target="#addQuestionModal">Add
+                                Question</button>
+                        </div>
+                    </div>
+
+                    <!-- Section to display existing questions -->
+                    <div id="question-list">
+                        <ul id="questions" class="list-group">
+                            <!-- Questions will be dynamically loaded here -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Modal for Adding Questions -->
+                <div class="modal fade" id="addQuestionModal" tabindex="-1" aria-labelledby="addQuestionModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addQuestionModalLabel">Add New Question</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="questionForm">
+                                    <div class="mb-3">
+                                        <label for="question" class="form-label">Question</label>
+                                        <textarea id="question" class="form-control" rows="3" required></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Options</label>
+                                        <div id="options-container">
+                                            <input type="text" class="form-control mb-2 option" placeholder="Option 1"
+                                                required>
+                                            <input type="text" class="form-control mb-2 option" placeholder="Option 2"
+                                                required>
+                                            <input type="text" class="form-control mb-2 option" placeholder="Option 3"
+                                                required>
+                                            <input type="text" class="form-control mb-2 option" placeholder="Option 4"
+                                                required>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="correct_option" class="form-label">Correct Option (1-4)</label>
+                                        <input type="number" id="correct_option" class="form-control" min="1" max="4"
+                                            required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="explanation" class="form-label">Explanation</label>
+                                        <textarea id="explanation" class="form-control" rows="3" required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100">Submit</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+
+
+        const uid = '{{ user_id }}';
+        const top_id = '{{topic_id}}'
+        const subtop_id = '{{subtopic_id}}'
+        const _type = '{{type}}'
+        const _title_id = '{{title_id}}'
+
+        console.log(uid, top_id, subtop_id)
+        var bc_home = document.getElementById('bc-home');
+        var bc_create = document.getElementById('bc-create');
+        var bc_topic = document.getElementById('bc-topic');
+        var bc_subtopic = document.getElementById('bc-subtopic');
+        var bc_title = document.getElementById('bc-title');
+
+
+        bc_home.addEventListener('click', () => {
+            window.location.href = '/subadmin/2/' + uid
+        })
+
+        bc_create.addEventListener('click', () => {
+
+            //  alert("SW")
+
+            window.location.href = '/subadmin/2/' + uid + "/new/content"
+        })
+        bc_topic.addEventListener('click', () => {
+
+            //  alert("SW")
+
+            window.location.href = `/subadmin/2/${uid}/new/content/${top_id}/subtopics`
+        })
+        bc_subtopic.addEventListener('click', () => {
+
+            //  alert("SW")
+            window.history.go(-1);
+            //window.location.href = `/subadmin/2/${uid}/new/content/${top_id}/subtopics/${subtop_id}`
+        })
+
+        apiBaseUrl = "/aapi3";
+
+        // Function to Load Topic Name
+        async function loadTopicName() {
+            try {
+                const response = await fetch(`${apiBaseUrl}/topic/${top_id}`);
+                const topic = await response.json();
+                if (topic && topic.name) {
+                    bc_topic.textContent = topic.name;
+                } else {
+                    console.error("Topic not found");
+                }
+            } catch (error) {
+                console.error("Error fetching topic:", error);
+            }
+        }
+        async function loadSubtopicNames() {
+            try {
+
+                // Fetch Subtopic Name
+                const subtopicResponse = await fetch(`${apiBaseUrl}/topics/${top_id}/subtopics/${subtop_id}`);
+                const subtopicData = await subtopicResponse.json();
+                bc_subtopic.textContent = subtopicData.name;
+            } catch (error) {
+                console.error('Error loading topic or subtopic names:', error);
+            }
+        }
+        async function loadTitleNames() {
+            try {
+
+                // Fetch Subtopic Name
+                const titleResponse = await fetch(`${apiBaseUrl}/get-title?topic_id=${top_id}&subtopic_id=${subtop_id}&utils_type=${_type}&title_id=${_title_id}`);
+                const titleData = await titleResponse.json();
+
+
+                bc_title.textContent = titleData.title;
+            } catch (error) {
+                console.error('Error loading topic or subtopic names:', error);
+            }
+        }
+
+        loadTopicName();
+        loadSubtopicNames();
+        loadTitleNames();
+        // loadSubtopicNames();
+
+    </script>
+    <script>
+        const user_id = "{{user_id}}"
+        const topic_id = "{{topic_id}}" || "Default Topic ID";
+        const subtopic_id = "{{subtopic_id}}" || "Default Subtopic ID";
+        const type = "{{type}}" || "Practices";
+        const title_id = "{{title_id}}" || "1";
+        const apiBaseUrl = "/aapi3";
+
+
+        async function fetchQuestions() {
+            try {
+                const response = await fetch(`${apiBaseUrl}/questions/${title_id}?topic_id=${topic_id}&subtopic_id=${subtopic_id}&utils=${type}`);
+                if (!response.ok) throw new Error("Failed to fetch questions");
+
+                const data = await response.json();
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                const questions = data.questions || [];
+                const questionsList = document.getElementById("questions");
+                questionsList.innerHTML = '';
+
+                questions.forEach((question, index) => {
+                    const li = document.createElement('li');
+                    li.classList.add("list-group-item");
+                    const correctOption = question.options[question.correct_option - 1];
+
+                    li.innerHTML = `
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="question-card">
+                                <strong>Q${index + 1}:</strong> ${question.question}
+                                <ul class="list-unstyled mt-2">
+                                    ${question.options.map((option, i) => `
+                                        <li class="${i + 1 === question.correct_option ? 'correct-option' : ''}">
+                                            Option ${i + 1}: ${option}
+                                        </li>`).join('')}
+                                </ul>
+                                <strong>Correct Answer : </strong> ${correctOption}<br>
+                                <strong>Explanation:</strong>
+                                <p class="explanation">${question.explanation}</p>
+                            </div>
+                        </div>`;
+                    questionsList.appendChild(li);
+                });
+            } catch (error) {
+                console.error("Error fetching questions:", error);
+                alert("Failed to load questions. Please try again.");
+            }
+        }
+
+        document.getElementById("questionForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const question = document.getElementById("question").value.trim();
+            const options = [...document.querySelectorAll(".option")].map(opt => opt.value.trim());
+            const correct_option = parseInt(document.getElementById("correct_option").value);
+            const explanation = document.getElementById("explanation").value.trim();
+
+            if (!question || options.some(opt => !opt) || isNaN(correct_option) || correct_option < 1 || correct_option > 4) {
+                alert("Please fill all fields correctly.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`${apiBaseUrl}/add/questions`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ topic_id, subtopic_id, title_id, question, options, correct_option, explanation, type })
+                });
+
+                if (!response.ok) throw new Error("Failed to add question");
+
+                const data = await response.json();
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                alert("Question added successfully!");
+                document.getElementById("questionForm").reset();
+                fetchQuestions();
+                bootstrap.Modal.getInstance(document.getElementById('addQuestionModal')).hide();
+            } catch (error) {
+                console.error("Error adding question:", error);
+                alert("Failed to add question. Please try again.");
+            }
+        });
+
+        function redirectToImport() {
+            window.location.href = `/subadmin/2/${user_id}/new/content/${topic_id}/subtopics/${subtopic_id}/${type}/${title_id}/import`
+        }
+
+        window.onload = fetchQuestions;
+    </script>
+    <script>
+        //const user_id = '{{ user_id }}'; // Django Template Variable
+        const profileIcon = document.getElementById('profile-icon');
+        const profileTooltip = document.getElementById('profile-tooltip');
+        const profileName = document.getElementById('profile-name');
+        const profileEmail = document.getElementById('profile-email');
+        const manageAccountLink = document.getElementById('profile-manage-account');
+        const logoutButton = document.getElementById('profile-logout');
+        const profileClose = document.getElementById('profile-close');
+
+        const ip = "/aapi3";
+
+        // Fetch user data from API
+        fetch(`${ip}/api/users/${user_id}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.email) {
+                    profileEmail.textContent = data.email;
+                    profileName.textContent = data.name;
+
+                    // Optionally set profile image if available
+                    if (data.profileImage) {
+                        document.getElementById('profile-image').src = data.profileImage;
+                    }
+                }
+            })
+            .catch(err => {
+                console.error('Error fetching user data:', err);
+            });
+
+        // Toggle tooltip on click
+        profileIcon.addEventListener('click', () => {
+            profileTooltip.style.display = (profileTooltip.style.display === 'block') ? 'none' : 'block';
+        });
+
+        // Close tooltip when clicking the close button
+        profileClose.addEventListener('click', () => {
+            profileTooltip.style.display = 'none';
+        });
+
+        logoutButton.addEventListener('click', () => {
+
+            if (confirm('Are you sure to logout ?'))
+
+                profileTooltip.style.display = 'none';
+
+            window.location.href = '/'
+        });
+
+        manageAccountLink.addEventListener('click', () => {
+
+            profileTooltip.style.display = 'none';
+            window.location.href = `/subadmin/2/${user_id}/setting`
+
+        });
+    </script>
+
+    <script>
+
+
+
+        var isShrink = false;
+        const navbar = document.getElementById('nav-bar');
+        const navToggler = document.getElementById("nav-toggler");
+        const sideBar = document.getElementById("side-bar");
+        const dropdownIcons = document.querySelectorAll('.dropdown-icon');
+
+        const logoImg = document.querySelector("#side-bar .logo-container img");
+
+
+        navToggler.addEventListener("click", () => {
+            isShrink = !isShrink;
+            navbar.style.left = isShrink ? '80px' : '250px';
+            navbar.style.width = isShrink ? 'calc(100% - 80px)' : 'calc(100% - 250px)';
+            sideBar.classList.toggle("shrink");
+
+            // Add rotation class temporarily
+            logoImg.classList.add("rotate");
+            setTimeout(() => logoImg.classList.remove("rotate"), 500); // Remove class after animation
+        });
+
+
+        dropdownIcons.forEach(icon => {
+            const targetId = icon.parentElement.getAttribute('data-bs-target');
+            const target = document.querySelector(targetId);
+
+            // Add click listener to rotate immediately
+            icon.parentElement.addEventListener('click', () => {
+                icon.classList.toggle('rotate'); // Rotate immediately when clicked
+            });
+
+            // Optional: Clean up rotation if animation ends unexpectedly
+            target.addEventListener('hidden.bs.collapse', () => {
+                icon.classList.remove('rotate');
+            });
+        });
+        // Enable tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        const tooltipList = tooltipTriggerList.map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    </script>
+</body>
+
+
+
+</html>
