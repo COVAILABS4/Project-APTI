@@ -707,15 +707,12 @@
                         <div class="percentage" id="percentage">0%</div>
                     </div>
                 </div>
-                <div class="summary-text">
-                    <h4>Summary</h4>
+                <div class="summary-text mt-4">
                     <p><strong>Score:</strong> <span id="score"></span></p>
                     <p><strong>Total Questions:</strong> <span id="total-questions"></span></p>
                     <p><strong>Questions Attempted:</strong> <span id="questions-attempted"></span></p>
                     <p><strong>Questions Unanswered:</strong> <span id="questions-unanswered"></span></p>
-                    <p><strong>Status:</strong> Completed</p>
-                    <p><strong>Start Time:</strong> 24/12/2024, 4:19:37 pm</p>
-                    <p><strong>End Time:</strong> 24/12/2024, 4:21:17 pm</p>
+
                 </div>
             </div>
 
@@ -788,8 +785,13 @@
                         const questionHtml = `
                 <div class="question-container ${selectedOption === 0 ? 'unanswered' : (isCorrect ? 'correct-answer' : 'incorrect-answer')}">
                     <h5>${index + 1}. ${question.question}</h5>
+
+                     ${question.question_img ? `
+                        <div style="margin: 10px; margin-left: 40px;">
+                            <img src="/${question.question_img.replace(/\\/g, '/')}" alt="Question Image" class="img-thumbnail img-clickable" style="width: 80px; height: 80px; cursor: pointer;">
+                        </div>
+                    ` : ''}
                     
-                    <!-- Options with possible images -->
                     <div class="form-check">
                         ${question.options.map((option, i) => {
                             const isSelected = selectedOption === i + 1;
