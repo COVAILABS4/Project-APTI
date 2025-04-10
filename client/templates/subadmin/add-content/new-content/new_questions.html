@@ -631,7 +631,7 @@
                                     <ul class="list-unstyled mt-2">
                                         ${optionsList}
                                     </ul>
-                                    <strong>Correct Answer : </strong> ${correctOption.text}<br>
+                                    <strong>Correct Answer : </strong> ${correctOption?.text || "N/A"}<br>
                                     <strong>Explanation:</strong>
                                     <p class="explanation">${question.explanation}</p>
                                     ${explanationImage}

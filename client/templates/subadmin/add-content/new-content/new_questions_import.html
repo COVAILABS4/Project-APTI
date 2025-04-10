@@ -490,6 +490,108 @@
         });
     </script>
 
+    <script>
+        document.getElementById("downloadForm").addEventListener("submit", (e) => {
+            e.preventDefault();
+            const noOfQuestions = parseInt(document.getElementById("noOfQuestions").value);
+            if (isNaN(noOfQuestions) || noOfQuestions < 1) {
+                alert("Please enter a valid number of questions.");
+                return;
+            }
+            downloadSample(noOfQuestions);
+            bootstrap.Modal.getInstance(document.getElementById('downloadModal')).hide();
+        });
+
+        document.getElementById("importForm").addEventListener("submit", handleFileUpload);
+        function handleFileUpload(event) {
+            event.preventDefault();
+            const fileInput = document.getElementById("importFile");
+            if (!fileInput.files[0]) {
+                alert("Please select a file to upload.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+            importQuestions(formData);
+        }
+
+    </script>
+
+    <script>
+
+        const topic_id = "{{topic_id}}" || "Default Topic ID";
+        const subtopic_id = "{{subtopic_id}}" || "Default Subtopic ID";
+        const type = "{{type}}" || "Practices";
+        const title_id = "{{title_id}}" || "1";
+        const apiBaseUrl = "/aapi3";
+
+        async function downloadSample(noOfQuestions) {
+
+            console.log("Called")
+            const requestBody = {
+                topic_id: topic_id,
+                subtopic_id: subtopic_id,
+                title_id: title_id,
+                type: type,
+                no_of_questions: noOfQuestions
+            };
+
+            try {
+                const response = await fetch(apiBaseUrl + "/download-sample", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to download the file");
+                }
+
+                const contentDisposition = response.headers.get("Content-Disposition");
+                const fileName = contentDisposition
+                    ? contentDisposition.split("filename=")[1].replace(/"/g, "")
+                    : "Sample_Format.xlsx";
+
+                const blob = await response.blob();
+                const downloadLink = document.createElement("a");
+                downloadLink.href = URL.createObjectURL(blob);
+                downloadLink.download = fileName;
+                downloadLink.click();
+                URL.revokeObjectURL(downloadLink.href);
+            } catch (error) {
+                console.error("Error:", error.message);
+                alert("Failed to download the file. Please try again.");
+            }
+        }
+
+        async function importQuestions(formData) {
+            try {
+                const response = await fetch(apiBaseUrl + "/add/questions/import", {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to upload the file");
+                }
+
+                const data = await response.json();
+                alert(data.message || "Questions imported successfully.");
+
+                window.location.href = `/subadmin/2/${user_id}/new/content/${topic_id}/subtopics/${subtopic_id}/${type}/${title_id}`
+            } catch (error) {
+                console.error("Error:", error.message);
+                alert("Failed to import questions. Please try again.");
+            }
+        }
+
+
+    </script>
+
+
 
     <script>
 

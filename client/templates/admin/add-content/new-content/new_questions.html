@@ -594,60 +594,60 @@
                 });
 
                 async function fetchQuestions() {
-                    try {
-                        const response = await fetch(
-                            `${apiBaseUrl}/questions/${title_id}?topic_id=${topic_id}&subtopic_id=${subtopic_id}&utils=${type}`
-                        );
-                        if (!response.ok) throw new Error('Failed to fetch questions');
+                    //try {
+                    const response = await fetch(
+                        `${apiBaseUrl}/questions/${title_id}?topic_id=${topic_id}&subtopic_id=${subtopic_id}&utils=${type}`
+                    );
+                    if (!response.ok) throw new Error('Failed to fetch questions');
 
-                        const data = await response.json();
-                        console.log(data);
+                    const data = await response.json();
+                    console.log(data);
 
-                        if (data.error) {
-                            alert(data.error);
-                            return;
-                        }
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
 
-                        const questions = data.questions || [];
-                        const questionsList = document.getElementById('questions');
-                        questionsList.innerHTML = '';
+                    const questions = data.questions || [];
+                    const questionsList = document.getElementById('questions');
+                    questionsList.innerHTML = '';
 
-                        questions.forEach((question, index) => {
-                            const li = document.createElement('li');
-                            li.classList.add('list-group-item');
-                            const correctOption = question.options[question.correct_option - 1];
+                    questions.forEach((question, index) => {
+                        const li = document.createElement('li');
+                        li.classList.add('list-group-item');
+                        const correctOption = question.options[question.correct_option - 1];
 
-                            // Add question image if it exists
-                            const questionImage = question.question_img
-                                ? `<div style="text-align: center; margin: 10px 0;">
+                        // Add question image if it exists
+                        const questionImage = question.question_img
+                            ? `<div style="text-align: center; margin: 10px 0;">
                                    <img src="/${question.question_img}" alt="Question Image" style="width: 50px; height: 50px; border-radius: 8px; cursor: pointer;" class="img-clickable">
                                </div>`
-                                : '';
+                            : '';
 
-                            // Add explanation image if it exists
-                            const explanationImage = question.explanation_img
-                                ? `<div style="text-align: center; margin: 10px 0;">
+                        // Add explanation image if it exists
+                        const explanationImage = question.explanation_img
+                            ? `<div style="text-align: center; margin: 10px 0;">
                                    <img src="/${question.explanation_img}" alt="Explanation Image" style="width: 50px; height: 50px; border-radius: 8px; cursor: pointer;" class="img-clickable">
                                </div>`
-                                : '';
+                            : '';
 
-                            // Add options with images if they exist
-                            const optionsList = question.options
-                                .map(
-                                    (option, i) => `
+                        // Add options with images if they exist
+                        const optionsList = question.options
+                            .map(
+                                (option, i) => `
                                 <li class="${i + 1 === question.correct_option ? 'correct-option' : ''}">
                                     Option ${i + 1}: ${option.text}
                                     ${option.image
-                                            ? `<div style="text-align: center; margin: 5px 0;">
+                                        ? `<div style="text-align: center; margin: 5px 0;">
                                                <img src="/${option.image}" alt="Option ${i + 1} Image" style="width: 50px; height: 50px; border-radius: 8px; cursor: pointer;" class="img-clickable">
                                            </div>`
-                                            : ''
-                                        }
+                                        : ''
+                                    }
                                 </li>`
-                                )
-                                .join('');
+                            )
+                            .join('');
 
-                            li.innerHTML = `
+                        li.innerHTML = `
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="question-card">
                                     <strong>Q${index + 1}:</strong> ${question.question}
@@ -655,28 +655,25 @@
                                     <ul class="list-unstyled mt-2">
                                         ${optionsList}
                                     </ul>
-                                    <strong>Correct Answer : </strong> ${correctOption.text}<br>
+                                    <strong>Correct Answer : </strong> ${correctOption?.text || "N/A"}<br>
                                     <strong>Explanation:</strong>
                                     <p class="explanation">${question.explanation}</p>
                                     ${explanationImage}
                                 </div>
                             </div>`;
-                            questionsList.appendChild(li);
-                        });
+                        questionsList.appendChild(li);
+                    });
 
-                        // Add click event listeners to all images with the class 'img-clickable'
-                        document.querySelectorAll('.img-clickable').forEach(img => {
-                            img.addEventListener('click', () => {
-                                const modalImage = document.getElementById('modalImage');
-                                modalImage.src = img.src; // Set the clicked image source to the modal image
-                                const imageModal = new bootstrap.Modal(document.getElementById('imageModal')); // Initialize Bootstrap modal
-                                imageModal.show(); // Show the modal
-                            });
+                    // Add click event listeners to all images with the class 'img-clickable'
+                    document.querySelectorAll('.img-clickable').forEach(img => {
+                        img.addEventListener('click', () => {
+                            const modalImage = document.getElementById('modalImage');
+                            modalImage.src = img.src; // Set the clicked image source to the modal image
+                            const imageModal = new bootstrap.Modal(document.getElementById('imageModal')); // Initialize Bootstrap modal
+                            imageModal.show(); // Show the modal
                         });
-                    } catch (error) {
-                        console.error('Error fetching questions:', error);
-                        alert('Failed to load questions. Please try again.');
-                    }
+                    });
+
                     MathJax.typesetPromise();
                 }
 
