@@ -230,6 +230,19 @@
             margin-top: 20px;
         }
     </style>
+
+    <style>
+        .breadcrumb .highlight {
+            text-decoration: none;
+            color: #28a745;
+            cursor: pointer;
+        }
+
+        .breadcrumb .highlight:hover {
+            text-decoration: underline;
+
+        }
+    </style>
 </head>
 
 <body>
@@ -354,6 +367,89 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <!-- Breadcrumb -->
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item highlight" id="bc-home">Home</li>
+                            <li class="breadcrumb-item highlight" id="bc-topic">All Tests</li>
+                            <li class="breadcrumb-item highlight" id="bc-subtopic">All Tests</li>
+                            <li class="breadcrumb-item active">Test</li>
+                        </ol>
+                    </nav>
+                    <script>
+
+                        const apiUrl = "/aapi3"; // Replace with your actual API base URL
+
+                        const uid = '{{ user_id }}';
+                        const top_id = '{{topic_id}}'
+                        const subtop_id = '{{subtopic_id}}'
+
+                        // var header = "NETWORL";
+
+                        //     console.log(uid, top_id, subtop_id)
+                        var bc_home = document.getElementById('bc-home');
+                        var bc_create = document.getElementById('bc-create');
+                        var bc_topic = document.getElementById('bc-topic');
+                        var bc_subtopic = document.getElementById('bc-subtopic');
+                        
+
+                        bc_home.addEventListener('click', () => {
+                            window.location.href = '/user/3/' + uid
+                        })
+
+
+                        bc_topic.addEventListener('click', () => {
+
+                            //  alert("SW")
+                            window.location.href = `/user/3/${uid}/${top_id}`
+                        })
+                        bc_subtopic.addEventListener('click', () => {
+
+                            //  alert("SW")
+                            window.history.go(-1);
+                            // window.location.href = `/admins/1/${uid}/new/content/${top_id}/subtopics`
+                        })
+
+
+                        // Function to Load Topic Name
+                        async function loadTopicName() {
+                            try {
+                                const response = await fetch(`${apiUrl}/topic/${top_id}`);
+                                const topic = await response.json();
+                                if (topic && topic.name) {
+                                    bc_topic.textContent = topic.name;
+                                } else {
+                                    console.error("Topic not found");
+                                }
+                            } catch (error) {
+                                console.error("Error fetching topic:", error);
+                            }
+                        }
+                        async function loadSubtopicNames() {
+                            try {
+
+                                // Fetch Subtopic Name
+                                const subtopicResponse = await fetch(`${apiUrl}/topics/${top_id}/subtopics/${subtop_id}`);
+                                const subtopicData = await subtopicResponse.json();
+                                bc_subtopic.textContent = subtopicData.name;
+
+
+
+                            } catch (error) {
+                                console.error('Error loading topic or subtopic names:', error);
+                            }
+                        }
+
+                        loadTopicName();
+                        loadSubtopicNames()
+                        // loadSubtopicNames();
+
+                    </script>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h1 class="h4">Test Questions</h1>
+                        <input id="filter-input" type="text" class="form-control w-25" placeholder="Filter titles..."
+                            oninput="filterTitles()">
                     </div>
 
                     <!-- Titles Container -->

@@ -233,6 +233,18 @@
             cursor: pointer;
         }
     </style>
+    <style>
+        .breadcrumb .highlight {
+            text-decoration: none;
+            color: #28a745;
+            cursor: pointer;
+        }
+
+        .breadcrumb .highlight:hover {
+            text-decoration: underline;
+
+        }
+    </style>
 </head>
 
 <body>
@@ -305,6 +317,53 @@
         </nav>
 
         <div class="mt-4">
+
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item highlight" id="bc-home">Home</li>
+                    <li class="breadcrumb-item" id="bc-topic">All Tests</li>
+                </ol>
+            </nav>
+
+            <script>
+
+
+                const apiUrl = "/aapi3";
+
+
+                const uid = '{{ user_id }}';
+                const top_id = '{{topic_id}}'
+                var bc_home = document.getElementById('bc-home');
+                var bc_topic = document.getElementById('bc-topic');
+
+
+                bc_home.addEventListener('click', () => {
+                    window.history.go(-1);
+                })
+
+
+
+
+                // Function to Load Topic Name
+                async function loadTopicName() {
+                    try {
+                        const response = await fetch(`${apiUrl}/topic/${top_id}`);
+                        const topic = await response.json();
+                        if (topic && topic.name) {
+                            bc_topic.textContent = topic.name;
+                        } else {
+                            console.error("Topic not found");
+                        }
+                    } catch (error) {
+                        console.error("Error fetching topic:", error);
+                    }
+                }
+
+                loadTopicName();
+
+            </script>
+
             <!-- Search Filter -->
             <div class="row mb-4">
                 <div class="col-12">
