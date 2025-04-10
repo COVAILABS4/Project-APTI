@@ -13,18 +13,6 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <script>
-        MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']]
-            }
-        };
-    </script>
-    <!-- width: calc(100% - 250px); -->
-    <script type="text/javascript" id="MathJax-script" async
-        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-        </script>
-
     <style>
         body {
             display: flex;
@@ -179,6 +167,37 @@
             border: none;
         }
 
+        .test-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .test-card img {
+            width: 100px;
+            height: 100px;
+            background-color: #d4edda;
+            display: inline-block;
+            border-radius: 4px;
+        }
+
+        .test-name {
+            color: #28a745;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+
+
+        .search-bar {
+            margin-bottom: 20px;
+        }
+    </style>
+
+    <style>
         .question-container {
             padding: 20px;
             background-color: white;
@@ -303,31 +322,20 @@
             margin-top: 5px;
         }
     </style>
-
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+    </script>
+    <!-- width: calc(100% - 250px); -->
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+        </script>
 </head>
 
 <body>
-
-
-    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="imageModalLabel">Image View</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <img id="modalImage" src="" alt="Question Image"
-                        style="width: 100%; max-height: 400px; object-fit: contain;">
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
-
 
     <!-- Sidebar -->
     <div id="sidebar">
@@ -343,50 +351,77 @@
         <div onclick="window.location.href = '/user/3/{{user_id}}/contact_us'" class="sidebar-item" title="Contact Us">
             <i class="material-icons">contact_mail</i> Contact Us
         </div>
+        <div class="separator"></div>
+        <div onclick="window.location.href = '/user/3/{{user_id}}/setting'" class="sidebar-item" title="Contact Us">
+            <i class="material-icons">person</i> Profile
+        </div>
     </div>
 
     <!-- Main Content -->
     <div id="main-content">
-        <nav class="navbar navbar-light">
+        <nav class="navbar navbar-light bg-light">
             <div class="container-fluid">
-                <div class="d-flex ">
+                <!-- Left Side: Toggle + Brand -->
+                <div class="d-flex align-items-center">
                     <button class="navbar-toggler" type="button" id="toggleSidebar" title="Toggle Sidebar">
-                        <i class="material-icons">menu</i>
+                        <i class="bi bi-list fs-4"></i>
                     </button>
-                    <a onclick="window.location.href = '/user/3/{{user_id}}/'" href="#" class="navbar-brand"
+                    <a onclick="window.location.href = '/user/3/{{ user_id }}/'" href="#" class="navbar-brand ms-2"
                         title="Go to Dashboard">
-                        <i class="material-icons">dashboard</i> KRISHTEC
+                        KRISHTEC
                     </a>
                 </div>
-                <div class="dropdown">
-                    <button class="btn" id="profileBtn" title="View Profile">
-                        <i class="material-icons">account_circle</i>
-                    </button>
+
+                <!-- Right Side: Profile -->
+                <div class="d-flex align-items-center position-relative">
+                    <!-- Avatar -->
+                    <img id="profile-avatar" src="{% static 'profile.png' %}" alt="Profile Image"
+                        class="rounded-circle border border-2 me-3 bg-white"
+                        style="width: 40px; height: 40px; object-fit: cover; cursor: pointer;">
+
                     <!-- Profile Tooltip -->
-                    <div id="profile-tooltip">
-                        <div class="d-flex">
+                    <div id="profile-tooltip" class="position-absolute bg-white border rounded shadow p-3"
+                        style="display: none; top: 50px; right: 0; width: 250px; z-index: 1000;">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
                             <div class="d-flex align-items-center">
                                 <img id="profile-image" src="{% static 'profile.png' %}" alt="Profile Image"
-                                    class="rounded-circle me-2">
-
+                                    class="rounded-circle me-2" style="width: 50px; height: 50px; object-fit: cover;">
                                 <div>
-                                    <p id="profile-name" class="mb-0 fw-bold">John Doe</p>
+                                    <p id="profile-name" style="color: black;" class="mb-0 fw-bold">John Doe</p>
                                     <p id="profile-email" class="mb-0 text-muted small">john.doe@example.com</p>
                                 </div>
                             </div>
                             <button id="profile-close" class="btn-close" aria-label="Close"></button>
                         </div>
-                        <a onclick="window.location.href = '/user/3/{{user_id}}/setting'" href="#"
-                            id="profile-manage-account" class="btn btn-primary btn-sm w-100 mb-2">Manage Your
-                            Account</a>
-                        <button onclick="window.location.href = '/login'" id="profile-logout"
-                            class="btn btn-danger btn-sm w-100">Logout</button>
+                        <a href="#" id="profile-manage-account" class="btn btn-primary btn-sm w-100 mb-2">
+                            Manage Your Account
+                        </a>
+                        <button id="profile-logout" class="btn btn-danger btn-sm w-100">
+                            Logout
+                        </button>
                     </div>
                 </div>
             </div>
         </nav>
+
         <div>
             <div>
+                <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="imageModalLabel">Image View</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <img id="modalImage" src="" alt="Question Image"
+                                    style="width: 100%; max-height: 400px; object-fit: contain;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="container mt-5">
                     <div class="row">
                         <div class="col-md-9">
@@ -464,625 +499,652 @@
                     <ul id="pagination" class="pagination"></ul>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script>
+            <script>
 
-        var isSubmitted = false;
-        let timerInterval = null;
+                var isSubmitted = false;
+                let timerInterval = null;
 
-        let isPaused = false;
-        const startTime = new Date();
-        let data = { questions: [] }; // Initialize an empty questions array
+                let isPaused = false;
+                const startTime = new Date();
+                let data = { questions: [] }; // Initialize an empty questions array
 
-        const userId = "{{user_id}}";
-        const topicId = "{{topic_id}}";
-        const subtopicId = "{{subtopic_id}}";
-        const title_id = "{{title_id}}"
-        const utils = "Test";
+                const user_id = "{{user_id}}";
+                const topicId = "{{topic_id}}";
+                const subtopicId = "{{subtopic_id}}";
+                const title_id = "{{title_id}}"
+                const utils = "Test";
 
 
-        var remainingTime = 0;
+                var remainingTime = 0;
 
 
-        let currentPage = 1;
-        const questionsPerPage = 10;
+                let currentPage = 1;
+                const questionsPerPage = 10;
 
-        const apiUrl = '/aapi3'
+                const apiUrl = '/aapi3'
 
 
 
 
 
 
-        // Function to fetch the data from the API
-        function fetchQuestions() {
-            fetch(`${apiUrl}/questions/${title_id}?topic_id=${topicId}&subtopic_id=${subtopicId}&utils=${utils}`)
-                .then(response => response.json())
-                .then(fetchedData => {
-                    data = fetchedData;
-                    const mcqContainer = document.getElementById('mcq-container');
-                    renderQuestions(mcqContainer); // Render questions after fetching data
-                    generatePagination(data.questions, document.getElementById('pagination')); // Generate pagination
+                // Function to fetch the data from the API
+                function fetchQuestions() {
+                    fetch(`${apiUrl}/questions/${title_id}?topic_id=${topicId}&subtopic_id=${subtopicId}&utils=${utils}`)
+                        .then(response => response.json())
+                        .then(fetchedData => {
+                            data = fetchedData;
+                            const mcqContainer = document.getElementById('mcq-container');
+                            renderQuestions(mcqContainer); // Render questions after fetching data
+                            generatePagination(data.questions, document.getElementById('pagination')); // Generate pagination
 
+
+                            const totalPages = Math.ceil(data.questions.length / questionsPerPage);
+
+
+
+                            if (totalPages == currentPage) {
+                                submitButton.style.display = 'block'
+                            } else {
+                                submitButton.style.display = 'none'
+
+                            }
+
+                            MathJax.typesetPromise();
+
+
+                        })
+                        .catch(error => {
+                            console.error('Error fetching data:', error)
+
+
+                        });
+
+
+                }
+
+                // Function to evaluate the answers
+                function evaluateAnswers() {
+                    let score = 0;
+                    const report = data.questions.map((q, i) => {
+                        const selectedOption = selectedAnswers[i] || 0; // Get saved answer
+                        const isCorrect = selectedOption == q.correct_option;
+                        if (isCorrect) score++;
+
+                        return {
+                            question_number: i + 1,
+                            correct_option: q.correct_option,
+                            selected_option: selectedOption,
+                            is_correct: isCorrect,
+                        };
+                    });
+
+                    return { score, total: data.questions.length, report };
+                }
+
+
+                // Function to generate result data
+                async function generateResultData(results) {
+
+
+
+
+                    const endTime = new Date();
+                    // Fetch Subtopic Name
+                    const titleResponse = await fetch(`${apiUrl}/get-title?topic_id=${topicId}&subtopic_id=${subtopicId}&utils_type=Test&title_id=${title_id}`);
+                    const titleData = await titleResponse.json();
+
+
+                    return {
+                        user_id: user_id,
+                        topic_id: topicId,
+                        subtopic_id: subtopicId,
+                        title: titleData.title,
+                        title_id: title_id,
+                        type: utils,
+                        start_at: startTime.toLocaleString(),
+                        finished_at: endTime.toLocaleString(),
+                        status: "completed",
+                        score: results.score,
+                        total_questions: results.total,
+                        report: results.report,
+                    };
+                }
+
+                async function displayResults(results) {
+
+
+                    const container = document.getElementById('result');
+                    container.innerHTML = `
+                    <div class="alert alert-info">
+                        <h4>Score: ${results.score}/${results.total}</h4>
+                        ${results.report.map((r, i) => `
+                            <p>Q${r.question_number}: Correct Option - ${r.correct_option}, Selected Option - ${r.selected_option}, <b>${r.is_correct ? "Correct" : "Incorrect"}</b></p>
+                        `).join('')}
+                    </div>`;
+
+                    // Prepare data to send to the endpoint
+                    const resultData = await generateResultData(results);
+
+
+                    console.log(resultData)
+
+
+
+
+
+                    // Send data to the /save-result endpoint
+                    await fetch(apiUrl + '/save-result', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(resultData),
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Failed to save result.');
+                            }
+
+
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log('Result ID:', data.testID); // Log the result ID
+
+                            isSubmitted = true;
+
+                            window.location.href = `/user/3/${user_id}/${topicId}/${subtopicId}/test/${title_id}/${data.testID}`;
+
+
+                        })
+                        .catch(error => {
+                            console.error('Error saving result:', error.message);
+
+                        });
+                }
+
+                // Function to disable options after test submission
+                function disableOptions() {
+                    const radioButtons = document.querySelectorAll('input[type="radio"]');
+                    radioButtons.forEach((radio) => {
+                        radio.disabled = true;
+                    });
+                }
+                // Function to disable options after test submission
+                function enableOptions() {
+                    const radioButtons = document.querySelectorAll('input[type="radio"]');
+                    radioButtons.forEach((radio) => {
+                        radio.disabled = false;
+                    });
+                }
+
+                // Timer function
+                function startTimer() {
+                    if (timerInterval) clearInterval(timerInterval);
+                    timerInterval = setInterval(() => {
+                        if (!isPaused && remainingTime > 0) {
+                            remainingTime--;
+                            updateTimerDisplay();
+                            if (remainingTime === 0) {
+                                clearInterval(timerInterval);
+                                autoSubmitTest();
+                            }
+                        }
+                    }, 1000);
+                }
+
+                let submitButton = document.getElementById('submit-button')
+
+
+
+                function disableSubmit() {
+                    submitButton.disabled = true
+                }
+
+
+
+
+
+
+                // Auto-submit the test when time runs out
+                function autoSubmitTest() {
+                    disableOptions();
+                    const results = evaluateAnswers();
+                    displayResults(results);
+                    alert("Time is up! Test auto-submitted.");
+                }
+
+                // Update timer display function
+                function updateTimerDisplay() {
+                    const minutes = Math.floor(remainingTime / 60);
+                    const seconds = remainingTime % 60;
+                    document.getElementById('time-display').textContent =
+                        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+
+
+                // Restart the test
+                document.getElementById('restart').addEventListener('click', () => {
+                    if (timerInterval) clearInterval(timerInterval);
+                    window.location.reload();
+                });
+
+
+                let selectedAnswers = {}; // Store user answers
+
+
+
+
+
+                function renderQuestions(mcqContainer) {
+                    mcqContainer.innerHTML = "";
+                    const startIndex = (currentPage - 1) * questionsPerPage;
+                    const endIndex = Math.min(startIndex + questionsPerPage, data.questions.length);
+
+                    data.questions.slice(startIndex, endIndex).forEach((q, index) => {
+                        const questionIndex = startIndex + index; // Actual question index
+                        const savedAnswer = selectedAnswers[questionIndex] || null; // Check if already selected
+
+                        const questionHtml = `
+                        <div class="card mb-4 p-3 border-white shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary">${questionIndex + 1}: ${q.question}</h5>
+                                ${q.question_img ? `
+                                    <div style="margin: 10px; margin-left: 40px">
+                                        <img src="/${q.question_img}" alt="Question Image" class="img-thumbnail img-clickable" style="width: 80px; height: 80px; cursor: pointer;">
+                                    </div>
+                                ` : ''}
+                                ${q.options.map((option, i) => `
+                                    <div class="form-check mb-3">
+                                        <input type="radio" name="question-${questionIndex}" value="${i + 1}" id="q${questionIndex}o${i}" class="form-check-input"
+                                        ${savedAnswer == i + 1 ? 'checked' : ''} onchange="saveAnswer(${questionIndex}, ${i + 1})">
+                                        <label for="q${questionIndex}o${i}" class="form-check-label">${option.text}</label>
+                                        ${option.image ? `
+                                            <div style="margin: 10px; margin-left: 40px">
+                                                <img src="/${option.image}" alt="Option ${i + 1} Image" class="img-thumbnail img-clickable" style="width: 80px; height: 80px; cursor: pointer;">
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                `).join('')}
+                                <div class="workspace border rounded p-3 bg-white mt-3" style="display: none;" id="workspace-${startIndex + index}">
+                                    <label class="text-success" for="workspace-text-${startIndex + index}"><strong>Workspace:</strong></label>
+                                    <textarea class="form-control mt-2" id="workspace-text-${startIndex + index}" rows="3" placeholder="Type your work here..."></textarea>
+                                </div>
+                                <button type="button" class="btn btn-outline-success btn-sm mt-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Workspace" onclick="toggleWorkspace(${startIndex + index})">
+                                    <i class="bi bi-pencil text-success"></i> Show Workspace
+                                </button>
+                                <hr />
+                            </div>
+                        </div>`;
+
+                        mcqContainer.innerHTML += questionHtml;
+                    });
+
+                    // Add click event listeners to all images for the modal
+                    document.querySelectorAll('.img-clickable').forEach(img => {
+                        img.addEventListener('click', () => {
+                            const modalImage = document.getElementById('modalImage');
+                            modalImage.src = img.src;
+                            const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+                            imageModal.show();
+                        });
+                    });
+                }
+
+                // Save selected answers before switching pages
+
+
+                function saveAnswer(questionIndex, selectedOption) {
+                    selectedAnswers[questionIndex] = selectedOption;
+                }
+
+                function toggleWorkspace(index) {
+                    const workspaceDiv = document.getElementById(`workspace-${index}`);
+                    workspaceDiv.style.display = workspaceDiv.style.display === "none" ? "block" : "none";
+                }
+
+                function goToPage() {
+                    const totalPages = Math.ceil(data.questions.length / questionsPerPage);
+                    const page = prompt(`Enter a page number (1 to ${totalPages}):`);
+
+                    if (page && !isNaN(page) && page >= 1 && page <= totalPages) {
+                        changePage(Number(page));
+                    } else {
+                        alert('Invalid page number.');
+                    }
+                }
+
+
+                // Pagination generation
+                function generatePagination(questions, container) {
+                    const totalPages = Math.ceil(questions.length / questionsPerPage);
+                    const paginationHtml = [];
+                    let pageStart = currentPage - 2 < 1 ? 1 : currentPage - 2;
+                    let pageEnd = currentPage + 2 > totalPages ? totalPages : currentPage + 2;
+
+
+                    // Previous button
+                    paginationHtml.push(`
+                            <li  class="page-item">
+                                <button onclick='goToPage()'  class="page-link" >GO</button>
+                            </li>
+                        `);
+
+
+                    // Previous button
+                    paginationHtml.push(`
+                            <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                                <a class="page-link" href="#" onclick="changePage(${currentPage - 1})">&lt;</a>
+                            </li>
+                        `);
+
+                    // Page numbers
+                    for (let i = pageStart; i <= pageEnd; i++) {
+                        paginationHtml.push(`
+                                <li class="page-item ${currentPage === i ? 'active' : ''}">
+                                    <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
+                                </li>
+                            `);
+                    }
+
+                    // Next button
+                    paginationHtml.push(`
+                            <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                                <a class="page-link" href="#" onclick="changePage(${currentPage + 1})">&gt;</a>
+                            </li>
+                        `);
+
+                    container.innerHTML = paginationHtml.join('');
+                }
+
+                // Change page
+                function changePage(page) {
+                    currentPage = page;
 
                     const totalPages = Math.ceil(data.questions.length / questionsPerPage);
 
-
-
-                    if (totalPages == currentPage) {
+                    if (totalPages === currentPage) {
                         submitButton.style.display = 'block'
                     } else {
                         submitButton.style.display = 'none'
 
                     }
+                    const mcqContainer = document.getElementById('mcq-container');
+                    renderQuestions(mcqContainer);
+                    generatePagination(data.questions, document.getElementById('pagination'));
 
                     MathJax.typesetPromise();
 
-
-                })
-                .catch(error => {
-                    console.error('Error fetching data:', error)
+                }
 
 
-                });
+                async function fetchAndDisplayAttemptsWhileSubmit() {
 
 
-        }
+                    try {
+                        // Call the API endpoint to get the attempts
+                        const response = await fetch(`${apiUrl}/attempts/${user_id}/${title_id}`);
 
-        // Function to evaluate the answers
-        function evaluateAnswers() {
-            let score = 0;
-            const report = data.questions.map((q, i) => {
-                const selectedOption = selectedAnswers[i] || 0; // Get saved answer
-                const isCorrect = selectedOption == q.correct_option;
-                if (isCorrect) score++;
-
-                return {
-                    question_number: i + 1,
-                    correct_option: q.correct_option,
-                    selected_option: selectedOption,
-                    is_correct: isCorrect,
-                };
-            });
-
-            return { score, total: data.questions.length, report };
-        }
+                        // Check if the response is successful
+                        if (!response.ok) {
 
 
-        // Function to generate result data
-        async function generateResultData(results) {
+                            throw new Error(`Failed to fetch attempts: ${response.statusText}`);
+                        }
+
+                        // Parse the response data
+                        const data = await response.json();
+
+                        console.log(data)
 
 
-
-
-            const endTime = new Date();
-            // Fetch Subtopic Name
-            const titleResponse = await fetch(`${apiUrl}/get-title?topic_id=${topicId}&subtopic_id=${subtopicId}&utils_type=Test&title_id=${title_id}`);
-            const titleData = await titleResponse.json();
-
-
-            return {
-                user_id: userId,
-                topic_id: topicId,
-                subtopic_id: subtopicId,
-                title: titleData.title,
-                title_id: title_id,
-                type: utils,
-                start_at: startTime.toLocaleString(),
-                finished_at: endTime.toLocaleString(),
-                status: "completed",
-                score: results.score,
-                total_questions: results.total,
-                report: results.report,
-            };
-        }
-
-        async function displayResults(results) {
-
-
-            const container = document.getElementById('result');
-            container.innerHTML = `
-        <div class="alert alert-info">
-            <h4>Score: ${results.score}/${results.total}</h4>
-            ${results.report.map((r, i) => `
-                <p>Q${r.question_number}: Correct Option - ${r.correct_option}, Selected Option - ${r.selected_option}, <b>${r.is_correct ? "Correct" : "Incorrect"}</b></p>
-            `).join('')}
-        </div>`;
-
-            // Prepare data to send to the endpoint
-            const resultData = await generateResultData(results);
-
-
-            console.log(resultData)
+                        console.log(`Number of attempts: ${data.user_attempts}`);
 
 
 
 
 
-            // Send data to the /save-result endpoint
-            await fetch(apiUrl + '/save-result', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(resultData),
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to save result.');
-                    }
+                        // Check if attempts exceed the limit
+                        if (data.user_attempts >= data.title_attempts) {
+                            // Show the Bootstrap modal if attempts exceed the limit
+                            const modal = new bootstrap.Modal(document.getElementById('attemptsExceededModal'));
+                            modal.show();
 
 
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Result ID:', data.testID); // Log the result ID
+                            setTimeout(() => {
+                                window.close()
+                            }, 3000)
 
-                    isSubmitted = true;
-
-                    window.location.href = `/user/3/${userId}/${topicId}/${subtopicId}/test/${title_id}/${data.testID}`;
+                        }
+                    } catch (error) {
 
 
-                })
-                .catch(error => {
-                    console.error('Error saving result:', error.message);
-
-                });
-        }
-
-        // Function to disable options after test submission
-        function disableOptions() {
-            const radioButtons = document.querySelectorAll('input[type="radio"]');
-            radioButtons.forEach((radio) => {
-                radio.disabled = true;
-            });
-        }
-        // Function to disable options after test submission
-        function enableOptions() {
-            const radioButtons = document.querySelectorAll('input[type="radio"]');
-            radioButtons.forEach((radio) => {
-                radio.disabled = false;
-            });
-        }
-
-        // Timer function
-        function startTimer() {
-            if (timerInterval) clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                if (!isPaused && remainingTime > 0) {
-                    remainingTime--;
-                    updateTimerDisplay();
-                    if (remainingTime === 0) {
-                        clearInterval(timerInterval);
-                        autoSubmitTest();
+                        // Handle and log any errors
+                        console.error('Error fetching attempts:', error.message);
                     }
                 }
-            }, 1000);
-        }
-
-        let submitButton = document.getElementById('submit-button')
 
 
-
-        function disableSubmit() {
-            submitButton.disabled = true
-        }
+                async function fetchAndDisplayAttempts() {
 
 
+                    try {
+                        // Call the API endpoint to get the attempts
+                        const response = await fetch(`${apiUrl}/attempts/${user_id}/${title_id}`);
+
+                        // Check if the response is successful
+                        if (!response.ok) {
 
 
+                            throw new Error(`Failed to fetch attempts: ${response.statusText}`);
+                        }
+
+                        // Parse the response data
+                        const data = await response.json();
+
+                        console.log(data)
 
 
-        // Auto-submit the test when time runs out
-        function autoSubmitTest() {
-            disableOptions();
-            const results = evaluateAnswers();
-            displayResults(results);
-            alert("Time is up! Test auto-submitted.");
-        }
-
-        // Update timer display function
-        function updateTimerDisplay() {
-            const minutes = Math.floor(remainingTime / 60);
-            const seconds = remainingTime % 60;
-            document.getElementById('time-display').textContent =
-                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }
-
-
-        // Restart the test
-        document.getElementById('restart').addEventListener('click', () => {
-            if (timerInterval) clearInterval(timerInterval);
-            window.location.reload();
-        });
-
-
-        let selectedAnswers = {}; // Store user answers
+                        console.log(`Number of attempts: ${data.user_attempts}`);
 
 
 
 
 
-        function renderQuestions(mcqContainer) {
-            mcqContainer.innerHTML = "";
-            const startIndex = (currentPage - 1) * questionsPerPage;
-            const endIndex = Math.min(startIndex + questionsPerPage, data.questions.length);
+                        // Check if attempts exceed the limit
+                        if (data.user_attempts >= data.title_attempts) {
+                            // Show the Bootstrap modal if attempts exceed the limit
+                            const modal = new bootstrap.Modal(document.getElementById('attemptsExceededModal'));
+                            modal.show();
 
-            data.questions.slice(startIndex, endIndex).forEach((q, index) => {
-                const questionIndex = startIndex + index; // Actual question index
-                const savedAnswer = selectedAnswers[questionIndex] || null; // Check if already selected
 
-                const questionHtml = `
-            <div class="card mb-4 p-3 border-white shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title text-primary">${questionIndex + 1}: ${q.question}</h5>
-                    ${q.question_img ? `
-                        <div style="margin: 10px; margin-left: 40px">
-                            <img src="/${q.question_img}" alt="Question Image" class="img-thumbnail img-clickable" style="width: 80px; height: 80px; cursor: pointer;">
-                        </div>
-                    ` : ''}
-                    ${q.options.map((option, i) => `
-                        <div class="form-check mb-3">
-                            <input type="radio" name="question-${questionIndex}" value="${i + 1}" id="q${questionIndex}o${i}" class="form-check-input"
-                            ${savedAnswer == i + 1 ? 'checked' : ''} onchange="saveAnswer(${questionIndex}, ${i + 1})">
-                            <label for="q${questionIndex}o${i}" class="form-check-label">${option.text}</label>
-                            ${option.image ? `
-                                <div style="margin: 10px; margin-left: 40px">
-                                    <img src="/${option.image}" alt="Option ${i + 1} Image" class="img-thumbnail img-clickable" style="width: 80px; height: 80px; cursor: pointer;">
-                                </div>
-                            ` : ''}
-                        </div>
-                    `).join('')}
-                    <div class="workspace border rounded p-3 bg-white mt-3" style="display: none;" id="workspace-${startIndex + index}">
-                        <label class="text-success" for="workspace-text-${startIndex + index}"><strong>Workspace:</strong></label>
-                        <textarea class="form-control mt-2" id="workspace-text-${startIndex + index}" rows="3" placeholder="Type your work here..."></textarea>
-                    </div>
-                    <button type="button" class="btn btn-outline-success btn-sm mt-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Show Workspace" onclick="toggleWorkspace(${startIndex + index})">
-                        <i class="bi bi-pencil text-success"></i> Show Workspace
-                    </button>
-                    <hr />
-                </div>
-            </div>`;
+                            setTimeout(() => {
+                                window.location.href = `/user/3/${user_id}/${topicId}/${subtopicId}/test`;
+                            }, 3000)
 
-                mcqContainer.innerHTML += questionHtml;
-            });
+                        } else {
+                            remainingTime = Number(data.title_duration)
+                            fetchQuestions()
+                            startTimer()
+                        }
+                    } catch (error) {
 
-            // Add click event listeners to all images for the modal
-            document.querySelectorAll('.img-clickable').forEach(img => {
-                img.addEventListener('click', () => {
-                    const modalImage = document.getElementById('modalImage');
-                    modalImage.src = img.src;
-                    const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
-                    imageModal.show();
+
+                        // Handle and log any errors
+                        console.error('Error fetching attempts:', error.message);
+                    }
+                }
+
+
+
+                fetchAndDisplayAttempts()
+
+
+
+
+
+            </script>
+            <script>
+
+
+                // Event listener for beforeunload (triggered when the user tries to leave or close the page)
+                window.addEventListener('beforeunload', function (e) {
+                    // Only prompt if the form hasn't been submitted
+                    if (!isSubmitted) {
+                        // Standard message for most browsers
+                        const message = "You have unsaved changes. Are you sure you want to leave without submitting?";
+
+                        // For modern browsers, a confirmation dialog box will be shown
+                        e.returnValue = message; // Standard for most browsers
+                        return message;          // Standard for older browsers
+                    }
                 });
-            });
-        }
 
-        // Save selected answers before switching pages
 
 
-        function saveAnswer(questionIndex, selectedOption) {
-            selectedAnswers[questionIndex] = selectedOption;
-        }
+                setTimeout(() => {
+                    fetchAndDisplayAttemptsWhileSubmit();
+                }, 2000)
 
-        function toggleWorkspace(index) {
-            const workspaceDiv = document.getElementById(`workspace-${index}`);
-            workspaceDiv.style.display = workspaceDiv.style.display === "none" ? "block" : "none";
-        }
+            </script>
 
-        function goToPage() {
-            const totalPages = Math.ceil(data.questions.length / questionsPerPage);
-            const page = prompt(`Enter a page number (1 to ${totalPages}):`);
+            <script>
 
-            if (page && !isNaN(page) && page >= 1 && page <= totalPages) {
-                changePage(Number(page));
-            } else {
-                alert('Invalid page number.');
-            }
-        }
 
+                // Calculator functions
+                const calcScreen = document.getElementById('calc-screen');
+                let calcExpression = '';
 
-        // Pagination generation
-        function generatePagination(questions, container) {
-            const totalPages = Math.ceil(questions.length / questionsPerPage);
-            const paginationHtml = [];
-            let pageStart = currentPage - 2 < 1 ? 1 : currentPage - 2;
-            let pageEnd = currentPage + 2 > totalPages ? totalPages : currentPage + 2;
-
-
-            // Previous button
-            paginationHtml.push(`
-                <li  class="page-item">
-                    <button onclick='goToPage()'  class="page-link" >GO</button>
-                </li>
-            `);
-
-
-            // Previous button
-            paginationHtml.push(`
-                <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-                    <a class="page-link" href="#" onclick="changePage(${currentPage - 1})">&lt;</a>
-                </li>
-            `);
-
-            // Page numbers
-            for (let i = pageStart; i <= pageEnd; i++) {
-                paginationHtml.push(`
-                    <li class="page-item ${currentPage === i ? 'active' : ''}">
-                        <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
-                    </li>
-                `);
-            }
-
-            // Next button
-            paginationHtml.push(`
-                <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-                    <a class="page-link" href="#" onclick="changePage(${currentPage + 1})">&gt;</a>
-                </li>
-            `);
-
-            container.innerHTML = paginationHtml.join('');
-        }
-
-        // Change page
-        function changePage(page) {
-            currentPage = page;
-
-            const totalPages = Math.ceil(data.questions.length / questionsPerPage);
-
-            if (totalPages === currentPage) {
-                submitButton.style.display = 'block'
-            } else {
-                submitButton.style.display = 'none'
-
-            }
-            const mcqContainer = document.getElementById('mcq-container');
-            renderQuestions(mcqContainer);
-            generatePagination(data.questions, document.getElementById('pagination'));
-
-            MathJax.typesetPromise();
-
-        }
-
-
-        async function fetchAndDisplayAttemptsWhileSubmit() {
-
-
-            try {
-                // Call the API endpoint to get the attempts
-                const response = await fetch(`${apiUrl}/attempts/${userId}/${title_id}`);
-
-                // Check if the response is successful
-                if (!response.ok) {
-
-
-                    throw new Error(`Failed to fetch attempts: ${response.statusText}`);
-                }
-
-                // Parse the response data
-                const data = await response.json();
-
-                console.log(data)
-
-
-                console.log(`Number of attempts: ${data.user_attempts}`);
-
-
-
-
-
-                // Check if attempts exceed the limit
-                if (data.user_attempts >= data.title_attempts) {
-                    // Show the Bootstrap modal if attempts exceed the limit
-                    const modal = new bootstrap.Modal(document.getElementById('attemptsExceededModal'));
-                    modal.show();
-
-
-                    setTimeout(() => {
-                        window.close()
-                    }, 3000)
-
-                }
-            } catch (error) {
-
-
-                // Handle and log any errors
-                console.error('Error fetching attempts:', error.message);
-            }
-        }
-
-
-        async function fetchAndDisplayAttempts() {
-
-
-            try {
-                // Call the API endpoint to get the attempts
-                const response = await fetch(`${apiUrl}/attempts/${userId}/${title_id}`);
-
-                // Check if the response is successful
-                if (!response.ok) {
-
-
-                    throw new Error(`Failed to fetch attempts: ${response.statusText}`);
-                }
-
-                // Parse the response data
-                const data = await response.json();
-
-                console.log(data)
-
-
-                console.log(`Number of attempts: ${data.user_attempts}`);
-
-
-
-
-
-                // Check if attempts exceed the limit
-                if (data.user_attempts >= data.title_attempts) {
-                    // Show the Bootstrap modal if attempts exceed the limit
-                    const modal = new bootstrap.Modal(document.getElementById('attemptsExceededModal'));
-                    modal.show();
-
-
-                    setTimeout(() => {
-                        window.location.href = `/user/3/${userId}/${topicId}/${subtopicId}/test`;
-                    }, 3000)
-
-                } else {
-                    remainingTime = Number(data.title_duration)
-                    fetchQuestions()
-                    startTimer()
-                }
-            } catch (error) {
-
-
-                // Handle and log any errors
-                console.error('Error fetching attempts:', error.message);
-            }
-        }
-
-
-
-        fetchAndDisplayAttempts()
-
-
-
-
-
-    </script>
-
-
-    <script>
-
-
-        // Calculator functions
-        const calcScreen = document.getElementById('calc-screen');
-        let calcExpression = '';
-
-        function appendCalc(value) {
-            if (calcScreen.value === 'Error') {
-                clearCalc();
-            }
-            calcExpression += value;
-            calcScreen.value = calcExpression;
-        }
-
-        function clearCalc() {
-            calcExpression = '';
-            calcScreen.value = '';
-        }
-
-        function calculate() {
-            try {
-                // Sanitize the expression
-                if (!/^[0-9+\-*/.() ]+$/.test(calcExpression)) {
-                    throw new Error('Invalid expression');
-                }
-                const result = Function('"use strict";return (' + calcExpression + ')')();
-                if (isFinite(result)) {
-                    calcExpression = result.toString();
+                function appendCalc(value) {
+                    if (calcScreen.value === 'Error') {
+                        clearCalc();
+                    }
+                    calcExpression += value;
                     calcScreen.value = calcExpression;
-                } else {
-                    throw new Error('Invalid result');
                 }
-            } catch (error) {
-                calcScreen.value = 'Error';
-                calcExpression = '';
-            }
-        }
 
-        // Modal functions
-        function showConfirmationModal(title, message, onConfirm) {
-            const modal = document.getElementById('confirmModal');
-            document.getElementById('modal-title').textContent = title;
-            document.getElementById('modal-message').textContent = message;
-            document.getElementById('modal-confirm').onclick = () => {
-                onConfirm();
-                closeModal();
-            };
-            modal.style.display = 'block';
-        }
-
-        function closeModal() {
-            document.getElementById('confirmModal').style.display = 'none';
-        }
-
-        // Event Listeners
-        document.getElementById('pause-resume').addEventListener('click', () => {
-            isPaused = !isPaused;
-            const button = document.getElementById('pause-resume');
-            button.textContent = isPaused ? 'Resume' : 'Pause';
-            button.classList.toggle('btn-outline-primary');
-            button.classList.toggle('btn-primary');
-
-            if (isPaused) {
-                disableOptions()
-            } else {
-                enableOptions()
-            }
-        });
-
-        document.getElementById('restart').addEventListener('click', () => {
-
-            if (confirm('Are you want to restart?')) {
-                window.location.reload()
-            }
-
-        });
-
-        document.getElementById('mcq-form').addEventListener('submit', (event) => {
-            event.preventDefault();
-            if (isSubmitted) {
-                alert("Already submitted !!!");
-
-                window.close()
-
-
-            }
-            showConfirmationModal(
-                'Submit Test',
-                'Are you sure you want to submit your test?',
-                () => {
-                    disableSubmit()
-                    clearInterval(timerInterval);
-                    const results = evaluateAnswers();
-                    displayResults(results);
-
+                function clearCalc() {
+                    calcExpression = '';
+                    calcScreen.value = '';
                 }
-            );
-        });
-    </script>
+
+                function calculate() {
+                    try {
+                        // Sanitize the expression
+                        if (!/^[0-9+\-*/.() ]+$/.test(calcExpression)) {
+                            throw new Error('Invalid expression');
+                        }
+                        const result = Function('"use strict";return (' + calcExpression + ')')();
+                        if (isFinite(result)) {
+                            calcExpression = result.toString();
+                            calcScreen.value = calcExpression;
+                        } else {
+                            throw new Error('Invalid result');
+                        }
+                    } catch (error) {
+                        calcScreen.value = 'Error';
+                        calcExpression = '';
+                    }
+                }
+
+                // Modal functions
+                function showConfirmationModal(title, message, onConfirm) {
+                    const modal = document.getElementById('confirmModal');
+                    document.getElementById('modal-title').textContent = title;
+                    document.getElementById('modal-message').textContent = message;
+                    document.getElementById('modal-confirm').onclick = () => {
+                        onConfirm();
+                        closeModal();
+                    };
+                    modal.style.display = 'block';
+                }
+
+                function closeModal() {
+                    document.getElementById('confirmModal').style.display = 'none';
+                }
+
+                // Event Listeners
+                document.getElementById('pause-resume').addEventListener('click', () => {
+                    isPaused = !isPaused;
+                    const button = document.getElementById('pause-resume');
+                    button.textContent = isPaused ? 'Resume' : 'Pause';
+                    button.classList.toggle('btn-outline-primary');
+                    button.classList.toggle('btn-primary');
+
+                    if (isPaused) {
+                        disableOptions()
+                    } else {
+                        enableOptions()
+                    }
+                });
+
+                document.getElementById('restart').addEventListener('click', () => {
+
+                    if (confirm('Are you want to restart?')) {
+                        window.location.reload()
+                    }
+
+                });
+
+                document.getElementById('mcq-form').addEventListener('submit', (event) => {
+                    event.preventDefault();
+                    if (isSubmitted) {
+                        alert("Already submitted !!!");
+
+                        window.close()
+
+
+                    }
+                    showConfirmationModal(
+                        'Submit Test',
+                        'Are you sure you want to submit your test?',
+                        () => {
+                            disableSubmit()
+                            clearInterval(timerInterval);
+                            const results = evaluateAnswers();
+                            displayResults(results);
+
+                        }
+                    );
+                });
+            </script>
+        </div>
+    </div>
+
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.getElementById('main-content');
-        const toggleSidebar = document.getElementById('toggleSidebar');
-        const profileBtn = document.getElementById('profileBtn');
-        const profileTooltip = document.getElementById('profile-tooltip');
-        const profileCloseBtn = document.getElementById('profile-close');
-        const profileLogoutBtn = document.getElementById('profile-logout');
 
-        // Fetching user data based on user_id
-        const user_id = '{{ user_id }}';  // Django Template Variable
         const ip = "/aapi3";
+        const userId = "{{ user_id }}"; // Assuming user_id is passed from the server-side template context
+        const profileAvatar = document.getElementById('profile-avatar');
+        const profileTooltip = document.getElementById('profile-tooltip');
+        const profileClose = document.getElementById('profile-close');
+        const profileName = document.getElementById('profile-name');
+        const profileEmail = document.getElementById('profile-email');
+        const profileImage = document.getElementById('profile-image');
+        const manageAccountLink = document.getElementById('profile-manage-account');
+        const logoutButton = document.getElementById('profile-logout');
 
-        // Fetch user data from API
-        fetch(`${ip}/api/users/${user_id}`)
+        // Fetch and update profile data
+        fetch(`${ip}/api/users/${userId}`)
             .then(response => response.json())
             .then(data => {
                 if (data.email) {
-                    document.getElementById('profile-email').textContent = data.email;
-                    document.getElementById('profile-name').textContent = data.name;
+                    profileEmail.textContent = data.email;
+                    profileName.textContent = data.name;
 
-                    // Optionally set profile image if available
-                    if (data.profileImage) {
-                        document.getElementById('profile-image').src = data.profileImage;
+                    if (data.photo_url) {
+                        const imageUrl = '/media/' + data.photo_url;
+                        profileAvatar.src = imageUrl;
+                        profileImage.src = imageUrl;
                     }
                 }
             })
@@ -1090,64 +1152,50 @@
                 console.error('Error fetching user data:', err);
             });
 
-        // Toggle Sidebar visibility
-        toggleSidebar.addEventListener('click', () => {
-            sidebar.classList.toggle('hidden');
-            mainContent.classList.toggle('expanded');
+        // Toggle tooltip
+        profileAvatar.addEventListener('click', () => {
+            profileTooltip.style.display = (profileTooltip.style.display === 'block') ? 'none' : 'block';
         });
 
-        // Toggle Profile Tooltip visibility
-        profileBtn.addEventListener('click', () => {
-            profileTooltip.style.display = profileTooltip.style.display === 'none' ? 'block' : 'none';
-        });
-
-        profileTooltip.style.display = 'none';
-        // Close Profile Tooltip
-        profileCloseBtn.addEventListener('click', () => {
+        // Close tooltip
+        profileClose.addEventListener('click', () => {
             profileTooltip.style.display = 'none';
         });
 
-        // Logout confirmation
-        profileLogoutBtn.addEventListener('click', () => {
-            if (confirm("Are you sure you want to logout?")) {
-                // Redirect to logout URL (modify as per your logout endpoint)
+        // Logout action
+        logoutButton.addEventListener('click', () => {
+            if (confirm('Are you sure you want to logout?')) {
+                profileTooltip.style.display = 'none';
                 window.location.href = '/';
             }
         });
 
-        // Close profile tooltip if clicked outside
+        // Manage account
+        manageAccountLink.addEventListener('click', () => {
+            profileTooltip.style.display = 'none';
+            window.location.href = `/user/3/${userId}/setting`;
+        });
+
+        // Close tooltip if click outside
         document.addEventListener('click', (e) => {
-            if (!profileBtn.contains(e.target) && !profileTooltip.contains(e.target)) {
+            if (!profileAvatar.contains(e.target) && !profileTooltip.contains(e.target)) {
                 profileTooltip.style.display = 'none';
             }
         });
 
+        // Toggle sidebar visibility
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('main-content');
+        const toggleSidebar = document.getElementById('toggleSidebar');
 
-
-    </script>
-
-    <script>
-
-
-        // Event listener for beforeunload (triggered when the user tries to leave or close the page)
-        window.addEventListener('beforeunload', function (e) {
-            // Only prompt if the form hasn't been submitted
-            if (!isSubmitted) {
-                // Standard message for most browsers
-                const message = "You have unsaved changes. Are you sure you want to leave without submitting?";
-
-                // For modern browsers, a confirmation dialog box will be shown
-                e.returnValue = message; // Standard for most browsers
-                return message;          // Standard for older browsers
-            }
-        });
-
-
-
-        setTimeout(() => {
-            fetchAndDisplayAttemptsWhileSubmit();
-        }, 2000)
-
+        if (toggleSidebar) {
+            toggleSidebar.addEventListener('click', () => {
+                if (sidebar && mainContent) {
+                    sidebar.classList.toggle('hidden');
+                    mainContent.classList.toggle('expanded');
+                }
+            });
+        }
     </script>
 
 </body>

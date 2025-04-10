@@ -1557,10 +1557,19 @@ def manage_content(request):
 
             content = ""
 
+            subtopic = SubTopic.objects.filter(
+                subtopic_id=subtopic_id, topic_id=topic_id
+            ).first()
+
             if material:
                 content = material.content
 
-            return JsonResponse({"content": content})
+            return JsonResponse(
+                {
+                    "subtopic_name": subtopic.name,
+                    "content": content,
+                }
+            )
         except Exception as e:
 
             print("---------", e)
