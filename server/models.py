@@ -14,7 +14,7 @@ class User(models.Model):
     country = models.CharField(max_length=255)
     photo_url = models.ImageField(upload_to="images/", default="images/krishtec.jpg")
     type = models.CharField(
-        max_length=255, default="user"
+        max_length=255, default="tech"
     )  # New field for tech/non-tech/user
 
     def save(self, *args, **kwargs):
