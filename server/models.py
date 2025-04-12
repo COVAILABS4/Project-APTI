@@ -36,6 +36,12 @@ class Topic(models.Model):
         max_length=10,
         default="sw",
     )
+    image_url = models.ImageField(upload_to="topics/", default="topics/course.png")
+
+    def save(self, *args, **kwargs):
+        if not self.image_url:
+            self.image_url.name = f"topics/{self.topic_id}.png"
+        super().save(*args, **kwargs)
 
 
 class UserTopic(models.Model):

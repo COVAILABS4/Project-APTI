@@ -508,11 +508,21 @@ def delete_subadmin(request, id):
 def add_topic(request):
     if request.method == "POST":
         try:
-            body = get_body_data(request)
-            user_id = body.get("user_id")
-            topic_name = body.get("topic_name")
-            domain_type = body.get("domain_type", "tech")
-            tech_type = body.get("tech_type", "sw")
+            if request.content_type == "multipart/form-data":
+                # Handle form data with file upload
+                user_id = request.POST.get("user_id")
+                topic_name = request.POST.get("topic_name")
+                domain_type = request.POST.get("domain_type", "tech")
+                tech_type = request.POST.get("tech_type", "sw")
+                image_file = request.FILES.get("image_url")
+            else:
+                # Handle JSON data (for backward compatibility)
+                body = get_body_data(request)
+                user_id = body.get("user_id")
+                topic_name = body.get("topic_name")
+                domain_type = body.get("domain_type", "tech")
+                tech_type = body.get("tech_type", "sw")
+                image_file = None
 
             if not user_id or not topic_name:
                 return JsonResponse(
@@ -526,7 +536,7 @@ def add_topic(request):
             topic_id = get_unique_id()
             formatted_time = datetime.now().strftime("%d/%m/%Y , %H:%M:%S")
 
-            new_topic = Topic.objects.create(
+            new_topic = Topic(
                 topic_id=topic_id,
                 name=topic_name,
                 created_by=user,
@@ -535,6 +545,34 @@ def add_topic(request):
                 tech_type=tech_type,
             )
 
+            if image_file:
+                # Set up file storage for topics
+                fs = FileSystemStorage(location="media/topics")
+
+                # Delete existing image if it exists (for updates, though this is add function)
+                if (
+                    new_topic.image_url
+                    and new_topic.image_url.name != "topics/course.png"
+                ):
+                    old_image_path = os.path.join(
+                        settings.MEDIA_ROOT, new_topic.image_url.name
+                    )
+                    if os.path.exists(old_image_path):
+                        os.remove(old_image_path)
+
+                # Save new image with topic_id as filename
+                filename = f"{topic_id}.png"
+                file_path = fs.save(filename, image_file)
+
+                # Update the topic's image_url
+                new_topic.image_url = f"topics/{file_path}"
+
+                # Save the topic
+                new_topic.save()
+            else:
+                # Save without image (will use default)
+                new_topic.save()
+
             response_data = {
                 "topic_id": new_topic.topic_id,
                 "name": new_topic.name,
@@ -542,6 +580,7 @@ def add_topic(request):
                 "created_at": new_topic.created_at,
                 "domain_type": new_topic.domain_type,
                 "tech_type": new_topic.tech_type,
+                "image_url": new_topic.image_url.url if new_topic.image_url else "",
                 "sub_topics": [],
             }
 
@@ -557,6 +596,7 @@ def get_topics(request):
     if request.method == "GET":
         try:
             topics = Topic.objects.all()
+
             topic_list = [
                 {
                     "topic_id": topic.topic_id,
@@ -565,6 +605,7 @@ def get_topics(request):
                     "created_at": topic.created_at,
                     "domain_type": topic.domain_type,
                     "tech_type": topic.tech_type,
+                    "image_url": topic.image_url.url,
                 }
                 for topic in topics
             ]
@@ -577,36 +618,67 @@ def get_topics(request):
 
 
 def organize_topic(request, id):
-    if request.method == "GET":
-        try:
-            topic = get_object_or_404(Topic, topic_id=id)
+    topic = get_object_or_404(Topic, topic_id=id)
 
-            topic_data = {
+    if request.method == "GET":
+        return JsonResponse(
+            {
                 "topic_id": topic.topic_id,
                 "name": topic.name,
                 "created_by": topic.created_by.name,
                 "created_at": topic.created_at,
                 "domain_type": topic.domain_type,
                 "tech_type": topic.tech_type,
+                "image_url": topic.image_url.url if topic.image_url else "",
             }
+        )
 
-            return JsonResponse(topic_data, status=200)
-
-        except Exception as err:
-            return JsonResponse({"error": str(err)}, status=500)
-
-    if request.method == "PUT":
+    elif request.method == "PUT":
         try:
-            topic = get_object_or_404(Topic, topic_id=id)
-            body = json.loads(request.body)
+            # For multipart/form-data PUT requests, Django doesn't populate request.POST automatically
+            if "multipart/form-data" in request.content_type:
+                # Manually parse the form data for PUT requests
+                from django.http.multipartparser import MultiPartParser
 
-            new_name = body.get("name", topic.name)
-            domain_type = body.get("domain_type", topic.domain_type)
-            tech_type = body.get("tech_type", topic.tech_type)
+                parser = MultiPartParser(request.META, request, request.upload_handlers)
+                parsed_data, files = parser.parse()
 
-            topic.name = new_name
-            topic.domain_type = domain_type
-            topic.tech_type = tech_type
+                new_name = parsed_data.get("name")
+                domain_type = parsed_data.get("domain_type")
+                tech_type = parsed_data.get("tech_type")
+                image_file = files.get("image_url")
+            else:
+                # Handle JSON data
+                data = json.loads(request.body)
+                new_name = data.get("name")
+                domain_type = data.get("domain_type")
+                tech_type = data.get("tech_type")
+                image_file = None
+
+            # Update fields
+            if new_name:
+                topic.name = new_name
+            if domain_type:
+                topic.domain_type = domain_type
+            if tech_type:
+                topic.tech_type = tech_type
+
+            # Handle image upload
+            if image_file:
+                # Delete old image if exists (except default)
+                if topic.image_url and topic.image_url.name != "topics/course.png":
+                    old_path = os.path.join(settings.MEDIA_ROOT, topic.image_url.name)
+                    if os.path.exists(old_path):
+                        os.remove(old_path)
+
+                # Save new image
+                fs = FileSystemStorage(
+                    location=os.path.join(settings.MEDIA_ROOT, "topics")
+                )
+
+                filename = fs.save(f"{topic.topic_id}.png", image_file)
+                topic.image_url = f"topics/{filename}"
+
             topic.save()
 
             return JsonResponse(
@@ -615,26 +687,29 @@ def organize_topic(request, id):
                     "topic": {
                         "topic_id": topic.topic_id,
                         "name": topic.name,
-                        "created_by": topic.created_by_id,
-                        "created_at": topic.created_at,
                         "domain_type": topic.domain_type,
                         "tech_type": topic.tech_type,
+                        "image_url": topic.image_url.url if topic.image_url else "",
                     },
-                },
-                status=200,
+                }
             )
 
-        except Exception as err:
-            return JsonResponse({"error": str(err)}, status=500)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
 
-    if request.method == "DELETE":
+    elif request.method == "DELETE":
         try:
-            topic = get_object_or_404(Topic, topic_id=id)
-            topic.delete()
-            return JsonResponse({"message": "Topic deleted successfully"}, status=200)
+            # Delete associated image (except default)
+            if topic.image_url and topic.image_url.name != "topics/course.png":
+                image_path = os.path.join(settings.MEDIA_ROOT, topic.image_url.name)
+                if os.path.exists(image_path):
+                    os.remove(image_path)
 
-        except Exception as err:
-            return JsonResponse({"error": str(err)}, status=500)
+            topic.delete()
+            return JsonResponse({"message": "Topic deleted successfully"})
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
 
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
@@ -1631,14 +1706,19 @@ def get_user_topics(request):
                 # Fetch the associated Topic object to get domain_type and tech_type
                 topic = user_topic.topic_id  # This is the related Topic object
 
+                topic_id = topic.topic_id
+
+                topic_obj = Topic.objects.filter(topic_id=topic_id).first()
+
                 topics_data.append(
                     {
-                        "topic_id": topic.topic_id,  # Topic ID from Topic model
-                        "name": user_topic.name,
+                        "topic_id": topic_obj.topic_id,  # Topic ID from Topic model
+                        "name": topic_obj.name,
                         "created_by": user_topic.created_by,
                         "created_at": user_topic.created_at,
-                        "domain_type": topic.domain_type,  # domain_type from Topic model
-                        "tech_type": topic.tech_type,  # tech_type from Topic model
+                        "domain_type": topic_obj.domain_type,  # domain_type from Topic model
+                        "tech_type": topic_obj.tech_type,  # tech_type from Topic model
+                        "image_url": topic_obj.image_url.url,
                     }
                 )
 

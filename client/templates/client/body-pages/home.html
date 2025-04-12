@@ -168,20 +168,24 @@
         }
 
         .test-card {
+
+            width: 170px;
             border: 1px solid #ddd;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             text-align: center;
-            padding: 10px;
             cursor: pointer;
+
         }
 
         .test-card img {
-            width: 100px;
-            height: 100px;
+            width: 100%;
+            height: 130px;
             background-color: #d4edda;
             display: inline-block;
-            border-radius: 4px;
+            border-radius: 4px 4px 0 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgb(235, 215, 215);
         }
 
         .test-name {
@@ -219,6 +223,8 @@
             <i class="material-icons">person</i> Profile
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Main Content -->
     <div id="main-content">
@@ -268,98 +274,102 @@
         </nav>
 
         <div>
-            <div class="container my-4">
+            <div>
+                <div class="container my-4">
 
-                <!-- Search Bar -->
-                <input type="text" id="searchInput" class="form-control search-bar" placeholder="Search Topic">
+                    <!-- Search Bar -->
+                    <input type="text" id="searchInput" class="form-control search-bar" placeholder="Search Topic">
 
-                <!-- Cards Grid -->
-                <div class="row g-3" id="cardsContainer">
-                    <!-- Cards will be dynamically generated here -->
+                    <!-- Cards Grid -->
+                    <div class="row g-3" id="cardsContainer">
+                        <!-- Cards will be dynamically generated here -->
+                    </div>
                 </div>
             </div>
+
+            <!-- Bootstrap JS -->
+            <script>
+                const apiBaseUrl = "/aapi3";
+
+                const user_id = '{{user_id}}';
+
+                let topics = []; // To store the fetched topics
+
+                // Function to load topics from API
+                async function loadTopics() {
+                    try {
+                        const response = await fetch(`${apiBaseUrl}/user-topics?user_id=${user_id}`);
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        topics = await response.json(); // Save topics globally
+                        populateTopicsGrid(topics);
+                    } catch (error) {
+                        console.error("Error fetching topics:", error);
+                    }
+                }
+
+                // Function to populate the topics grid
+                function populateTopicsGrid(filteredTopics) {
+                    const cardsContainer = document.getElementById('cardsContainer');
+                    cardsContainer.innerHTML = ''; // Clear existing content
+
+                    if (filteredTopics.length === 0) {
+                        cardsContainer.innerHTML = `<div class="col-12 text-center text-muted">No matching tests found.</div>`;
+                        return;
+                    }
+
+                    console.log(topics)
+                    filteredTopics.forEach(topic => {
+                        const card = document.createElement('div');
+                        card.className = 'col-12 col-md-4 col-lg-3';
+                        card.innerHTML = `
+                      <div class="test-card" onclick="navigateToTopic('${topic.topic_id}')">
+                        <img class='w-[100%]'  src="${topic.image_url || '/media/topics/course.png'}"  alt="${topic.name}">
+                        <p class="test-name">${topic.name}</p>
+                      </div>
+                    `;
+                        cardsContainer.appendChild(card);
+                    });
+                }
+
+                // Function to handle navigation to a topic
+                function navigateToTopic(topicId) {
+                    window.location.href = `/user/3/${user_id}/${topicId}`;
+                }
+
+                // Function to filter topics based on search input
+                function filterTopics(event) {
+                    const searchTerm = event.target.value.toLowerCase();
+                    const filteredTopics = topics.filter(topic =>
+                        topic.name.toLowerCase().includes(searchTerm)
+                    );
+                    populateTopicsGrid(filteredTopics);
+                }
+
+                // Attach the filter function to the search input's onChange event
+                document.getElementById('searchInput').addEventListener('input', filterTopics);
+
+                // Initialize the page by loading topics
+                loadTopics();
+
+                // Make breadcrumbs clickable
+                /* document.getElementById('homeLink').addEventListener('click', () => {
+                     alert('Navigating to Home');
+                 });
+                 document.getElementById('onlineTestLink').addEventListener('click', () => {
+                     alert('Navigating to Online Test');
+                 });
+                 document.getElementById('aptitudeTestLink').addEventListener('click', () => {
+                     alert('Navigating to Online Aptitude Test');
+                 });*/
+            </script>
         </div>
     </div>
 
 
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        const apiBaseUrl = "/aapi3";
 
-        const user_id = '{{user_id}}';
-
-        let topics = []; // To store the fetched topics
-
-        // Function to load topics from API
-        async function loadTopics() {
-            try {
-                const response = await fetch(`${apiBaseUrl}/user-topics?user_id=${user_id}`);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                topics = await response.json(); // Save topics globally
-                populateTopicsGrid(topics);
-            } catch (error) {
-                console.error("Error fetching topics:", error);
-            }
-        }
-
-        // Function to populate the topics grid
-        function populateTopicsGrid(filteredTopics) {
-            const cardsContainer = document.getElementById('cardsContainer');
-            cardsContainer.innerHTML = ''; // Clear existing content
-
-            if (filteredTopics.length === 0) {
-                cardsContainer.innerHTML = `<div class="col-12 text-center text-muted">No matching tests found.</div>`;
-                return;
-            }
-
-            filteredTopics.forEach(topic => {
-                const card = document.createElement('div');
-                card.className = 'col-12 col-md-4 col-lg-3';
-                card.innerHTML = `
-          <div class="test-card" onclick="navigateToTopic('${topic.topic_id}')">
-            <img src="{% static 'course.png' %}" alt="${topic.name}">
-            <p class="test-name">${topic.name}</p>
-          </div>
-        `;
-                cardsContainer.appendChild(card);
-            });
-        }
-
-        // Function to handle navigation to a topic
-        function navigateToTopic(topicId) {
-            window.location.href = `/user/3/${user_id}/${topicId}`;
-        }
-
-        // Function to filter topics based on search input
-        function filterTopics(event) {
-            const searchTerm = event.target.value.toLowerCase();
-            const filteredTopics = topics.filter(topic =>
-                topic.name.toLowerCase().includes(searchTerm)
-            );
-            populateTopicsGrid(filteredTopics);
-        }
-
-        // Attach the filter function to the search input's onChange event
-        document.getElementById('searchInput').addEventListener('input', filterTopics);
-
-        // Initialize the page by loading topics
-        loadTopics();
-
-        // Make breadcrumbs clickable
-        /* document.getElementById('homeLink').addEventListener('click', () => {
-             alert('Navigating to Home');
-         });
-         document.getElementById('onlineTestLink').addEventListener('click', () => {
-             alert('Navigating to Online Test');
-         });
-         document.getElementById('aptitudeTestLink').addEventListener('click', () => {
-             alert('Navigating to Online Aptitude Test');
-         });*/
-    </script>
     <script>
 
 
