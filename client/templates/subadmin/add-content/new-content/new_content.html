@@ -365,6 +365,7 @@
                     <thead>
                         <tr class="table-dark">
                             <th>S.No</th>
+                            <th>Image</th>
                             <th>Topic</th>
                             <th>Domain Type</th>
                             <th>Tech Type</th>
@@ -387,10 +388,17 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form id="addTopicForm">
+                            <form id="addTopicForm" enctype="multipart/form-data">
                                 <div class="mb-3">
                                     <label for="topicName" class="form-label">Topic Name</label>
                                     <input type="text" class="form-control" id="topicName" required />
+                                </div>
+
+                                <!-- Image Upload -->
+                                <div class="mb-3">
+                                    <label for="topicImage" class="form-label">Topic Image</label>
+                                    <input type="file" class="form-control" id="topicImage" accept="image/*" />
+                                    <small class="text-muted">Leave empty to use default image</small>
                                 </div>
 
                                 <!-- Dynamic Domain Type Selection -->
@@ -414,6 +422,23 @@
                 </div>
             </div>
 
+            <!-- Image Preview Modal -->
+            <div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="imagePreviewTitle">Topic Image Preview</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <img id="previewImage" src="" class="img-fluid" style="max-height: 70vh;"
+                                alt="Topic Image Preview">
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
             <!-- Scripts -->
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -425,16 +450,25 @@
                 const domainTypes = ["tech", "non-tech"];
                 const techTypes = ["sw", "hw", "iot"];
 
+                document.addEventListener("DOMContentLoaded", () => {
+                    loadTopics();
+                    populateRadioButtons("domainTypeOptions", domainTypes, "domainType");
+                    populateRadioButtons("techTypeOptions", techTypes, "techType");
+
+                    document.getElementById("addTopicBtn").addEventListener("click", openAddTopicModal);
+                    document.getElementById("saveTopicBtn").addEventListener("click", saveTopic);
+                });
+
                 async function loadTopics() {
                     try {
-                        const response = await fetch(`${apiBaseUrl}/user-topics?user_id=${userId}`);
+                        const response = await fetch(`${apiBaseUrl}/topic`);
                         const topics = await response.json();
                         populateTopicsTable(topics);
                     } catch (error) {
                         console.error("Error fetching topics:", error);
                     }
                 }
-                loadTopics()
+
                 function populateTopicsTable(topics) {
                     const tableBody = document.getElementById("topicsTableBody");
                     tableBody.innerHTML = "";
@@ -446,22 +480,43 @@
                         row.setAttribute("data-bs-placement", "top");
                         row.setAttribute("title", "Click to view subtopics");
 
+                        const imageUrl = topic.image_url || '/media/topics/course.png';
+
                         row.innerHTML = `
-                                <td>${index + 1}</td>
-                                <td>${topic.name}</td>
-                                <td>${topic.domain_type.toUpperCase()}</td>
-                                <td>${topic.tech_type.toUpperCase()}</td>
-                                <td>${topic.created_by}</td>
-                                <td>${topic.created_at}</td>
-                            `;
+                                    <td>${index + 1}</td>
+                                    <td>
+                                        <img src="${imageUrl}" 
+                                             alt="${topic.name}" 
+                                             style="width: 50px; height: 50px; object-fit: cover; cursor: pointer;"
+                                             class="topic-image"
+                                             data-image="${imageUrl}"
+                                             data-title="${topic.name}">
+                                    </td>
+                                    <td>${topic.name}</td>
+                                    <td>${topic.domain_type.toUpperCase()}</td>
+                                    <td>${topic.tech_type.toUpperCase()}</td>
+                                    <td>${topic.created_by}</td>
+                                    <td>${topic.created_at}</td>
+                                `;
 
                         row.addEventListener("click", (event) => {
-                            if (!event.target.closest("button")) {
+                            if (!event.target.closest("button") && !event.target.classList.contains('topic-image')) {
                                 window.location.href = `content/${topic.topic_id}/subtopics`;
                             }
                         });
 
                         tableBody.appendChild(row);
+                    });
+
+                    // Add click event for all topic images
+                    document.querySelectorAll('.topic-image').forEach(img => {
+                        img.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const previewModal = new bootstrap.Modal(document.getElementById('imagePreviewModal'));
+                            document.getElementById('previewImage').src = img.dataset.image;
+                            document.getElementById('imagePreviewTitle').textContent = `Image: ${img.dataset.title}`;
+                            previewModal.show();
+                        });
                     });
 
                     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -482,11 +537,11 @@
                         col.classList.add('col-12', 'col-sm-6', 'col-md-4', 'col-lg-3'); // Adjust size for different screen widths
 
                         const radioHtml = `
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="${groupName}" value="${option}">
-                            <label class="form-check-label">${option.toUpperCase()}</label>
-                        </div>
-                    `;
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="${groupName}" value="${option}">
+                                        <label class="form-check-label">${option.toUpperCase()}</label>
+                                    </div>
+                                `;
 
                         col.innerHTML = radioHtml;
                         row.appendChild(col);
@@ -505,22 +560,26 @@
                     const topicName = document.getElementById("topicName").value.trim();
                     const domainType = document.querySelector('input[name="domainType"]:checked')?.value;
                     const techType = document.querySelector('input[name="techType"]:checked')?.value;
+                    const imageFile = document.getElementById("topicImage").files[0];
 
                     if (!topicName || !domainType || !techType) {
-                        alert("All fields are required");
+                        alert("All fields except image are required");
                         return;
                     }
 
                     try {
+                        const formData = new FormData();
+                        formData.append("user_id", userId);
+                        formData.append("topic_name", topicName);
+                        formData.append("domain_type", domainType);
+                        formData.append("tech_type", techType);
+                        if (imageFile) {
+                            formData.append("image_url", imageFile);
+                        }
+
                         const response = await fetch(`${apiBaseUrl}/add/topic`, {
                             method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                user_id: userId,
-                                topic_name: topicName,
-                                domain_type: domainType,
-                                tech_type: techType
-                            }),
+                            body: formData,
                         });
 
                         if (response.ok) {
