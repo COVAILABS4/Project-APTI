@@ -269,11 +269,17 @@
                             placeholder="Search Topic...">
                     </div>
 
-                    <!-- Cards Container -->
-                    <div style="color: #28a745;" id="cardsContainer" class="flex flex-wrap justify-start gap-6">
-                        <!-- Cards will be dynamically generated here -->
+                    <!-- Categories Tabs -->
+                    <div class="flex flex-wrap gap-2 mb-6" id="categoryTabs">
+                        <!-- Tabs will be dynamically generated here -->
+                    </div>
+
+                    <!-- Cards Container with categorized sections -->
+                    <div id="cardsContainer">
+                        <!-- Categorized sections will be dynamically generated here -->
                     </div>
                 </div>
+
             </div>
 
 
@@ -300,43 +306,132 @@
                 }
 
                 // Function to populate the topics grid
-                // Function to populate the topics grid
+
+                // Function to populate the topics grid with categorized sections
                 function populateTopicsGrid(filteredTopics) {
                     const cardsContainer = document.getElementById('cardsContainer');
-                    cardsContainer.innerHTML = ''; // Clear existing content
+                    const categoryTabs = document.getElementById('categoryTabs');
+                    cardsContainer.innerHTML = '';
+                    categoryTabs.innerHTML = '';
 
                     if (filteredTopics.length === 0) {
                         cardsContainer.innerHTML = `
-                        <div class="w-full py-12 text-center text-gray-500 text-lg">
-                            No matching tests found.
-                        </div>`;
+            <div class="w-full py-12 text-center text-gray-500 text-lg">
+                No matching tests found.
+            </div>`;
                         return;
                     }
 
+                    // Group topics by tech_type
+                    const categories = {
+                        hw: { name: "Hardware", color: "bg-orange-100", text: "text-orange-800", topics: [] },
+                        sw: { name: "Software", color: "bg-blue-100", text: "text-blue-800", topics: [] },
+                        iot: { name: "IoT", color: "bg-purple-100", text: "text-purple-800", topics: [] },
+                        other: { name: "Other", color: "bg-gray-100", text: "text-gray-800", topics: [] }
+                    };
 
                     filteredTopics.forEach(topic => {
-                        const card = document.createElement('div');
-                        card.className = 'w-full sm:w-[calc(50%-1.5rem)] md:w-[calc(33.333%-1.5rem)] lg:w-[calc(25%-1.5rem)] xl:w-[calc(20%-1.5rem)]';
-                        card.innerHTML = `
-                        <div 
-                            class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 cursor-pointer transform hover:-translate-y-1 h-full flex flex-col test-card"
-                            onclick="navigateToTopic('${topic.topic_id}')"
-                        >
+                        const category = categories[topic.tech_type] || categories.other;
+                        category.topics.push(topic);
+                    });
+
+                    let firstAvailableCategoryKey = null;
+
+                    // Create tabs for each category
+                    Object.entries(categories).forEach(([key, category]) => {
+                        if (category.topics.length > 0) {
+                            if (!firstAvailableCategoryKey) firstAvailableCategoryKey = key;
+
+                            const tab = document.createElement('button');
+                            tab.className = `px-4 py-2 rounded-full font-medium ${category.color} ${category.text} hover:opacity-90 transition-all`;
+                            tab.textContent = `${category.name} (${category.topics.length})`;
+                            tab.onclick = () => {
+                                document.querySelectorAll('.category-section').forEach(section => {
+                                    section.classList.add('hidden');
+                                });
+                                document.getElementById(`category-${key}`).classList.remove('hidden');
+
+                                // Update active tab
+                                document.querySelectorAll('#categoryTabs button').forEach(btn => {
+                                    btn.classList.remove('ring-2', 'ring-offset-2', 'ring-current');
+                                });
+                                tab.classList.add('ring-2', 'ring-offset-2', 'ring-current');
+                            };
+                            categoryTabs.appendChild(tab);
+                        }
+                    });
+
+                    // Create sections for each category
+                    Object.entries(categories).forEach(([key, category]) => {
+                        if (category.topics.length > 0) {
+                            const section = document.createElement('div');
+                            section.id = `category-${key}`;
+                            section.className = `category-section mb-10 ${key !== firstAvailableCategoryKey ? 'hidden' : ''}`;
+
+                            const sectionHeader = document.createElement('h2');
+                            sectionHeader.className = `text-2xl font-bold mb-6 flex items-center ${category.text}`;
+                            sectionHeader.innerHTML = `
+                <span class="w-3 h-3 rounded-full ${category.color.replace('bg-', 'bg-').replace('100', '500')} mr-2"></span>
+                ${category.name} Topics
+            `;
+                            section.appendChild(sectionHeader);
+
+                            const cardsWrapper = document.createElement('div');
+                            cardsWrapper.className = 'flex flex-wrap justify-start gap-6';
+
+                            category.topics.forEach(topic => {
+                                const card = document.createElement('div');
+                                card.className = 'w-full sm:w-[calc(50%-1.5rem)] md:w-[calc(33.333%-1.5rem)] lg:w-[calc(25%-1.5rem)]';
+                                card.innerHTML = `
+                    <div 
+                        class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:-translate-y-1 h-full flex flex-col border-t-4 ${getBorderColor(topic.tech_type)}"
+                        onclick="navigateToTopic('${topic.topic_id}')"
+                    >
+                        <div class="relative">
                             <img 
-                                class="w-full h-48 object-cover border " 
+                                class="w-full h-48 object-cover" 
                                 src="${topic.image_url || '/media/topics/course.png'}" 
                                 alt="${topic.name}"
                                 onerror="this.src='/media/topics/course.png'"
                             >
-                            <div class="p-4 flex-grow" style='text-align: center;'>
-                                <h3 class="text-lg font-semibold  mb-2 line-clamp-2">${topic.name}</h3>
-                                
-                            </div>
+                            <span class="absolute top-2 right-2 ${getBadgeColor(topic.tech_type)} text-white text-xs font-bold px-2 py-1 rounded-full">
+                                ${getTechTypeName(topic.tech_type)}
+                            </span>
                         </div>
-                    `;
-                        cardsContainer.appendChild(card);
+                        <div class="p-4 flex-grow text-center">
+                            <h3 class="text-lg font-semibold mb-2 line-clamp-2">${topic.name}</h3>
+                        </div>
+                    </div>
+                `;
+                                cardsWrapper.appendChild(card);
+                            });
+
+                            section.appendChild(cardsWrapper);
+                            cardsContainer.appendChild(section);
+                        }
                     });
+
+                    // Activate the first tab dynamically
+                    const firstTab = categoryTabs.querySelector('button');
+                    if (firstTab) firstTab.classList.add('ring-2', 'ring-offset-2', 'ring-current');
                 }
+
+                // Helper functions
+                function getTechTypeName(techType) {
+                    const types = { hw: 'Hardware', sw: 'Software', iot: 'IoT' };
+                    return types[techType] || techType;
+                }
+
+                function getBorderColor(techType) {
+                    const colors = { hw: 'border-orange-500', sw: 'border-blue-500', iot: 'border-purple-500' };
+                    return colors[techType] || 'border-gray-500';
+                }
+
+                function getBadgeColor(techType) {
+                    const colors = { hw: 'bg-orange-500', sw: 'bg-blue-500', iot: 'bg-purple-500' };
+                    return colors[techType] || 'bg-gray-500';
+                }
+
 
                 // Function to handle navigation to a topic
                 function navigateToTopic(topicId) {
